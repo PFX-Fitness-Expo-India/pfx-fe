@@ -14,6 +14,7 @@ import Registration from './features/registration';
 import Dashboard from './features/dashboard';
 import Login from './features/auth/Login';
 import Signup from './features/auth/Signup';
+import EventDetail from './features/sports/EventDetail';
 import { SportModal, TicketModal, ConfirmationModal } from './features/modals';
 
 // ─── ScrollToTop Helper ────────────────────────────────────────────────────────
@@ -54,11 +55,12 @@ function AppInner() {
               <Sponsors />
               <Tickets />
               <Registration />
-              <Dashboard />
+              {/* <Dashboard /> */}
             </>
           } />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/events/:eventId" element={<EventDetail />} />
         </Routes>
 
       <SportModal />

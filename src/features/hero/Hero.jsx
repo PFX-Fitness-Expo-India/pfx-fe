@@ -33,7 +33,7 @@ export default function Hero() {
       <div className="hero-content container">
         <p className="eyebrow">PFX FITNESS EXPO INDIA</p>
         <h1>India's Biggest Multi-Sport Fitness Expo</h1>
-        <p className="subtitle">
+        <p className="subtitle text-white">
           Join elite athletes, fitness enthusiasts, and global brands for a high-energy weekend
           of competitions, showcases, and innovation.
         </p>

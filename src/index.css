@@ -341,7 +341,7 @@ p  { margin: 0; }
 .hero .subtitle {
   max-width: 520px;
   margin-top: 20px;
-  color: var(--muted);
+  color: #ffffff;
 }
 
 .hero-cta {
@@ -353,7 +353,7 @@ p  { margin: 0; }
 
 .hero-meta {
   margin-top: 20px;
-  color: var(--muted);
+  color: #ffffff;
   font-size: 0.85rem;
   display: flex;
   gap: 10px;
