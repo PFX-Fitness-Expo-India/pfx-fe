@@ -46,70 +46,59 @@ export default function EventDetail() {
     : event.eventDate;
 
   return (
-    <section className="section" style={{ paddingTop: '80px', paddingBottom: '80px' }}>
-      <div className="container" style={{ maxWidth: '800px', margin: '0 auto' }}>
+    <section className="section">
+      <div className="container medium-container">
         <button 
           className="btn subtle" 
           onClick={() => navigate('/')}
-          style={{ marginBottom: '20px', padding: '8px 16px' }}
+          style={{ marginBottom: '20px' }}
         >
           ← Back to Events
         </button>
         
-        <div style={{ borderRadius: '12px', overflow: 'hidden', backgroundColor: '#111', border: '1px solid #333' }}>
-          <div style={{ 
-            height: '300px', 
-            backgroundImage: `url('${imageUrl}')`, 
-            backgroundSize: 'cover', 
-            backgroundPosition: 'center' 
-          }} />
+        <div className="sport-card detail-card">
+          <div className="sport-media" style={{ height: '300px', backgroundImage: `url('${imageUrl}')` }} />
           
-          <div style={{ padding: '30px' }}>
-            <h1 style={{ fontSize: '2.5rem', marginBottom: '10px', color: '#fff' }}>{event.eventName}</h1>
-            <p style={{ fontSize: '1.2rem', color: '#aaa', marginBottom: '30px' }}>{event.eventDescription}</p>
+          <div className="sport-body" style={{ padding: '24px' }}>
+            <h1 className="section-title">{event.eventName}</h1>
+            <p className="subtitle" style={{ color: 'var(--muted)', marginBottom: '32px' }}>{event.eventDescription}</p>
             
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '30px' }}>
-              <div>
-                <p style={{ color: '#888', fontSize: '0.9rem', marginBottom: '4px' }}>Date</p>
-                <p style={{ fontWeight: 600, color: '#fff' }}>{formattedDate}</p>
+            <div className="info-grid" style={{ marginBottom: '32px' }}>
+              <div className="info-item">
+                <label>Date</label>
+                <span>{formattedDate}</span>
               </div>
-              <div>
-                <p style={{ color: '#888', fontSize: '0.9rem', marginBottom: '4px' }}>Time</p>
-                <p style={{ fontWeight: 600, color: '#fff' }}>{event.eventTime}</p>
+              <div className="info-item">
+                <label>Time</label>
+                <span>{event.eventTime}</span>
               </div>
-              <div>
-                <p style={{ color: '#888', fontSize: '0.9rem', marginBottom: '4px' }}>Location</p>
-                <p style={{ fontWeight: 600, color: '#fff' }}>{event.eventLocation || 'TBD'}</p>
+              <div className="info-item">
+                <label>Location</label>
+                <span>{event.eventLocation || 'TBD'}</span>
               </div>
-              <div>
-                <p style={{ color: '#888', fontSize: '0.9rem', marginBottom: '4px' }}>Capacity</p>
-                <p style={{ fontWeight: 600, color: '#fff' }}>{event.eventCapacity} Participants</p>
+              <div className="info-item">
+                <label>Capacity</label>
+                <span>{event.eventCapacity} Participants</span>
               </div>
-              <div>
-                <p style={{ color: '#888', fontSize: '0.9rem', marginBottom: '4px' }}>Entry Fee</p>
-                <p style={{ fontWeight: 600, color: '#fff' }}>₹{event.eventPrice}</p>
+              <div className="info-item">
+                <label>Entry Fee</label>
+                <span>₹{event.eventPrice}</span>
               </div>
-              <div>
-                <p style={{ color: '#888', fontSize: '0.9rem', marginBottom: '4px' }}>Payment</p>
-                <p style={{ fontWeight: 600, color: '#fff', textTransform: 'capitalize' }}>{event.paymentMethod}</p>
+              <div className="info-item">
+                <label>Payment</label>
+                <span style={{ textTransform: 'capitalize' }}>{event.paymentMethod}</span>
               </div>
             </div>
 
             {event.haveSubcategory && event.subcategories?.length > 0 && (
-              <div style={{ marginBottom: '30px' }}>
-                <h3 style={{ fontSize: '1.2rem', marginBottom: '10px', color: '#fff' }}>Categories</h3>
-                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <div style={{ marginBottom: '32px' }}>
+                <h3 style={{ fontSize: '1.2rem', marginBottom: '12px' }}>Categories</h3>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   {event.subcategories.map(cat => (
                     <span 
                       key={cat._id} 
-                      style={{ 
-                        padding: '6px 12px', 
-                        backgroundColor: '#222', 
-                        border: '1px solid #444', 
-                        borderRadius: '20px', 
-                        fontSize: '0.9rem',
-                        color: '#ddd'
-                      }}
+                      className="sport-modal-badge"
+                      style={{ margin: 0 }}
                     >
                       {cat.name}
                     </span>
@@ -121,7 +110,7 @@ export default function EventDetail() {
             {event.paymentMethod === 'online' ? (
               <button 
                 className="btn primary" 
-                style={{ width: '100%', padding: '15px', fontSize: '1.1rem' }}
+                style={{ width: '100%', padding: '16px', fontSize: '1rem' }}
                 onClick={() => {
                   navigate('/');
                   setTimeout(() => {
@@ -137,7 +126,7 @@ export default function EventDetail() {
               <a 
                 href="tel:+919361614200" 
                 className="btn primary" 
-                style={{ display: 'block', width: '100%', padding: '15px', fontSize: '1.1rem', textAlign: 'center', boxSizing: 'border-box', textDecoration: 'none' }}
+                style={{ display: 'block', width: '100%', padding: '16px', fontSize: '1rem', textAlign: 'center', boxSizing: 'border-box' }}
               >
                 Call to Register
               </a>

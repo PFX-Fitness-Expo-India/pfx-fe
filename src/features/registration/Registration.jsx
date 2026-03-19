@@ -143,7 +143,7 @@ export default function Registration() {
       </div>
 
       {/* CTA Banner */}
-      <div className="container" style={{ marginTop: '60px' }}>
+      <div className="container" style={{ marginTop: 'clamp(32px, 5vw, 60px)' }}>
         <div className="cta-inner">
           <div>
             <p className="eyebrow">Final Call</p>
