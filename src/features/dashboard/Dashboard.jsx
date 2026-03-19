@@ -28,7 +28,7 @@ export default function Dashboard() {
           </div>
           <div className="stat-card small">
             <span className="stat-label">Payments (Simulated)</span>
-            <span className="stat-value" style={{ fontSize: '0.9rem' }}>Online only for select sports</span>
+            <span className="stat-value" style={{ fontSize: 'clamp(0.8rem, 2vw, 1.2rem)' }}>Online only</span>
           </div>
         </div>
 

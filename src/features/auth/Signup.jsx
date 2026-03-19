@@ -39,22 +39,21 @@ export default function Signup() {
   }
 
   return (
-    <section className="section" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center' }}>
-      <div className="container registration-layout" style={{ justifyContent: 'center' }}>
-        <div className="registration-card" style={{ maxWidth: '600px', width: '100%', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+    <section className="section signup-section">
+      <div className="container medium-container">
+        <div className="registration-card" style={{ maxWidth: '600px', margin: '0 auto' }}>
+          <div className="section-header-compact" style={{ textAlign: 'center', marginBottom: '2rem' }}>
             <p className="eyebrow">Join PFX</p>
             <h3>Create an account</h3>
-            {error && <p style={{ color: 'var(--pf-accent)', marginTop: '1rem' }}>{error}</p>}
+            {error && <p className="error-text" style={{ color: 'var(--primary)', marginTop: '1rem' }}>{error}</p>}
           </div>
 
           <form ref={formRef} className="form" onSubmit={handleSubmit}>
-            <div className="form-row">
-              <div className="form-field full">
-                <label htmlFor="userName">Full Name</label>
-                <input id="userName" name="userName" type="text" required disabled={loading} />
-              </div>
+            <div className="form-field full">
+              <label htmlFor="userName">Full Name</label>
+              <input id="userName" name="userName" type="text" required disabled={loading} />
             </div>
+
             <div className="form-row">
               <div className="form-field">
                 <label htmlFor="email">Email</label>
@@ -65,13 +64,15 @@ export default function Signup() {
                 <input id="phoneNumber" name="phoneNumber" type="tel" required disabled={loading} />
               </div>
             </div>
+
             <div className="form-row">
               <div className="form-field">
                 <label htmlFor="password">Password</label>
-                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                <div className="password-input-wrapper" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                   <input id="password" name="password" type={showPassword ? "text" : "password"} required disabled={loading} style={{ width: '100%', paddingRight: '54px' }} />
                   <button 
                     type="button" 
+                    className="password-toggle"
                     onClick={() => setShowPassword(!showPassword)}
                     style={{ position: 'absolute', right: '14px', background: 'none', border: 'none', color: 'var(--muted)', display: 'flex', alignItems: 'center', cursor: 'pointer', padding: 0 }}
                     tabIndex="-1"
@@ -99,9 +100,10 @@ export default function Signup() {
                 </select>
               </div>
             </div>
+
             <div className="form-footer">
               <div className="registration-actions" style={{ width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
-                <button type="button" className="btn subtle" onClick={() => navigate('/login')} disabled={loading}>
+                <button type="button" className="btn subtle" onClick={() => navigate('/login')} disabled={loading} style={{ fontSize: '0.75rem' }}>
                   Already have an account? Login
                 </button>
                 <button type="submit" className="btn primary" disabled={loading}>
