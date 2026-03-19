@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AppProvider, useAppContext } from './contexts/AppContext';
 import { useScrollAnimation } from './hooks/useScrollAnimation';
 import PageLayout from './layouts/PageLayout';
@@ -11,7 +12,21 @@ import Sponsors from './features/sponsors';
 import Tickets from './features/tickets';
 import Registration from './features/registration';
 import Dashboard from './features/dashboard';
+import Login from './features/auth/Login';
+import Signup from './features/auth/Signup';
 import { SportModal, TicketModal, ConfirmationModal } from './features/modals';
+
+// ─── ScrollToTop Helper ────────────────────────────────────────────────────────
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
 
 // ─── Inner app — has access to AppContext ─────────────────────────────────────
 
@@ -28,16 +43,24 @@ function AppInner() {
 
   return (
     <PageLayout>
-      <Hero />
-      <Highlights />
-      <SportsGrid />
-      <Schedule />
-      <Sponsors />
-      <Tickets />
-      <Registration />
-      <Dashboard />
+      <ScrollToTop />
+      <Routes>
+          <Route path="/" element={
+            <>
+              <Hero />
+              <Highlights />
+              <SportsGrid />
+              <Schedule />
+              <Sponsors />
+              <Tickets />
+              <Registration />
+              <Dashboard />
+            </>
+          } />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+        </Routes>
 
-      {/* Modals — self-contained, read their state from context */}
       <SportModal />
       <TicketModal />
       <ConfirmationModal />
@@ -49,8 +72,10 @@ function AppInner() {
 
 export default function App() {
   return (
-    <AppProvider>
-      <AppInner />
-    </AppProvider>
+    <Router>
+      <AppProvider>
+        <AppInner />
+      </AppProvider>
+    </Router>
   );
 }

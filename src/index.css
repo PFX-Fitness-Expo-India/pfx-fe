@@ -660,11 +660,35 @@ p  { margin: 0; }
   font-size: 0.85rem;
 }
 
+.form-field select {
+  appearance: none; /* Hide default arrow */
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 14px;
+}
+
+.form-field select option {
+  background-color: #050509; /* Deep dark background */
+  color: #ffffff;
+  padding: 12px;
+}
+
 .form-field input:focus,
 .form-field select:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 1px rgba(24, 225, 185, 0.6);
+}
+
+.form-field input:-webkit-autofill,
+.form-field input:-webkit-autofill:hover, 
+.form-field input:-webkit-autofill:focus, 
+.form-field input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #0d0d14 inset !important;
+  -webkit-text-fill-color: var(--text) !important;
+  border-radius: 999px !important;
+  transition: background-color 5000s ease-in-out 0s;
 }
 
 .form-footer {
