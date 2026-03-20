@@ -1,53 +1,147 @@
-import { useRef } from 'react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Modal from '../../shared/Modal';
 import { useAppContext } from '../../contexts/AppContext';
+import { paymentService } from '../../services/paymentService';
+import { registrationService } from '../../services/registrationService';
+import Swal from 'sweetalert2';
 
 export default function TicketModal() {
-  const { activeTicketType: ticketType, closeTicketModal, addTicket, showConfirmation } = useAppContext();
-  const formRef = useRef(null);
+  const { 
+    activeTicketType: ticketType, 
+    closeTicketModal, 
+    user, 
+    token,
+    logout 
+  } = useAppContext();
+  
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   if (!ticketType) return null;
 
-  function handleSubmit(e) {
+  const getTicketDetails = () => {
+    if (ticketType === 'General Pass') {
+      return { amount: 999, type: 'standard' };
+    }
+    if (ticketType === 'VIP Pass') {
+      return { amount: 2999, type: 'gold' };
+    }
+    return { amount: 999, type: 'standard' };
+  };
+
+  async function handleSubmit(e) {
     e.preventDefault();
-    const form = formRef.current;
-    const data = {
-      name: form.elements.name.value.trim(),
-      phone: form.elements.phone.value.trim(),
-      email: form.elements.email.value.trim(),
-      quantity: parseInt(form.elements.quantity.value || '1', 10),
-      type: ticketType,
-      createdAt: new Date().toISOString(),
-    };
-    addTicket(data);
-    closeTicketModal();
-    showConfirmation(
-      `Your ${data.type} booking for ${data.quantity} ticket(s) has been recorded. A confirmation email will be sent to ${data.email}. (Demo only)`
-    );
+    if (!user || !token) {
+      Swal.fire({
+        title: 'Login Required',
+        text: 'Please login to purchase tickets.',
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonText: 'Go to Login',
+        confirmButtonColor: 'var(--primary)'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate('/login');
+          closeTicketModal();
+        }
+      });
+      return;
+    }
+
+    const { amount, type } = getTicketDetails();
+    setLoading(true);
+
+    try {
+      // 1. Create Order
+      const orderRes = await paymentService.createOrder({
+        userId: user.userId,
+        eventId: 'visitor_pass', // Placeholder eventId for generic visitor tickets
+        amount: amount
+      }, token);
+
+      const order = orderRes.data;
+
+      // 2. Open Razorpay
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: order.currency,
+        name: 'PFX Fitness Expo',
+        description: `${ticketType} Purchase`,
+        order_id: order.id,
+        handler: async (response) => {
+          try {
+            setLoading(true);
+            
+            // New requirement: Skip verifyPayment and createPaymentRecord
+            // Register Visitor directly
+            await registrationService.registerVisitor({
+              userId: user.userId,
+              ticketType: type
+            }, token);
+
+            Swal.fire({
+              icon: 'success',
+              title: 'Ticket Booked!',
+              text: `Your ${ticketType} has been successfully booked. Check your email for the ticket.`,
+              confirmButtonColor: 'var(--primary)'
+            });
+            closeTicketModal();
+          } catch (err) {
+            console.error('Visitor registration failed:', err);
+            if (err.statusCode === 401) {
+              Swal.fire('Session Expired', 'Please login again.', 'warning');
+              logout();
+            } else {
+              Swal.fire('Error', err.message || 'Registration failed', 'error');
+            }
+          } finally {
+            setLoading(false);
+          }
+        },
+        prefill: {
+          name: user.userName || '',
+          email: user.email || '',
+        },
+        theme: {
+          color: "#ff4444"
+        },
+        modal: {
+          ondismiss: () => setLoading(false)
+        }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (error) {
+      console.error('Order creation failed:', error);
+      if (error.statusCode === 401) {
+        Swal.fire('Session Expired', 'Please login again.', 'warning');
+        logout();
+      } else {
+        Swal.fire('Error', error.message || 'Failed to initiate payment', 'error');
+      }
+      setLoading(false);
+    }
   }
 
   return (
     <Modal onClose={closeTicketModal}>
       <h3>Book {ticketType}</h3>
-      <form ref={formRef} className="form" onSubmit={handleSubmit}>
+      <form className="form" onSubmit={handleSubmit}>
         <div className="form-field">
-          <label htmlFor="visitorName">Name</label>
-          <input id="visitorName" name="name" required />
+          <label>Ticket Type</label>
+          <input value={ticketType} disabled />
         </div>
         <div className="form-field">
-          <label htmlFor="visitorPhone">Phone number</label>
-          <input id="visitorPhone" name="phone" type="tel" required />
+          <label>Price</label>
+          <input value={`₹${getTicketDetails().amount}`} disabled />
         </div>
-        <div className="form-field">
-          <label htmlFor="visitorEmail">Email</label>
-          <input id="visitorEmail" name="email" type="email" required />
-        </div>
-        <div className="form-field">
-          <label htmlFor="ticketQuantity">Number of tickets</label>
-          <input id="ticketQuantity" name="quantity" type="number" min="1" defaultValue="1" required />
-        </div>
-        <p className="payment-note">Secure online payment (test mode) – no real charges.</p>
-        <button type="submit" className="btn accent">Proceed to Payment</button>
+        <p className="payment-note">Secure online payment via Razorpay.</p>
+        <button type="submit" className="btn accent" disabled={loading}>
+          {loading ? 'Processing...' : 'Proceed to Payment'}
+        </button>
       </form>
     </Modal>
   );

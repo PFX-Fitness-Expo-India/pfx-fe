@@ -15,7 +15,7 @@ import Dashboard from './features/dashboard';
 import Login from './features/auth/Login';
 import Signup from './features/auth/Signup';
 import EventDetail from './features/sports/EventDetail';
-import { SportModal, TicketModal, ConfirmationModal } from './features/modals';
+import { SportModal, TicketModal, ConfirmationModal, AthleteRegistrationModal } from './features/modals';
 
 // ─── ScrollToTop Helper ────────────────────────────────────────────────────────
 
@@ -66,6 +66,7 @@ function AppInner() {
       <SportModal />
       <TicketModal />
       <ConfirmationModal />
+      <AthleteRegistrationModal />
     </PageLayout>
   );
 }

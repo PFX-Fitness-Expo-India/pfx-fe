@@ -112,6 +112,7 @@ export function AppProvider({ children }) {
 
   // ── Modal state ──
   const [activeSport, setActiveSport] = useState(null);
+  const [activeRegistrationEvent, setActiveRegistrationEvent] = useState(null);
   const [activeTicketType, setActiveTicketType] = useState(null);
   const [confirmationMessage, setConfirmationMessage] = useState(null);
 
@@ -147,6 +148,9 @@ export function AppProvider({ children }) {
   const openSportModal = useCallback((sport) => setActiveSport(sport), []);
   const closeSportModal = useCallback(() => setActiveSport(null), []);
 
+  const openAthleteRegistrationModal = useCallback((event) => setActiveRegistrationEvent(event), []);
+  const closeAthleteRegistrationModal = useCallback(() => setActiveRegistrationEvent(null), []);
+
   const openTicketModal = useCallback((type) => setActiveTicketType(type), []);
   const closeTicketModal = useCallback(() => setActiveTicketType(null), []);
 
@@ -155,6 +159,7 @@ export function AppProvider({ children }) {
 
   const closeAllModals = useCallback(() => {
     setActiveSport(null);
+    setActiveRegistrationEvent(null);
     setActiveTicketType(null);
     setConfirmationMessage(null);
   }, []);
@@ -176,11 +181,14 @@ export function AppProvider({ children }) {
     exportTicketsCsv,
     // modal state
     activeSport,
+    activeRegistrationEvent,
     activeTicketType,
     confirmationMessage,
     // modal actions
     openSportModal,
     closeSportModal,
+    openAthleteRegistrationModal,
+    closeAthleteRegistrationModal,
     openTicketModal,
     closeTicketModal,
     showConfirmation,
