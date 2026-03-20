@@ -136,8 +136,8 @@ export default function Account() {
               </div>
             ) : (
               <div className="empty-state">
-                <p>You haven't registered for any events yet.</p>
-                <button className="btn primary mt-2" onClick={() => window.location.href='/#events'}>
+                <p>You haven't booked any tickets yet.</p>
+                <button className="btn primary " onClick={() => window.location.href='/#events'}>
                   Browse Events
                 </button>
               </div>

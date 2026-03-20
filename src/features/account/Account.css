@@ -71,6 +71,7 @@
 }
 
 .empty-state { text-align: center; padding: 40px; background: rgba(255,255,255,0.02); border-radius: 12px; }
+.empty-state p { margin-bottom: 24px; color: var(--muted); }
 
 @media (max-width: 640px) {
   .ticket-item { flex-direction: column; align-items: flex-start; gap: 16px; }
