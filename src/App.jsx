@@ -14,6 +14,7 @@ import Registration from './features/registration';
 import Dashboard from './features/dashboard';
 import Login from './features/auth/Login';
 import Signup from './features/auth/Signup';
+import Account from './features/account/Account';
 import EventDetail from './features/sports/EventDetail';
 import { SportModal, TicketModal, ConfirmationModal, AthleteRegistrationModal } from './features/modals';
 
@@ -60,6 +61,7 @@ function AppInner() {
           } />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/account" element={<Account />} />
           <Route path="/events/:eventId" element={<EventDetail />} />
         </Routes>
 

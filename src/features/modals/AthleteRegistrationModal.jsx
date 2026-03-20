@@ -66,7 +66,8 @@ export default function AthleteRegistrationModal() {
                 eventId: event._id,
                 age: parseInt(formData.age),
                 gender: formData.gender,
-                weight: parseFloat(formData.weight)
+                weight: parseFloat(formData.weight),
+                status: 'completed'
               };
               await registrationService.registerAthlete(athleteData, token);
 

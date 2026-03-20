@@ -51,4 +51,56 @@ export const authService = {
     }
     return data;
   },
+
+  refreshToken: async (refreshToken) => {
+    const response = await fetch(`${API_BASE_URL}/api/auth/refresh-token`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ refreshToken }),
+    });
+    const data = await response.json();
+    if (!response.ok || (data.statusCode && data.statusCode >= 400)) {
+      const error = new Error(data.message || 'Token refresh failed');
+      error.statusCode = data.statusCode || response.status;
+      throw error;
+    }
+    return data;
+  },
+
+  logout: async (token) => {
+    const response = await fetch(`${API_BASE_URL}/api/auth/logout`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await response.json();
+    if (!response.ok || (data.statusCode && data.statusCode >= 400)) {
+      const error = new Error(data.message || 'Logout failed');
+      error.statusCode = data.statusCode || response.status;
+      throw error;
+    }
+    return data;
+  },
+
+  changePassword: async (passwordData, token) => {
+    const response = await fetch(`${API_BASE_URL}/api/auth/change-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(passwordData),
+    });
+    const data = await response.json();
+    if (!response.ok || (data.statusCode && data.statusCode >= 400)) {
+      const error = new Error(data.message || 'Change password failed');
+      error.statusCode = data.statusCode || response.status;
+      throw error;
+    }
+    return data;
+  },
 };
