@@ -1,16 +1,23 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
+import { useScrollAnimation } from '../../hooks/useScrollAnimation';
+import { useAppContext } from '../../contexts/AppContext';
 
 export default function EventDetail() {
   const { eventId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { token, openAthleteRegistrationModal } = useAppContext();
+  useScrollAnimation();
 
   const { data: event, isLoading: loading, error } = useQuery({
     queryKey: ['events', eventId],
     queryFn: async () => {
       const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/events/${eventId}`);
-      if (res.data.statusCode === 200 && res.data.data) {
+      
+      if (res.data.statusCode === 200) {
+        // console.log(res.data.data);
         return res.data.data;
       }
       throw new Error(res.data.message || 'Failed to fetch event');
@@ -20,7 +27,7 @@ export default function EventDetail() {
 
   if (loading) {
     return (
-      <section className="section" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <section className="section in-view" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <p style={{ color: '#888' }}>Loading event details...</p>
       </section>
     );
@@ -29,7 +36,7 @@ export default function EventDetail() {
   if (error || !event) {
     const errorMsg = error?.message || error || 'Event not found';
     return (
-      <section className="section" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+      <section className="section in-view" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
         <p style={{ color: '#ff4444', marginBottom: '1rem' }}>{errorMsg}</p>
         <button className="btn outline" onClick={() => navigate('/')}>Back to Home</button>
       </section>
@@ -46,7 +53,7 @@ export default function EventDetail() {
     : event.eventDate;
 
   return (
-    <section className="section">
+    <section className="section in-view">
       <div className="container medium-container">
         <button 
           className="btn subtle" 
@@ -56,7 +63,7 @@ export default function EventDetail() {
           ← Back to Events
         </button>
         
-        <div className="sport-card detail-card">
+        <div className="sport-card detail-card in-view">
           <div className="sport-media" style={{ height: '300px', backgroundImage: `url('${imageUrl}')` }} />
           
           <div className="sport-body" style={{ padding: '24px' }}>
@@ -112,12 +119,11 @@ export default function EventDetail() {
                 className="btn primary" 
                 style={{ width: '100%', padding: '16px', fontSize: '1rem' }}
                 onClick={() => {
-                  navigate('/');
-                  setTimeout(() => {
-                    const latestEl = document.getElementById('athlete-registration');
-                    if (latestEl) window.scrollTo({ top: latestEl.offsetTop - 76, behavior: 'smooth' });
-                    window.dispatchEvent(new CustomEvent('pfx:selectSport', { detail: event._id || event.eventId }));
-                  }, 100);
+                  if (!token) {
+                    navigate(`/login?redirect=${encodeURIComponent(location.pathname)}`);
+                  } else {
+                    openAthleteRegistrationModal(event);
+                  }
                 }}
               >
                 Register for this Event
