@@ -387,16 +387,17 @@ p  { margin: 0; }
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 12px 22px;
+  padding: 8px 18px;
   border-radius: var(--radius-pill);
   border: 1px solid transparent;
   background: transparent;
   color: var(--text);
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
   font-weight: 600;
   cursor: pointer;
+  white-space: nowrap;
   transition: transform 0.18s ease-out, box-shadow 0.18s ease-out,
     background 0.18s ease-out, border-color 0.18s ease-out;
 }
@@ -420,7 +421,8 @@ p  { margin: 0; }
 .btn.subtle {
   border-color: rgba(255, 255, 255, 0.2);
   background: rgba(3, 3, 6, 0.85);
-  font-size: 0.7rem;
+  font-size: 0.68rem;
+  padding: 6px 14px;
 }
 
 .btn:hover {
@@ -509,11 +511,7 @@ p  { margin: 0; }
 .hero-meta .dot { color: rgba(255, 255, 255, 0.4); }
 
 /* ---- Highlights ---- */
-.highlight-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 20px;
-}
+/* .highlight-grid removed as it's replaced by Bootstrap Grid */
 
 .stat-card {
   position: relative;
@@ -545,11 +543,7 @@ p  { margin: 0; }
 }
 
 /* ---- Sports grid ---- */
-.sports-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 20px;
-}
+/* .sports-grid removed as it's replaced by Bootstrap Grid */
 
 .sport-card {
   position: relative;
@@ -560,6 +554,7 @@ p  { margin: 0; }
   box-shadow: var(--shadow-soft);
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .sport-media {
@@ -674,11 +669,7 @@ p  { margin: 0; }
 }
 
 /* ---- Sponsors ---- */
-.sponsor-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 18px;
-}
+/* .sponsor-grid removed as it's replaced by Bootstrap Grid */
 
 .sponsor-card {
   border-radius: var(--radius-md);
@@ -694,11 +685,7 @@ p  { margin: 0; }
 }
 
 /* ---- Tickets ---- */
-.ticket-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 24px;
-}
+/* .ticket-grid removed as it's replaced by Bootstrap Grid */
 
 .ticket-card {
   border-radius: var(--radius-lg);
@@ -767,11 +754,16 @@ p  { margin: 0; }
 .registration-card {
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-strong);
-  background: radial-gradient(circle at 0% 0%, rgba(255, 48, 64, 0.3), transparent 60%),
-    radial-gradient(circle at 100% 100%, rgba(24, 225, 185, 0.3), transparent 60%),
-    linear-gradient(145deg, #05050c, #030307);
-  padding: 26px 24px 22px;
-  box-shadow: var(--shadow-soft);
+  background: radial-gradient(circle at 0% 0%, rgba(255, 48, 64, 0.2), transparent 60%),
+    radial-gradient(circle at 100% 100%, rgba(24, 225, 185, 0.15), transparent 60%),
+    linear-gradient(145deg, #0a0a12, #050508);
+  padding: 32px;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.registration-card:hover {
+  border-color: rgba(255, 48, 64, 0.4);
 }
 
 .form {
@@ -857,9 +849,20 @@ p  { margin: 0; }
 
 .registration-actions {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  justify-content: space-between;
   align-items: center;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+@media (max-width: 480px) {
+  .registration-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+  .registration-actions .btn {
+    width: 100%;
+  }
 }
 
 .hidden { display: none !important; }
@@ -890,7 +893,7 @@ p  { margin: 0; }
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 50;
+  z-index: 2000; /* Ensure it's above the header (1000) */
 }
 
 .modal.hidden { display: none; }
@@ -898,23 +901,42 @@ p  { margin: 0; }
 .modal-backdrop {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 0% 0%, rgba(255, 48, 64, 0.4), transparent 60%),
-    rgba(0, 0, 0, 0.86);
+  background: rgba(0, 0, 0, 0.9); /* Solid dark backdrop */
+  z-index: -1; /* Ensure it stays behind modal-content */
 }
 
 .modal-content {
   position: relative;
-  z-index: 1;
+  z-index: 100; /* Definitively on top of backdrop */
   width: min(560px, 92vw);
   max-height: 84vh;
-  overflow: auto;
+  overflow-y: auto; /* Allow vertical scroll if too tall */
+  overflow-x: hidden; /* Prevent horizontal scroll */
+  
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
   border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: radial-gradient(circle at 0% 0%, rgba(255, 48, 64, 0.35), transparent 60%),
-    radial-gradient(circle at 100% 100%, rgba(24, 225, 185, 0.28), transparent 60%),
-    #050509;
-  padding: 22px 22px 18px;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.4); /* Stronger border for separation */
+  background: #0d0d14 !important; /* Force solid background */
+  padding: 24px 24px 20px;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 1);
+  color: #ffffff !important; 
+}
+
+/* Subtle accent glow on the modal border instead of a full face gradient */
+.modal-content::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255, 48, 64, 0.2), transparent, rgba(24, 225, 185, 0.15));
+  z-index: -1;
+  pointer-events: none;
 }
 
 .sport-modal-content { width: min(880px, 94vw); }
@@ -950,18 +972,31 @@ p  { margin: 0; }
   margin-bottom: 10px;
 }
 
+.sport-modal-hero h3 {
+  color: #ffffff !important;
+  font-size: 1.6rem;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
 .sport-modal-hero p {
-  margin-top: 10px;
-  color: var(--muted);
-  font-size: 0.9rem;
+  margin-top: 4px;
+  color: #f0f0f5 !important; /* Near-white for clear reading */
+  font-size: 0.92rem;
 }
 
 .sport-modal-body {
   margin-top: 18px;
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  grid-template-columns: minmax(0, 1fr); /* Unified for responsiveness */
   gap: 24px;
   font-size: 0.9rem;
+  color: var(--text);
+}
+
+.athlete-modal-content .form-field label {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
 }
 
 .sport-modal-column ul {
@@ -1112,7 +1147,7 @@ tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.02); }
     height: 38px;
   }
   .header-actions { gap: 8px; }
-  .login-btn { font-size: 0.75rem; padding: 8px 14px; }
+  .login-btn { font-size: 0.72rem; padding: 6px 12px; }
 
   .main-nav {
     position: absolute;
@@ -1180,4 +1215,57 @@ tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.02); }
   .schedule-timeline { padding-left: 16px; }
   .schedule-day { padding-left: 18px; }
   .schedule-dot { left: -26px; }
+}
+
+/* ---- Placeholders / Skeleton ---- */
+.placeholder {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  opacity: 1 !important;
+  cursor: default;
+}
+
+.placeholder-glow .placeholder {
+  animation: placeholder-glow 2s ease-in-out infinite;
+}
+
+@keyframes placeholder-glow {
+  0% { opacity: 1; }
+  50% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
+.back-btn {
+  margin-bottom: 24px;
+  padding: 8px 18px !important;
+  font-size: 0.82rem !important;
+  color: var(--muted) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: var(--text) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  transform: translateX(-4px);
+}
+
+.back-btn svg {
+  transition: transform 0.25s ease;
+}
+
+.back-btn:hover svg {
+  transform: translateX(-2px);
+}
+
+.detail-section {
+  padding-top: 24px !important;
+  padding-bottom: 40px !important;
+}
+
+@media (max-width: 768px) {
+  .detail-section {
+    padding-top: 16px !important;
+  }
 }

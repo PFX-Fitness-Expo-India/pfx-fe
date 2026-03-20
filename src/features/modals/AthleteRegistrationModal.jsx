@@ -77,6 +77,7 @@ export default function AthleteRegistrationModal() {
                 text: 'Your spot has been secured. Get ready to compete!',
                 confirmButtonColor: 'var(--primary)'
               });
+              setFormData({ age: '', gender: 'male', weight: '' });
               closeAthleteRegistrationModal();
             } catch (err) {
               console.error('Athlete registration failed:', err);
@@ -123,6 +124,7 @@ export default function AthleteRegistrationModal() {
           text: 'Registration request submitted. Please complete payment at the venue.',
           confirmButtonColor: 'var(--primary)'
         });
+        setFormData({ age: '', gender: 'male', weight: '' });
         closeAthleteRegistrationModal();
       }
     } catch (error) {

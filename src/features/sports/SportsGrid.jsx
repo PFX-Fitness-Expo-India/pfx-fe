@@ -27,18 +27,28 @@ export default function SportsGrid({ onViewEvent }) {
           most complete fitness festival.
         </p>
       </div>
-      <div className="container sports-grid">
-        {loading ? (
-          <p style={{ textAlign: 'center', color: '#888', gridColumn: '1 / -1', padding: '2rem 0' }}>Loading events...</p>
-        ) : error ? (
-          <p style={{ textAlign: 'center', color: '#ff4444', gridColumn: '1 / -1', padding: '2rem 0' }}>{error.message || 'Failed to load events'}</p>
-        ) : events.length === 0 ? (
-          <p style={{ textAlign: 'center', color: '#888', gridColumn: '1 / -1', padding: '2rem 0' }}>No events scheduled.</p>
-        ) : (
-          events.map((event) => (
-            <SportCard key={event._id} sport={event} onViewEvent={onViewEvent} />
-          ))
-        )}
+      <div className="container">
+        <div className="row g-4">
+          {loading ? (
+            <div className="col-12 text-center py-5">
+              <p style={{ color: '#888' }}>Loading events...</p>
+            </div>
+          ) : error ? (
+            <div className="col-12 text-center py-5">
+              <p style={{ color: '#ff4444' }}>{error.message || 'Failed to load events'}</p>
+            </div>
+          ) : events.length === 0 ? (
+            <div className="col-12 text-center py-5">
+              <p style={{ color: '#888' }}>No events scheduled.</p>
+            </div>
+          ) : (
+            events.map((event) => (
+              <div key={event._id} className="col-12 col-md-6 col-lg-4">
+                <SportCard sport={event} onViewEvent={onViewEvent} />
+              </div>
+            ))
+          )}
+        </div>
       </div>
     </section>
   );

@@ -27,8 +27,31 @@ export default function EventDetail() {
 
   if (loading) {
     return (
-      <section className="section in-view" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ color: '#888' }}>Loading event details...</p>
+      <section className="section in-view placeholder-glow">
+        <div className="container medium-container">
+          <div className="placeholder col-3 mb-4 rounded-pill py-3" />
+          
+          <div className="sport-card detail-card in-view overflow-hidden">
+            <div className="placeholder col-12" style={{ height: '300px' }} />
+            
+            <div className="sport-body" style={{ padding: '24px' }}>
+              <h1 className="placeholder col-8 py-4 mb-3 rounded" />
+              <p className="placeholder col-10 py-2 mb-2 rounded" />
+              <p className="placeholder col-6 py-2 mb-5 rounded" />
+              
+              <div className="row g-4 mb-5">
+                {[1, 2, 3, 4, 5, 6].map(i => (
+                  <div key={i} className="col-6 col-md-4">
+                    <div className="placeholder col-4 py-1 mb-2 rounded" />
+                    <div className="placeholder col-10 py-2 rounded" />
+                  </div>
+                ))}
+              </div>
+              
+              <div className="placeholder col-12 py-5 rounded-pill" />
+            </div>
+          </div>
+        </div>
       </section>
     );
   }
@@ -53,14 +76,17 @@ export default function EventDetail() {
     : event.eventDate;
 
   return (
-    <section className="section in-view">
+    <section className="section in-view detail-section">
       <div className="container medium-container">
         <button 
-          className="btn subtle" 
+          className="btn subtle back-btn mt-2" 
           onClick={() => navigate('/')}
-          style={{ marginBottom: '20px' }}
         >
-          ← Back to Events
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}>
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Back to Events
         </button>
         
         <div className="sport-card detail-card in-view">
@@ -117,7 +143,7 @@ export default function EventDetail() {
             {event.paymentMethod === 'online' ? (
               <button 
                 className="btn primary" 
-                style={{ width: '100%', padding: '16px', fontSize: '1rem' }}
+                style={{ width: 'fit-content', padding: '6px 20px', fontSize: '0.8rem' }}
                 onClick={() => {
                   if (!token) {
                     navigate(`/login?redirect=${encodeURIComponent(location.pathname)}`);
@@ -132,7 +158,7 @@ export default function EventDetail() {
               <a 
                 href="tel:+919361614200" 
                 className="btn primary" 
-                style={{ display: 'block', width: '100%', padding: '16px', fontSize: '1rem', textAlign: 'center', boxSizing: 'border-box' }}
+                style={{ display: 'inline-block', width: 'fit-content', padding: '6px 20px', fontSize: '0.8rem', textAlign: 'center', boxSizing: 'border-box' }}
               >
                 Call to Register
               </a>

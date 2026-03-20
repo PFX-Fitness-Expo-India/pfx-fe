@@ -22,10 +22,14 @@ export default function Sponsors() {
           consumers from across India.
         </p>
       </div>
-      <div className="container sponsor-grid">
-        {sponsors.map((name) => (
-          <div className="sponsor-card" key={name}>{name}</div>
-        ))}
+      <div className="container">
+        <div className="row g-3">
+          {sponsors.map((name) => (
+            <div className="col-6 col-md-4 col-lg-3" key={name}>
+              <div className="sponsor-card h-100">{name}</div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
