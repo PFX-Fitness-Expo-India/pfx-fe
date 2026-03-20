@@ -19,13 +19,17 @@ export default function Highlights() {
           high-octane crowds.
         </p>
       </div>
-      <div className="container highlight-grid">
-        {highlights.map(({ label, value }) => (
-          <div className="stat-card" key={label}>
-            <span className="stat-label">{label}</span>
-            <span className="stat-value">{value}</span>
-          </div>
-        ))}
+      <div className="container">
+        <div className="row g-4">
+          {highlights.map(({ label, value }) => (
+            <div className="col-6 col-md-3" key={label}>
+              <div className="stat-card h-100">
+                <span className="stat-label">{label}</span>
+                <span className="stat-value">{value}</span>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

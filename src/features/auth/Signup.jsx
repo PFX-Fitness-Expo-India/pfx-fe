@@ -41,11 +41,11 @@ export default function Signup() {
   return (
     <section className="section signup-section">
       <div className="container medium-container">
-        <div className="registration-card" style={{ maxWidth: '600px', margin: '0 auto' }}>
-          <div className="section-header-compact" style={{ textAlign: 'center', marginBottom: '2rem' }}>
+        <div className="registration-card mx-auto" style={{ maxWidth: '480px' }}>
+          <div className="section-header-compact text-center mb-4">
             <p className="eyebrow">Join PFX</p>
             <h3>Create an account</h3>
-            {error && <p className="error-text" style={{ color: 'var(--primary)', marginTop: '1rem' }}>{error}</p>}
+            {error && <p className="error-text mt-3">{error}</p>}
           </div>
 
           <form ref={formRef} className="form" onSubmit={handleSubmit}>
@@ -102,11 +102,11 @@ export default function Signup() {
             </div>
 
             <div className="form-footer">
-              <div className="registration-actions" style={{ width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
-                <button type="button" className="btn subtle" onClick={() => navigate('/login')} disabled={loading} style={{ fontSize: '0.75rem' }}>
+              <div className="registration-actions">
+                <button type="button" className="btn subtle btn-sm" onClick={() => navigate('/login')} disabled={loading}>
                   Already have an account? Login
                 </button>
-                <button type="submit" className="btn primary" disabled={loading}>
+                <button type="submit" className="btn primary px-3" disabled={loading}>
                   {loading ? 'Creating account...' : 'Sign Up'}
                 </button>
               </div>

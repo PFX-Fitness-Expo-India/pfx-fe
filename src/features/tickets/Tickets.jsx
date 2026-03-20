@@ -14,31 +14,37 @@ export default function Tickets() {
           Choose from General or VIP access and immerse yourself in the full PFX experience.
         </p>
       </div>
-      <div className="container ticket-grid">
-        <div className="ticket-card">
-          <p className="ticket-label">General Pass</p>
-          <p className="ticket-price">₹999</p>
-          <ul className="ticket-benefits">
-            <li>Expo floor access</li>
-            <li>All open seating arenas</li>
-            <li>Brand experiences &amp; demos</li>
-          </ul>
-          <button className="btn primary ticket-buy-btn" onClick={() => openTicketModal('General Pass')}>
-            Buy Ticket
-          </button>
-        </div>
-        <div className="ticket-card featured">
-          <p className="ticket-label">VIP Pass</p>
-          <p className="ticket-price">₹2,999</p>
-          <ul className="ticket-benefits">
-            <li>Priority entry lanes</li>
-            <li>Premium stage seating</li>
-            <li>VIP lounge access</li>
-            <li>Exclusive meet &amp; greet zones</li>
-          </ul>
-          <button className="btn accent ticket-buy-btn" onClick={() => openTicketModal('VIP Pass')}>
-            Buy VIP Ticket
-          </button>
+      <div className="container">
+        <div className="row g-4">
+          <div className="col-12 col-md-6">
+            <div className="ticket-card h-100">
+              <p className="ticket-label">General Pass</p>
+              <p className="ticket-price">₹999</p>
+              <ul className="ticket-benefits">
+                <li>Expo floor access</li>
+                <li>All open seating arenas</li>
+                <li>Brand experiences &amp; demos</li>
+              </ul>
+              <button className="btn primary ticket-buy-btn" onClick={() => openTicketModal('General Pass')}>
+                Buy Ticket
+              </button>
+            </div>
+          </div>
+          <div className="col-12 col-md-6">
+            <div className="ticket-card featured h-100">
+              <p className="ticket-label">VIP Pass</p>
+              <p className="ticket-price">₹2,999</p>
+              <ul className="ticket-benefits">
+                <li>Priority entry lanes</li>
+                <li>Premium stage seating</li>
+                <li>VIP lounge access</li>
+                <li>Exclusive meet &amp; greet zones</li>
+              </ul>
+              <button className="btn accent ticket-buy-btn" onClick={() => openTicketModal('VIP Pass')}>
+                Buy VIP Ticket
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </section>

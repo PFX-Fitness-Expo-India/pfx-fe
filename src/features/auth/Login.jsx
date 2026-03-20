@@ -34,10 +34,10 @@ export default function Login() {
     <section className="section login-section">
       <div className="container narrow-container">
         <div className="registration-card">
-          <div className="section-header-compact" style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <div className="section-header-compact text-center mb-4">
             <p className="eyebrow">Welcome Back</p>
             <h3>Login to your account</h3>
-            {error && <p className="error-text" style={{ color: 'var(--primary)', marginTop: '1rem' }}>{error}</p>}
+            {error && <p className="error-text mt-3">{error}</p>}
           </div>
 
           <form ref={formRef} className="form" onSubmit={handleSubmit}>
@@ -74,11 +74,11 @@ export default function Login() {
             </div>
 
             <div className="form-footer">
-              <div className="registration-actions" style={{ width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
-                <button type="button" className="btn subtle" onClick={() => navigate('/signup')} disabled={loading} style={{ fontSize: '0.75rem' }}>
+              <div className="registration-actions">
+                <button type="button" className="btn subtle btn-sm" onClick={() => navigate('/signup')} disabled={loading}>
                   Need an account? Sign up
                 </button>
-                <button type="submit" className="btn primary" disabled={loading}>
+                <button type="submit" className="btn primary px-3" disabled={loading}>
                   {loading ? 'Logging in...' : 'Login'}
                 </button>
               </div>
