@@ -21,13 +21,33 @@ export function AppProvider({ children }) {
     async function initializeUser() {
       if (token) {
         try {
+          // Try fetching profile, if it fails with 401, handleApiError will be called by components 
+          // but here we just try once.
           const res = await authService.fetchProfile(token);
           if (res.user) {
             setUser(res.user);
           }
         } catch (error) {
           console.error('Failed to restore session:', error);
-          logout();
+          if (error.statusCode === 401 && refreshToken) {
+            try {
+              const refreshRes = await authService.refreshToken(refreshToken);
+              const newToken = refreshRes.data.token;
+              const newRefreshToken = refreshRes.data.refreshToken;
+              
+              setToken(newToken);
+              setRefreshToken(newRefreshToken);
+              localStorage.setItem('token', newToken);
+              localStorage.setItem('refreshToken', newRefreshToken);
+              
+              const retryRes = await authService.fetchProfile(newToken);
+              if (retryRes.user) setUser(retryRes.user);
+            } catch (err) {
+              logout();
+            }
+          } else {
+            logout();
+          }
         }
       }
     }
@@ -86,25 +106,54 @@ export function AppProvider({ children }) {
     }
   }, []);
 
-  const logout = useCallback(() => {
-    setUser(null);
-    setToken(null);
-    setRefreshToken(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('userId');
+  const logout = useCallback(async () => {
+    try {
+      if (token) {
+        await authService.logout(token);
+      }
+    } catch (err) {
+      console.error('Logout API failed:', err);
+    } finally {
+      setUser(null);
+      setToken(null);
+      setRefreshToken(null);
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('userId');
 
-    Swal.fire({
-      toast: true,
-      position: 'top-end',
-      icon: 'success',
-      title: 'Logged Out',
-      text: 'You have been successfully logged out.',
-      timer: 3000,
-      showConfirmButton: false,
-      timerProgressBar: true
-    });
-  }, []);
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: 'Logged Out',
+        text: 'You have been successfully logged out.',
+        timer: 3000,
+        showConfirmButton: false,
+        timerProgressBar: true
+      });
+    }
+  }, [token]);
+
+  const handleApiError = useCallback(async (error, retryCallback) => {
+    if (error.statusCode === 401 && refreshToken) {
+      try {
+        const refreshRes = await authService.refreshToken(refreshToken);
+        const newToken = refreshRes.data.token;
+        const newRefreshToken = refreshRes.data.refreshToken;
+        
+        setToken(newToken);
+        setRefreshToken(newRefreshToken);
+        localStorage.setItem('token', newToken);
+        localStorage.setItem('refreshToken', newRefreshToken);
+        
+        return await retryCallback(newToken);
+      } catch (err) {
+        logout();
+        throw err;
+      }
+    }
+    throw error;
+  }, [refreshToken, logout]);
 
   // ── Persistent data ──
   const [athletes, setAthletes] = useState(() => loadFromStorage(STORAGE_KEYS.athletes));
@@ -172,6 +221,7 @@ export function AppProvider({ children }) {
     loginUser,
     signupUser,
     logout,
+    handleApiError,
     // data
     athletes,
     tickets,
