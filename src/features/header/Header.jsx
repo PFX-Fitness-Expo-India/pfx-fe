@@ -68,7 +68,10 @@ export default function Header() {
                <button 
                  className="user-avatar" 
                  title={user.userName || user.role} 
-                 onClick={() => setDropdownOpen(!dropdownOpen)}
+                onClick={() => {
+                  setDropdownOpen(!dropdownOpen);
+                  if (!dropdownOpen) setMenuOpen(false);
+                }}
                >
                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -106,7 +109,10 @@ export default function Header() {
         <button
           className={`nav-toggle${menuOpen ? ' open' : ''}`}
           aria-label="Toggle menu"
-          onClick={() => setMenuOpen(!menuOpen)}
+          onClick={() => {
+            setMenuOpen(!menuOpen);
+            if (!menuOpen) setDropdownOpen(false);
+          }}
         >
           <span /><span /><span />
         </button>
