@@ -30,12 +30,32 @@ export default function SportsGrid({ onViewEvent }) {
       <div className="container">
         <div className="row g-4">
           {loading ? (
-            <div className="col-12 text-center py-5">
-              <p style={{ color: '#888' }}>Loading events...</p>
-            </div>
+            <>
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="col-12 col-md-6 col-lg-4">
+                  <article className="sport-card skeleton-item">
+                    <div className="sport-media" style={{ backgroundImage: `url('')`, backgroundColor: 'rgba(255,255,255,0.02)' }}>
+                      <div className="skeleton-line" style={{ width: '150px', height: '18px', position: 'absolute', bottom: '16px', left: '16px', margin: 0 }}></div>
+                    </div>
+                    <div className="sport-body">
+                      <div className="skeleton-line" style={{ width: '100%', height: '14px', marginBottom: '8px' }}></div>
+                      <div className="skeleton-line" style={{ width: '85%', height: '14px', marginBottom: '8px' }}></div>
+                      <div className="skeleton-line" style={{ width: '60%', height: '14px', marginBottom: '24px' }}></div>
+                      <div className="sport-footer" style={{ marginTop: 'auto' }}>
+                        <div className="sport-meta">
+                          <div className="skeleton-line" style={{ width: '130px', height: '12px' }}></div>
+                          <div className="skeleton-line" style={{ width: '90px', height: '12px', marginTop: '6px' }}></div>
+                        </div>
+                        <div className="skeleton-badge" style={{ width: '100px', height: '32px', borderRadius: '999px' }}></div>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+              ))}
+            </>
           ) : error ? (
             <div className="col-12 text-center py-5">
-              <p style={{ color: '#ff4444' }}>{error.message || 'Failed to load events'}</p>
+               <p style={{ color: '#ff4444' }}>{error.message || 'Failed to load events'}</p>
             </div>
           ) : events.length === 0 ? (
             <div className="col-12 text-center py-5">
