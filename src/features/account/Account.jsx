@@ -119,21 +119,39 @@ export default function Account() {
         {activeTab === 'tickets' && (
           <div className="tickets-section">
             {loading ? (
-              <p>Loading your tickets...</p>
+              <div className="ticket-list">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="ticket-item skeleton-item">
+                    <div className="ticket-info">
+                      <div className="skeleton-line skeleton-title"></div>
+                      <div className="skeleton-line skeleton-meta"></div>
+                      <div className="skeleton-line skeleton-date"></div>
+                    </div>
+                    <div className="skeleton-badge"></div>
+                  </div>
+                ))}
+              </div>
             ) : tickets.length > 0 ? (
               <div className="ticket-list">
                 {tickets.map((ticket, index) => (
                   <div key={ticket._id || index} className="ticket-item">
                     <div className="ticket-info">
                       <h3>{ticket.eventId?.eventName || 'Event Pass'}</h3>
+                      {ticket.eventId?.eventDate && (
+                         <p className="ticket-meta" style={{ color: 'var(--text)' }}>
+                           Date: {new Date(ticket.eventId.eventDate).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+                         </p>
+                      )}
                       <p className="ticket-meta">
-                        {ticket.ticketType ? `Type: ${ticket.ticketType}` : `Role: ${ticket.role}`}
+                        ID: {ticket.ticketId || 'Pending'} • Type: {ticket.ticketType ? ticket.ticketType.toUpperCase() : (ticket.role ? ticket.role.toUpperCase() : 'STANDARD')}
                       </p>
                       <p className="ticket-date">
-                        Booked on: {new Date(ticket.createdAt).toLocaleDateString()}
+                        Issued on: {ticket.issuedAt ? new Date(ticket.issuedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : new Date(ticket.createdAt || Date.now()).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
                       </p>
                     </div>
-                    <div className="ticket-status success">Confirmed</div>
+                    <div className={`ticket-status ${ticket.status === 'unused' ? 'success' : 'used'}`}>
+                      {ticket.status ? ticket.status.toUpperCase() : 'CONFIRMED'}
+                    </div>
                   </div>
                 ))}
               </div>

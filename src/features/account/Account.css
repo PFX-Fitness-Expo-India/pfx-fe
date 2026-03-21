@@ -77,3 +77,44 @@
   .ticket-item { flex-direction: column; align-items: flex-start; gap: 16px; }
   .password-section { max-width: 100%; }
 }
+
+/* Skeleton Loader Details */
+.skeleton-item {
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.skeleton-item::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.04), transparent);
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}
+
+.skeleton-line {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  height: 12px;
+  margin-bottom: 8px;
+}
+
+.skeleton-title { width: 150px; height: 16px; margin-bottom: 12px; }
+.skeleton-meta { width: 100px; height: 12px; margin-bottom: 8px; }
+.skeleton-date { width: 120px; height: 10px; margin-bottom: 0px; }
+.skeleton-badge { width: 80px; height: 24px; border-radius: 99px; background: rgba(255, 255, 255, 0.05); }
+
+.ticket-status.used {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--muted);
+}
