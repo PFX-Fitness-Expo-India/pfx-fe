@@ -1,17 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Modal from '../../shared/Modal';
 import { useAppContext } from '../../contexts/AppContext';
 import { registrationService } from '../../services/registrationService';
 import { paymentService } from '../../services/paymentService';
 import Swal from 'sweetalert2';
-
+import logo from "../../assets/logo.png";
 export default function AthleteRegistrationModal() {
   const { 
     activeRegistrationEvent: event, 
     closeAthleteRegistrationModal, 
     user, 
     token,
-    logout 
+    logout,
+    showRegistrationSuccess
   } = useAppContext();
 
   const [loading, setLoading] = useState(false);
@@ -21,7 +22,31 @@ export default function AthleteRegistrationModal() {
     weight: ''
   });
 
+  useEffect(() => {
+    if (!event) {
+      setLoading(false);
+      setFormData({
+        age: '',
+        gender: 'male',
+        weight: ''
+      });
+    }
+  }, [event]);
+
   if (!event) return null;
+
+  const handleCloseModal = () => {
+    if (loading) {
+      Swal.fire({
+        title: 'Processing',
+        text: 'Payment is currently processing. Please wait.',
+        icon: 'warning',
+        confirmButtonColor: 'var(--primary)'
+      });
+      return;
+    }
+    closeAthleteRegistrationModal();
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -38,67 +63,73 @@ export default function AthleteRegistrationModal() {
     setLoading(true);
     try {
       if (event.paymentMethod === 'online') {
-        // 1. Create Razorpay Order
+        // 1. Register Athlete First
+        const athleteData = {
+          userId: user.userId,
+          eventId: event._id,
+          age: parseInt(formData.age),
+          gender: formData.gender,
+          weight: parseFloat(formData.weight),
+          paymentMethod: "online"
+        };
+        const registrationRes = await registrationService.registerAthlete(athleteData, token);
+        const registrationId = registrationRes.data?._id || "";
+
+        // 2. Create Razorpay Order
         const orderRes = await paymentService.createOrder({
           userId: user.userId,
           eventId: event._id,
           amount: event.eventPrice,
-          registrationId: "",
+          registrationId: registrationId,
           visitorId: ""
         }, token);
 
         const order = orderRes.data;
 
-        // 2. Open Razorpay
+        // 3. Open Razorpay
         const options = {
           key: import.meta.env.VITE_RAZORPAY_KEY_ID,
           amount: order.amount,
           currency: order.currency,
+          image:logo,
+          // image: 'https://ui-avatars.com/api/?name=PFX+Fitness+Expo&background=ff4444&color=fff&size=512',
           name: 'PFX Fitness Expo',
           description: `Registration for ${event.eventName}`,
           order_id: order.id,
+          config: {
+            display: {
+              hide: [{ method: 'paylater' }]
+            }
+          },
           handler: async (response) => {
+            const currentEventName = event.eventName;
+            closeAthleteRegistrationModal();
+            
+            Swal.fire({
+              title: 'Verifying Payment...',
+              text: 'Please wait while we confirm your registration. Do not close this window.',
+              allowOutsideClick: false,
+              allowEscapeKey: false,
+              showConfirmButton: false,
+              didOpen: () => {
+                Swal.showLoading();
+              }
+            });
+
             try {
-              setLoading(true);
-              
-              // 3. Verify Payment
+              // 4. Verify Payment
               await paymentService.verifyPayment({
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature
               }, token);
 
-              // 4. Register Athlete
-              const athleteData = {
-                userId: user.userId,
-                eventId: event._id,
-                age: parseInt(formData.age),
-                gender: formData.gender,
-                weight: parseFloat(formData.weight),
-                paymentMethod: "online"
-              };
-              await registrationService.registerAthlete(athleteData, token);
-
-              Swal.fire({
-                icon: 'success',
-                title: 'Registration Successful!',
-                text: 'Your spot has been secured. Get ready to compete!',
-                confirmButtonColor: 'var(--primary)'
-              });
-              setFormData({ age: '', gender: 'male', weight: '' });
-              closeAthleteRegistrationModal();
+              Swal.close();
+              showRegistrationSuccess({ eventName: currentEventName });
             } catch (err) {
-              console.error('Athlete registration failed:', err);
-              if (err.statusCode === 401) {
-                Swal.fire('Session Expired', 'Your session has expired. Please login again.', 'warning');
-                logout();
-              } else if (err.statusCode === 409) {
-                 Swal.fire('Already Registered', 'You have already registered for this event.', 'info');
-              } else {
-                Swal.fire('Error', err.message || 'Registration failed', 'error');
-              }
-            } finally {
-              setLoading(false);
+              Swal.close();
+              console.error('Payment verification failed:', err);
+              Swal.fire('Error', err.message || 'Payment verification failed', 'error');
             }
           },
           prefill: {
@@ -126,14 +157,9 @@ export default function AthleteRegistrationModal() {
         };
         await registrationService.registerAthlete(athleteData, token);
         
-        Swal.fire({
-          icon: 'success',
-          title: 'Success!',
-          text: 'Registration request submitted. Please complete payment at the venue.',
-          confirmButtonColor: 'var(--primary)'
-        });
-        setFormData({ age: '', gender: 'male', weight: '' });
+        const currentEventName = event.eventName;
         closeAthleteRegistrationModal();
+        showRegistrationSuccess({ eventName: currentEventName });
       }
     } catch (error) {
       console.error('Registration failed:', error);
@@ -148,15 +174,14 @@ export default function AthleteRegistrationModal() {
         Swal.fire('Registration Failed', error.message || 'Something went wrong. Please try again.', 'error');
       }
     } finally {
-      // For online payment, loading is managed in handler or ondismiss
-      if (event.paymentMethod !== 'online') {
+      if (event && event.paymentMethod !== 'online') {
         setLoading(false);
       }
     }
   };
 
   return (
-    <Modal onClose={closeAthleteRegistrationModal} className="athlete-modal-content">
+    <Modal onClose={handleCloseModal} className="athlete-modal-content">
       <div className="sport-modal-hero">
         <div className="sport-modal-badge">Athlete Registration</div>
         <h3>{event.eventName}</h3>
@@ -224,4 +249,5 @@ export default function AthleteRegistrationModal() {
       </div>
     </Modal>
   );
+
 }

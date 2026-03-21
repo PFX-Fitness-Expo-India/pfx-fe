@@ -16,7 +16,7 @@ import Login from './features/auth/Login';
 import Signup from './features/auth/Signup';
 import Account from './features/account/Account';
 import EventDetail from './features/sports/EventDetail';
-import { SportModal, TicketModal, ConfirmationModal, AthleteRegistrationModal } from './features/modals';
+import { SportModal, TicketModal, ConfirmationModal, AthleteRegistrationModal, RegistrationSuccessModal } from './features/modals';
 import { Navigate } from 'react-router-dom';
 
 // ─── Route Guards ─────────────────────────────────────────────────────────────
@@ -77,6 +77,7 @@ function AppInner() {
       <TicketModal />
       <ConfirmationModal />
       <AthleteRegistrationModal />
+      <RegistrationSuccessModal />
     </PageLayout>
   );
 }

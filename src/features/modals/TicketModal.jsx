@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Modal from '../../shared/Modal';
 import { useAppContext } from '../../contexts/AppContext';
 import { paymentService } from '../../services/paymentService';
 import { registrationService } from '../../services/registrationService';
 import Swal from 'sweetalert2';
+import logo from '../../assets/logo.png';
 
 export default function TicketModal() {
   const { 
@@ -17,6 +18,12 @@ export default function TicketModal() {
   
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!ticketType) {
+      setLoading(false);
+    }
+  }, [ticketType]);
 
   if (!ticketType) return null;
 
@@ -69,7 +76,14 @@ export default function TicketModal() {
         currency: order.currency,
         name: 'PFX Fitness Expo',
         description: `${ticketType} Purchase`,
+        image:logo,
+        // image: 'https://ui-avatars.com/api/?name=PFX+Fitness+Expo&background=ff4444&color=fff&size=512',
         order_id: order.id,
+        config: {
+          display: {
+            hide: [{ method: 'paylater' }]
+          }
+        },
         handler: async (response) => {
           try {
             setLoading(true);
