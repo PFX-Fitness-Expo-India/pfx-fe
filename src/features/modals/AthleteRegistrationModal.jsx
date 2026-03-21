@@ -17,19 +17,21 @@ export default function AthleteRegistrationModal() {
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    age: '',
+    age: '0',
     gender: 'male',
-    weight: ''
+    weight: '0'
   });
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (!event) {
       setLoading(false);
       setFormData({
-        age: '',
+        age: '0',
         gender: 'male',
-        weight: ''
+        weight: '0'
       });
+      setErrors({});
     }
   }, [event]);
 
@@ -50,11 +52,53 @@ export default function AthleteRegistrationModal() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    if (name === 'age' || name === 'weight') {
+      let newValue = value;
+      
+      if (name === 'age') {
+        newValue = newValue.replace(/[^0-9]/g, '');
+      } else if (name === 'weight') {
+        newValue = newValue.replace(/[^0-9.]/g, '');
+        const parts = newValue.split('.');
+        if (parts.length > 2) {
+          newValue = parts[0] + '.' + parts.slice(1).join('');
+        }
+      }
+
+      if (newValue.length > 1 && newValue.startsWith('0') && !newValue.startsWith('0.')) {
+        newValue = newValue.replace(/^0+/, '');
+      }
+      
+      if (newValue === '') {
+        newValue = '0';
+      }
+
+      setFormData(prev => ({ ...prev, [name]: newValue }));
+      if (errors[name]) {
+        setErrors(prev => ({ ...prev, [name]: null }));
+      }
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const newErrors = {};
+    if (!formData.age || formData.age === '0') {
+      newErrors.age = "Please enter a valid age.";
+    }
+    if (!formData.weight || formData.weight === '0' || formData.weight === '0.') {
+      newErrors.weight = "Please enter a valid weight.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     if (!user || !token) {
       Swal.fire('Error', 'You must be logged in to register.', 'error');
       return;
@@ -188,19 +232,20 @@ export default function AthleteRegistrationModal() {
         <p>Complete your details to register for this event.</p>
       </div>
       <div className="sport-modal-body">
-        <form className="form" onSubmit={handleSubmit} style={{ width: '100%' }}>
+        <form className="form" onSubmit={handleSubmit} style={{ width: '100%' }} noValidate>
           <div className="form-row">
             <div className="form-field">
               <label htmlFor="regAge">Age</label>
               <input 
                 id="regAge" 
                 name="age" 
-                type="number" 
-                required 
+                type="text" 
+                inputMode="numeric"
                 value={formData.age}
                 onChange={handleChange}
                 placeholder="e.g. 25"
               />
+              {errors.age && <span style={{ color: '#ff4444', fontSize: '0.85rem', marginTop: '4px' }}>{errors.age}</span>}
             </div>
             <div className="form-field">
               <label htmlFor="regGender">Gender</label>
@@ -223,13 +268,13 @@ export default function AthleteRegistrationModal() {
               <input 
                 id="regWeight" 
                 name="weight" 
-                type="number" 
-                step="0.1" 
-                required 
+                type="text" 
+                inputMode="decimal"
                 value={formData.weight}
                 onChange={handleChange}
                 placeholder="e.g. 75.5"
               />
+              {errors.weight && <span style={{ color: '#ff4444', fontSize: '0.85rem', marginTop: '4px' }}>{errors.weight}</span>}
             </div>
           </div>
           <div style={{ marginTop: '24px' }}>
