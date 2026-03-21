@@ -164,6 +164,7 @@ export function AppProvider({ children }) {
   const [activeRegistrationEvent, setActiveRegistrationEvent] = useState(null);
   const [activeTicketType, setActiveTicketType] = useState(null);
   const [confirmationMessage, setConfirmationMessage] = useState(null);
+  const [registrationSuccessData, setRegistrationSuccessData] = useState(null);
 
   // ── Athletes ──
   const addAthlete = useCallback((data) => {
@@ -206,6 +207,9 @@ export function AppProvider({ children }) {
   const showConfirmation = useCallback((message) => setConfirmationMessage(message), []);
   const closeConfirmation = useCallback(() => setConfirmationMessage(null), []);
 
+  const showRegistrationSuccess = useCallback((data) => setRegistrationSuccessData(data), []);
+  const clearRegistrationSuccess = useCallback(() => setRegistrationSuccessData(null), []);
+
   const closeAllModals = useCallback(() => {
     setActiveSport(null);
     setActiveRegistrationEvent(null);
@@ -243,6 +247,9 @@ export function AppProvider({ children }) {
     closeTicketModal,
     showConfirmation,
     closeConfirmation,
+    registrationSuccessData,
+    showRegistrationSuccess,
+    clearRegistrationSuccess,
     closeAllModals,
   };
 
