@@ -42,7 +42,9 @@ export default function AthleteRegistrationModal() {
         const orderRes = await paymentService.createOrder({
           userId: user.userId,
           eventId: event._id,
-          amount: event.eventPrice
+          amount: event.eventPrice,
+          registrationId: "",
+          visitorId: ""
         }, token);
 
         const order = orderRes.data;
@@ -59,15 +61,21 @@ export default function AthleteRegistrationModal() {
             try {
               setLoading(true);
               
-              // New requirement: Skip verifyPayment and createPaymentRecord
-              // Just call Register Athlete directly after successful payment
+              // 3. Verify Payment
+              await paymentService.verifyPayment({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature
+              }, token);
+
+              // 4. Register Athlete
               const athleteData = {
                 userId: user.userId,
                 eventId: event._id,
                 age: parseInt(formData.age),
                 gender: formData.gender,
                 weight: parseFloat(formData.weight),
-                status: 'completed'
+                paymentMethod: "online"
               };
               await registrationService.registerAthlete(athleteData, token);
 

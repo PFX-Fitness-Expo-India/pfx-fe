@@ -853,6 +853,7 @@ p  { margin: 0; }
   align-items: center;
   gap: 16px;
   margin-top: 10px;
+  flex-wrap: wrap;
 }
 
 @media (max-width: 480px) {

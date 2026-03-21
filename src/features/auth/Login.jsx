@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../contexts/AppContext';
+import Swal from 'sweetalert2';
 
 export default function Login() {
   const { loginUser } = useAppContext();
@@ -37,7 +38,7 @@ export default function Login() {
           <div className="section-header-compact text-center mb-4">
             <p className="eyebrow">Welcome Back</p>
             <h3>Login to your account</h3>
-            {error && <p className="error-text mt-3">{error}</p>}
+            {error && <p className="error-text mt-3 text-danger">{error==="User not found"?"Invalid Credentials":error}</p>}
           </div>
 
           <form ref={formRef} className="form" onSubmit={handleSubmit}>
