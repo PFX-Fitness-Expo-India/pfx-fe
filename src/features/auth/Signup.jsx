@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../contexts/AppContext';
+import Swal from 'sweetalert2';
 
 export default function Signup() {
   const { signupUser } = useAppContext();
@@ -28,8 +29,14 @@ export default function Signup() {
 
     try {
       await signupUser(userData);
-      // signupUser changes view to 'login' upon success
-      alert('Signup successful! Please login.');
+      
+      await Swal.fire({
+        icon: 'success',
+        title: 'Signup Successful!',
+        text: 'Your account has been created. Please login to continue.',
+        confirmButtonColor: 'var(--primary)'
+      });
+      
       navigate('/login');
     } catch (err) {
       setError(err.message || 'Signup failed. Please try again.');
@@ -101,13 +108,13 @@ export default function Signup() {
               </div>
             </div>
 
-            <div className="form-footer">
-              <div className="registration-actions">
-                <button type="button" className="btn subtle btn-sm" onClick={() => navigate('/login')} disabled={loading}>
+            <div className="form-footer mt-4">
+              <div className="registration-actions" style={{ marginTop: '0' }}>
+                <button type="button" className="btn subtle" onClick={() => navigate('/login')} disabled={loading} style={{ border: 'none', background: 'transparent', paddingLeft: '0', fontSize: '0.75rem' }}>
                   Already have an account? Login
                 </button>
-                <button type="submit" className="btn primary px-3" disabled={loading}>
-                  {loading ? 'Creating account...' : 'Sign Up'}
+                <button type="submit" className="btn primary" disabled={loading} style={{ paddingInline: '24px' }}>
+                  {loading ? 'Processing...' : 'Sign Up'}
                 </button>
               </div>
             </div>

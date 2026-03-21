@@ -17,6 +17,14 @@ import Signup from './features/auth/Signup';
 import Account from './features/account/Account';
 import EventDetail from './features/sports/EventDetail';
 import { SportModal, TicketModal, ConfirmationModal, AthleteRegistrationModal } from './features/modals';
+import { Navigate } from 'react-router-dom';
+
+// ─── Route Guards ─────────────────────────────────────────────────────────────
+
+function PublicRoute({ children }) {
+  const { user } = useAppContext();
+  return user ? <Navigate to="/" replace /> : children;
+}
 
 // ─── ScrollToTop Helper ────────────────────────────────────────────────────────
 
@@ -59,8 +67,8 @@ function AppInner() {
               {/* <Dashboard /> */}
             </>
           } />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+          <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
           <Route path="/account" element={<Account />} />
           <Route path="/events/:eventId" element={<EventDetail />} />
         </Routes>
