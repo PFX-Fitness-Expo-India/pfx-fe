@@ -53,7 +53,7 @@ export const authService = {
   },
 
   refreshToken: async (refreshToken) => {
-    const response = await fetch(`${API_BASE_URL}/api/auth/refresh-token`, {
+    const response = await fetch(`${API_BASE_URL}/refresh-token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -70,7 +70,7 @@ export const authService = {
   },
 
   logout: async (token) => {
-    const response = await fetch(`${API_BASE_URL}/api/auth/logout`, {
+    const response = await fetch(`${API_BASE_URL}/logout`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ export const authService = {
   },
 
   changePassword: async (passwordData, token) => {
-    const response = await fetch(`${API_BASE_URL}/api/auth/change-password`, {
+    const response = await fetch(`${API_BASE_URL}/change-password`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
