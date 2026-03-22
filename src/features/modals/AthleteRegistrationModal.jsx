@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Modal from '../../shared/Modal';
+import CustomSelect from '../../shared/CustomSelect';
 import { useAppContext } from '../../contexts/AppContext';
 import { registrationService } from '../../services/registrationService';
 import { paymentService } from '../../services/paymentService';
@@ -244,22 +245,24 @@ export default function AthleteRegistrationModal() {
                 value={formData.age}
                 onChange={handleChange}
                 placeholder="e.g. 25"
+                style={errors.age ? { borderColor: '#ff4444' } : {}}
               />
               {errors.age && <span style={{ color: '#ff4444', fontSize: '0.85rem', marginTop: '4px' }}>{errors.age}</span>}
             </div>
             <div className="form-field">
               <label htmlFor="regGender">Gender</label>
-              <select 
-                id="regGender" 
-                name="gender" 
-                required 
+              <CustomSelect
+                id="regGender"
+                name="gender"
                 value={formData.gender}
                 onChange={handleChange}
-              >
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-              </select>
+                options={[
+                  { value: 'male', label: 'Male' },
+                  { value: 'female', label: 'Female' },
+                  { value: 'other', label: 'Other' }
+                ]}
+                placeholder="Select Gender"
+              />
             </div>
           </div>
           <div className="form-row">
@@ -273,6 +276,7 @@ export default function AthleteRegistrationModal() {
                 value={formData.weight}
                 onChange={handleChange}
                 placeholder="e.g. 75.5"
+                style={errors.weight ? { borderColor: '#ff4444' } : {}}
               />
               {errors.weight && <span style={{ color: '#ff4444', fontSize: '0.85rem', marginTop: '4px' }}>{errors.weight}</span>}
             </div>

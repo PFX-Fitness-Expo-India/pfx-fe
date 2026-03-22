@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { sports } from '../../services/sportsService';
 import { useAppContext } from '../../contexts/AppContext';
 import { ADMIN_PHONE, SCROLL_OFFSET } from '../../constants/config';
+import CustomSelect from '../../shared/CustomSelect';
 
 export default function Registration() {
   const { addAthlete } = useAppContext();
@@ -109,18 +110,14 @@ export default function Registration() {
               </div>
               <div className="form-field">
                 <label htmlFor="sportCategory">Sport category</label>
-                <select
+                <CustomSelect
                   id="sportCategory"
                   name="sport"
-                  required
                   value={selectedSportId}
                   onChange={(e) => setSelectedSportId(e.target.value)}
-                >
-                  <option value="">Select a sport</option>
-                  {sports.map((s) => (
-                    <option key={s.id} value={s.id}>{s.name}</option>
-                  ))}
-                </select>
+                  options={sports.map((s) => ({ value: s.id, label: s.name }))}
+                  placeholder="Select a sport"
+                />
               </div>
             </div>
             <div className="form-row">

@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../contexts/AppContext';
 import Swal from 'sweetalert2';
+import CustomSelect from '../../shared/CustomSelect';
 
 export default function Signup() {
   const { signupUser } = useAppContext();
@@ -9,6 +10,7 @@ export default function Signup() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [role, setRole] = useState('visitor');
   const formRef = useRef(null);
 
   async function handleSubmit(e) {
@@ -24,7 +26,7 @@ export default function Signup() {
       phoneNumber: form.elements.phoneNumber.value.trim(),
       email: form.elements.email.value.trim(),
       password: form.elements.password.value,
-      role: form.elements.role.value
+      role: role
     };
 
     try {
@@ -101,10 +103,16 @@ export default function Signup() {
               </div>
               <div className="form-field">
                 <label htmlFor="role">Role</label>
-                <select id="role" name="role" required disabled={loading} defaultValue="visitor">
-                  <option value="visitor">Visitor</option>
-                  <option value="athlete">Athlete</option>
-                </select>
+                <CustomSelect
+                  id="role"
+                  name="role"
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  options={[
+                    { value: 'visitor', label: 'Visitor' },
+                    { value: 'athlete', label: 'Athlete' }
+                  ]}
+                />
               </div>
             </div>
 
