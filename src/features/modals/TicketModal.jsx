@@ -76,7 +76,7 @@ export default function TicketModal() {
         currency: order.currency,
         name: 'PFX Fitness Expo',
         description: `${ticketType} Purchase`,
-        image:logo,
+        image: import.meta.env.VITE_APP_LOGO,
         // image: 'https://ui-avatars.com/api/?name=PFX+Fitness+Expo&background=ff4444&color=fff&size=512',
         order_id: order.id,
         config: {
