@@ -135,7 +135,7 @@ export default function AthleteRegistrationModal() {
           key: import.meta.env.VITE_RAZORPAY_KEY_ID,
           amount: order.amount,
           currency: order.currency,
-          image:logo,
+          image: import.meta.env.VITE_APP_LOGO,
           // image: 'https://ui-avatars.com/api/?name=PFX+Fitness+Expo&background=ff4444&color=fff&size=512',
           name: 'PFX Fitness Expo',
           description: `Registration for ${event.eventName}`,

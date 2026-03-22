@@ -61,9 +61,24 @@ export default function Account() {
     }
   };
 
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+
   useEffect(() => {
     if (token) loadTicketsNew();
   }, [token]);
+
+  // Prevent navigation/refreshing while updating password
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (isUpdatingPassword) {
+        e.preventDefault();
+        e.returnValue = 'Password update in progress. Are you sure you want to leave?';
+      }
+    };
+    
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isUpdatingPassword]);
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
@@ -71,6 +86,7 @@ export default function Account() {
       return Swal.fire('Error', 'Passwords do not match.', 'error');
     }
 
+    setIsUpdatingPassword(true);
     try {
       await fetchWithRefresh((t) => authService.changePassword({
         oldPassword: passwordData.oldPassword,
@@ -81,6 +97,8 @@ export default function Account() {
       setPasswordData({ oldPassword: '', newPassword: '', confirmPassword: '' });
     } catch (err) {
       Swal.fire('Error', err.message || 'Failed to change password.', 'error');
+    } finally {
+      setIsUpdatingPassword(false);
     }
   };
 
@@ -242,8 +260,8 @@ export default function Account() {
                 </div>
               </div>
               <div className="registration-actions" style={{ justifyContent: 'center' }}>
-                <button type="submit" className="btn primary px-5" disabled={loading}>
-                  Update Password
+                <button type="submit" className="btn primary px-5" disabled={isUpdatingPassword || loading}>
+                  {isUpdatingPassword ? 'Updating...' : 'Update Password'}
                 </button>
               </div>
             </form>
