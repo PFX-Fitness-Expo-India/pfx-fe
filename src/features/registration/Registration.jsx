@@ -1,164 +1,147 @@
-import { useState, useEffect, useRef } from 'react';
-import { sports } from '../../services/sportsService';
-import { useAppContext } from '../../contexts/AppContext';
-import { ADMIN_PHONE, SCROLL_OFFSET } from '../../constants/config';
-import CustomSelect from '../../shared/CustomSelect';
+import { useState } from 'react';
+import { useModal } from '../../contexts/ModalContext';
 
 export default function Registration() {
-  const { addAthlete } = useAppContext();
-  const [selectedSportId, setSelectedSportId] = useState('');
-  const formRef = useRef(null);
+  const { showModal, closeModal } = useModal();
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
+  });
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const selectedSport = sports.find((s) => s.id === selectedSportId) || null;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
+  };
 
-  // Listen for pre-select events dispatched from SportModal
-  useEffect(() => {
-    const onSelectSport = (e) => setSelectedSportId(e.detail);
-    window.addEventListener('pfx:selectSport', onSelectSport);
-    return () => window.removeEventListener('pfx:selectSport', onSelectSport);
-  }, []);
-
-  function getRegistrationNote() {
-    if (!selectedSport) return 'Select a sport to see registration details.';
-    if (selectedSport.requiresPayment)
-      return 'Online payment is mandatory for this event. After submitting the form, you will be guided to complete payment.';
-    return "Submit the form and then tap 'Call to Register' to confirm your slot with the admin.";
-  }
-
-  function handleSubmit(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const form = formRef.current;
-    if (!selectedSport) {
-      alert('Please select a sport category.');
+    
+    const newErrors = {};
+    if (!formData.name.trim()) newErrors.name = 'Full Name is required';
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email Address is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+    if (!formData.message.trim()) newErrors.message = 'Message is required';
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
-    const data = {
-      name: form.elements.name.value.trim(),
-      phone: form.elements.phone.value.trim(),
-      email: form.elements.email.value.trim(),
-      age: form.elements.age.value.trim(),
-      city: form.elements.city.value.trim(),
-      sportId: selectedSport.id,
-      sportName: selectedSport.name,
-      weight: form.elements.weight.value.trim(),
-      requiresPayment: selectedSport.requiresPayment,
-      createdAt: new Date().toISOString(),
-    };
-    addAthlete(data);
-    form.reset();
-    setSelectedSportId('');
-    if (selectedSport.requiresPayment) {
-      alert('Athrox and Marathon require online payment. In a live system you would now be redirected to a secure payment gateway.');
-    } else {
-      alert("Registration submitted. Please tap the 'Call to Register' button to confirm with the admin.");
+
+    setIsSubmitting(true);
+
+    try {
+      // Direct call to Vercel API Route
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setFormData({ name: '', email: '', message: '' });
+        showModal('Thank You!', 'Your message has been sent. We will get back to you shortly.', 'success');
+      } else {
+        throw new Error(data.message || 'Failed to send message.');
+      }
+    } catch (error) {
+      console.error('Contact error:', error);
+      showModal('Error', error.message || 'Something went wrong. In local Dev (npm run dev), Vercel API routes cannot be tested natively unless using Vercel CLI.', 'error');
+    } finally {
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
-    <section id="athlete-registration" className="section">
+    <section id="contact-us" className="section contact-section">
       <div className="container section-header">
         <div>
-          <p className="eyebrow">Athlete Registration</p>
-          <h2>Step onto India's most electric stage</h2>
+          <p className="eyebrow">Get In Touch</p>
+          <h2>Contact PFX Fitness Expo</h2>
         </div>
         <p className="section-intro">
-          Register now to secure your slot in your chosen discipline. Limited athlete spots per
-          category to ensure premium competition.
+          Have a question about the expo, sponsorships, or athlete registration? Send us a message and our team will get back to you as soon as possible.
         </p>
       </div>
-      <div className="container registration-layout">
+      
+      <div className="container registration-layout contact-layout">
         <div className="registration-copy">
-          <h3>Elite standards. Fair judging. Real spotlight.</h3>
+          <h3>We're here to help you shine.</h3>
           <p>
-            All competitions are judged by experienced panels with clear rulebooks, weight classes,
-            and transparent scoring criteria.
+            Whether you are an aspiring athlete looking to compete, a brand wanting to sponsor India's biggest electric stage, or an enthusiastic fan, we are here to answer your queries.
           </p>
           <ul className="bullet-list">
-            <li>Multiple weight categories across strength sports</li>
-            <li>Natural &amp; open bodybuilding divisions</li>
-            <li>Anti-doping protocols for select categories</li>
-            <li>Cash prizes, trophies, and media coverage</li>
+            <li>Sponsorship opportunities</li>
+            <li>Athlete participation inquiries</li>
+            <li>Expo & ticketing questions</li>
+            <li>Media & PR coverage</li>
           </ul>
         </div>
 
         <div className="registration-card">
-          <form ref={formRef} className="form" onSubmit={handleSubmit}>
+          <form className="form" onSubmit={handleSubmit} noValidate>
             <div className="form-row">
-              <div className="form-field">
-                <label htmlFor="athleteName">Name</label>
-                <input id="athleteName" name="name" required />
-              </div>
-              <div className="form-field">
-                <label htmlFor="athletePhone">Phone number</label>
-                <input id="athletePhone" name="phone" type="tel" required />
-              </div>
-            </div>
-            <div className="form-row">
-              <div className="form-field">
-                <label htmlFor="athleteEmail">Email</label>
-                <input id="athleteEmail" name="email" type="email" required />
-              </div>
-              <div className="form-field">
-                <label htmlFor="athleteAge">Age</label>
-                <input id="athleteAge" name="age" type="number" min="16" required />
-              </div>
-            </div>
-            <div className="form-row">
-              <div className="form-field">
-                <label htmlFor="athleteCity">City</label>
-                <input id="athleteCity" name="city" required />
-              </div>
-              <div className="form-field">
-                <label htmlFor="sportCategory">Sport category</label>
-                <CustomSelect
-                  id="sportCategory"
-                  name="sport"
-                  value={selectedSportId}
-                  onChange={(e) => setSelectedSportId(e.target.value)}
-                  options={sports.map((s) => ({ value: s.id, label: s.name }))}
-                  placeholder="Select a sport"
+              <div className="form-field full">
+                <label htmlFor="contactName">Full Name</label>
+                <input 
+                  id="contactName" 
+                  name="name" 
+                  placeholder="John Doe"
+                  value={formData.name}
+                  onChange={handleChange}
+                  style={errors.name ? { borderColor: '#ff4444' } : {}}
                 />
+                {errors.name && <span style={{ color: '#ff4444', fontSize: '0.85rem', marginTop: '4px' }}>{errors.name}</span>}
               </div>
             </div>
             <div className="form-row">
               <div className="form-field full">
-                <label htmlFor="weightCategory">Weight category</label>
-                <input id="weightCategory" name="weight" placeholder="e.g. Under 75kg" required />
+                <label htmlFor="contactEmail">Email Address</label>
+                <input 
+                  id="contactEmail" 
+                  name="email" 
+                  type="email" 
+                  placeholder="johndoe@example.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                  style={errors.email ? { borderColor: '#ff4444' } : {}}
+                />
+                {errors.email && <span style={{ color: '#ff4444', fontSize: '0.85rem', marginTop: '4px' }}>{errors.email}</span>}
               </div>
             </div>
-            <div className="form-footer">
-              <p className="payment-note">{getRegistrationNote()}</p>
+            <div className="form-row">
+              <div className="form-field full">
+                <label htmlFor="contactMessage">Message</label>
+                <textarea 
+                  id="contactMessage" 
+                  name="message" 
+                  rows="5"
+                  placeholder="How can we help you?"
+                  value={formData.message}
+                  onChange={handleChange}
+                  style={{ resize: 'vertical', ...(errors.message ? { borderColor: '#ff4444' } : {}) }}
+                />
+                {errors.message && <span style={{ color: '#ff4444', fontSize: '0.85rem', marginTop: '4px' }}>{errors.message}</span>}
+              </div>
+            </div>
+            <div className="form-footer contact-footer">
               <div className="registration-actions">
-                <button type="submit" className="btn primary">Submit Registration</button>
-                {selectedSport && !selectedSport.requiresPayment && (
-                  <a href={`tel:${ADMIN_PHONE}`} className="btn subtle">Call to Register</a>
-                )}
+                <button type="submit" className="btn primary" disabled={isSubmitting} style={{ width: '100%', justifySelf: 'stretch', opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? 'not-allowed' : 'pointer' }}>
+                  {isSubmitting ? 'SENDING...' : 'SEND MESSAGE'}
+                </button>
               </div>
             </div>
           </form>
-        </div>
-      </div>
-
-      {/* CTA Banner */}
-      <div className="container" style={{ marginTop: 'clamp(32px, 5vw, 60px)' }}>
-        <div className="cta-inner">
-          <div>
-            <p className="eyebrow">Final Call</p>
-            <h2>Ready to compete at PFX Fitness Expo India?</h2>
-            <p>
-              Lock in your division today and get ready to perform in front of India's most
-              passionate fitness crowd.
-            </p>
-          </div>
-          <button
-            className="btn accent"
-            onClick={() => {
-              const el = document.getElementById('athlete-registration');
-              if (el) window.scrollTo({ top: el.offsetTop - SCROLL_OFFSET, behavior: 'smooth' });
-            }}
-          >
-            Register for Competitions
-          </button>
         </div>
       </div>
     </section>

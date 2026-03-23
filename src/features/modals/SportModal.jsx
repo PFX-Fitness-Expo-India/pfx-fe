@@ -7,7 +7,7 @@ export default function SportModal() {
   if (!sport) return null;
 
   function handleRegister() {
-    const el = document.getElementById('athlete-registration');
+    const el = document.getElementById('contact-us');
     if (el) window.scrollTo({ top: el.offsetTop - SCROLL_OFFSET, behavior: 'smooth' });
     window.dispatchEvent(new CustomEvent('pfx:selectSport', { detail: sport._id || sport.eventId }));
     closeSportModal();
