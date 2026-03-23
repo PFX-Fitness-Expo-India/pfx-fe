@@ -1434,3 +1434,23 @@ tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.02); }
   display: inline-block;
   margin-bottom: 12px;
 }
+
+/* Contact Item Styling */
+.contact-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px;
+  margin-bottom: 12px !important;
+  color: var(--muted);
+  transition: color 0.2s ease;
+}
+
+.contact-item:hover {
+  color: var(--text);
+}
+
+.contact-icon {
+  flex-shrink: 0;
+  color: var(--accent);
+  opacity: 0.8;
+}
