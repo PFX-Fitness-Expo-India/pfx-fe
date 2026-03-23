@@ -1,7 +1,6 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../contexts/AppContext';
-import Swal from 'sweetalert2';
 
 export default function Login() {
   const { loginUser } = useAppContext();

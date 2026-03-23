@@ -4,7 +4,7 @@ import Modal from '../../shared/Modal';
 import { useAppContext } from '../../contexts/AppContext';
 import { paymentService } from '../../services/paymentService';
 import { registrationService } from '../../services/registrationService';
-import Swal from 'sweetalert2';
+import { useModal } from '../../contexts/ModalContext';
 import logo from '../../assets/logo.png';
 
 export default function TicketModal() {
@@ -16,6 +16,7 @@ export default function TicketModal() {
     logout 
   } = useAppContext();
   
+  const { showModal } = useModal();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
@@ -40,15 +41,12 @@ export default function TicketModal() {
   async function handleSubmit(e) {
     e.preventDefault();
     if (!user || !token) {
-      Swal.fire({
+      showModal({
         title: 'Login Required',
         text: 'Please login to purchase tickets.',
-        icon: 'info',
-        showCancelButton: true,
-        confirmButtonText: 'Go to Login',
-        confirmButtonColor: 'var(--primary)'
-      }).then((result) => {
-        if (result.isConfirmed) {
+        type: 'info',
+        confirmText: 'Go to Login',
+        onConfirm: () => {
           navigate('/login');
           closeTicketModal();
         }
@@ -95,20 +93,19 @@ export default function TicketModal() {
               ticketType: type
             }, token);
 
-            Swal.fire({
-              icon: 'success',
+            showModal({
+              type: 'success',
               title: 'Ticket Booked!',
-              text: `Your ${ticketType} has been successfully booked. Check your email for the ticket.`,
-              confirmButtonColor: 'var(--primary)'
+              text: `Your ${ticketType} has been successfully booked. Check your email for the ticket.`
             });
             closeTicketModal();
           } catch (err) {
             console.error('Visitor registration failed:', err);
             if (err.statusCode === 401) {
-              Swal.fire('Session Expired', 'Please login again.', 'warning');
+              showModal('Session Expired', 'Please login again.', 'warning');
               logout();
             } else {
-              Swal.fire('Error', err.message || 'Registration failed', 'error');
+              showModal('Error', err.message || 'Registration failed', 'error');
             }
           } finally {
             setLoading(false);
@@ -131,10 +128,10 @@ export default function TicketModal() {
     } catch (error) {
       console.error('Order creation failed:', error);
       if (error.statusCode === 401) {
-        Swal.fire('Session Expired', 'Please login again.', 'warning');
+        showModal('Session Expired', 'Please login again.', 'warning');
         logout();
       } else {
-        Swal.fire('Error', error.message || 'Failed to initiate payment', 'error');
+        showModal('Error', error.message || 'Failed to initiate payment', 'error');
       }
       setLoading(false);
     }

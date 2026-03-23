@@ -4,7 +4,7 @@ import CustomSelect from '../../shared/CustomSelect';
 import { useAppContext } from '../../contexts/AppContext';
 import { registrationService } from '../../services/registrationService';
 import { paymentService } from '../../services/paymentService';
-import Swal from 'sweetalert2';
+import { useModal } from '../../contexts/ModalContext';
 import logo from "../../assets/logo.png";
 export default function AthleteRegistrationModal() {
   const { 
@@ -15,6 +15,8 @@ export default function AthleteRegistrationModal() {
     logout,
     showRegistrationSuccess
   } = useAppContext();
+
+  const { showModal, showLoading, closeModal } = useModal();
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -40,11 +42,11 @@ export default function AthleteRegistrationModal() {
 
   const handleCloseModal = () => {
     if (loading) {
-      Swal.fire({
+      showModal({
         title: 'Processing',
         text: 'Payment is currently processing. Please wait.',
-        icon: 'warning',
-        confirmButtonColor: 'var(--primary)'
+        type: 'warning',
+        confirmText: 'OK'
       });
       return;
     }
@@ -101,7 +103,7 @@ export default function AthleteRegistrationModal() {
     }
 
     if (!user || !token) {
-      Swal.fire('Error', 'You must be logged in to register.', 'error');
+      showModal('Error', 'You must be logged in to register.', 'error');
       return;
     }
 
@@ -150,16 +152,7 @@ export default function AthleteRegistrationModal() {
             const currentEventName = event.eventName;
             closeAthleteRegistrationModal();
             
-            Swal.fire({
-              title: 'Verifying Payment...',
-              text: 'Please wait while we confirm your registration. Do not close this window.',
-              allowOutsideClick: false,
-              allowEscapeKey: false,
-              showConfirmButton: false,
-              didOpen: () => {
-                Swal.showLoading();
-              }
-            });
+            showLoading('Verifying Payment...', 'Please wait while we confirm your registration. Do not close this window.');
 
             try {
               // 4. Verify Payment
@@ -169,12 +162,12 @@ export default function AthleteRegistrationModal() {
                 razorpay_signature: response.razorpay_signature
               }, token);
 
-              Swal.close();
+              closeModal();
               showRegistrationSuccess({ eventName: currentEventName });
             } catch (err) {
-              Swal.close();
+              closeModal();
               console.error('Payment verification failed:', err);
-              Swal.fire('Error', err.message || 'Payment verification failed', 'error');
+              showModal('Error', err.message || 'Payment verification failed', 'error');
             }
           },
           prefill: {
@@ -209,14 +202,14 @@ export default function AthleteRegistrationModal() {
     } catch (error) {
       console.error('Registration failed:', error);
       if (error.statusCode === 401) {
-        Swal.fire('Session Expired', 'Please login again to continue.', 'warning');
+        showModal('Session Expired', 'Please login again to continue.', 'warning');
         logout();
       } else if (error.statusCode === 409) {
-        Swal.fire('Already Registered', 'You are already registered for this event.', 'info');
+        showModal('Already Registered', 'You are already registered for this event.', 'info');
       } else if (error.statusCode === 400) {
-        Swal.fire('Invalid Data', error.message || 'Please check your inputs.', 'error');
+        showModal('Invalid Data', error.message || 'Please check your inputs.', 'error');
       } else {
-        Swal.fire('Registration Failed', error.message || 'Something went wrong. Please try again.', 'error');
+        showModal('Registration Failed', error.message || 'Something went wrong. Please try again.', 'error');
       }
     } finally {
       if (event && event.paymentMethod !== 'online') {

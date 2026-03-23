@@ -1,11 +1,12 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../contexts/AppContext';
-import Swal from 'sweetalert2';
+import { useModal } from '../../contexts/ModalContext';
 import CustomSelect from '../../shared/CustomSelect';
 
 export default function Signup() {
   const { signupUser } = useAppContext();
+  const { showModal } = useModal();
   const navigate = useNavigate();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -32,11 +33,10 @@ export default function Signup() {
     try {
       await signupUser(userData);
       
-      await Swal.fire({
-        icon: 'success',
+      await showModal({
+        type: 'success',
         title: 'Signup Successful!',
-        text: 'Your account has been created. Please login to continue.',
-        confirmButtonColor: 'var(--primary)'
+        text: 'Your account has been created. Please login to continue.'
       });
       
       navigate('/login');
