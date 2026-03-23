@@ -1070,7 +1070,7 @@ p  { margin: 0; }
 .sport-modal-body {
   margin-top: 18px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr); /* Unified for responsiveness */
+  grid-template-columns: min(0, 1fr); /* Unified for responsiveness */
   gap: 24px;
   font-size: 0.9rem;
   color: var(--text);
@@ -1167,8 +1167,8 @@ tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.02); }
 
 .footer-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) repeat(2, minmax(0, 0.7fr));
-  gap: 24px;
+  grid-template-columns: minmax(0, 1.2fr) repeat(3, minmax(0, 1fr));
+  gap: 40px;
   font-size: 0.85rem;
 }
 
