@@ -1,7 +1,9 @@
 import { useAppContext } from '../../contexts/AppContext';
 
 export default function Tickets() {
-  const { openTicketModal } = useAppContext();
+  const { openTicketModal, user } = useAppContext();
+
+  if (user?.role === 'athlete') return null;
 
   return (
     <section id="tickets" className="section section-dark">

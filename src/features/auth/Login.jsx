@@ -21,7 +21,17 @@ export default function Login() {
 
     try {
       await loginUser(credentials, password);
-      // loginUser will change the view to 'home' on success
+      
+      const pendingActionStr = localStorage.getItem('pendingAction');
+      if (pendingActionStr) {
+        try {
+          const action = JSON.parse(pendingActionStr);
+          navigate(action.from || '/');
+          return;
+        } catch (e) {
+          console.error('Failed to parse pendingAction', e);
+        }
+      }
       navigate('/');
     } catch (err) {
       setError(err.message || 'Login failed. Please check your credentials.');

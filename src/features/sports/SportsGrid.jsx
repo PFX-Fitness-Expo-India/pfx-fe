@@ -1,8 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { useAppContext } from '../../contexts/AppContext';
 import SportCard from './SportCard';
 
 export default function SportsGrid({ onViewEvent }) {
+  const { user } = useAppContext();
   const { data: events = [], isLoading: loading, error } = useQuery({
     queryKey: ['events'],
     queryFn: async () => {
@@ -14,6 +16,8 @@ export default function SportsGrid({ onViewEvent }) {
       throw new Error(result.message || 'Failed to fetch events');
     }
   });
+
+  if (user?.role === 'visitor') return null;
 
   return (
     <section id="sports" className="section">

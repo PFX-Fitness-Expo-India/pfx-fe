@@ -145,11 +145,7 @@ export default function EventDetail() {
                 className="btn primary" 
                 style={{ width: 'fit-content', padding: '6px 20px', fontSize: '0.8rem' }}
                 onClick={() => {
-                  if (!token) {
-                    navigate(`/login?redirect=${encodeURIComponent(location.pathname)}`);
-                  } else {
-                    openAthleteRegistrationModal(event);
-                  }
+                  openAthleteRegistrationModal(event);
                 }}
               >
                 Register for this Event

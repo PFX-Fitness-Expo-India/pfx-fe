@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Modal from '../../shared/Modal';
 import CustomSelect from '../../shared/CustomSelect';
 import { useAppContext } from '../../contexts/AppContext';
@@ -17,23 +18,42 @@ export default function AthleteRegistrationModal() {
   } = useAppContext();
 
   const { showModal, showLoading, closeModal } = useModal();
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    age: '0',
-    gender: 'male',
-    weight: '0'
+  const [formData, setFormData] = useState(() => {
+    // Attempt to restore from pendingAction immediately on mount
+    const pendingActionStr = localStorage.getItem('pendingAction');
+    if (pendingActionStr) {
+      try {
+        const action = JSON.parse(pendingActionStr);
+        if (action.type === 'athlete_registration' && action.data) {
+          return action.data;
+        }
+      } catch (e) {
+        console.error('Failed to pre-initialize formData:', e);
+      }
+    }
+    return {
+      age: '0',
+      gender: 'male',
+      weight: '0'
+    };
   });
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (!event) {
       setLoading(false);
-      setFormData({
-        age: '0',
-        gender: 'male',
-        weight: '0'
-      });
+      // Only reset to defaults if there's NO pending action
+      // This prevents the "reset flash" on reload
+      if (!localStorage.getItem('pendingAction')) {
+        setFormData({
+          age: '0',
+          gender: 'male',
+          weight: '0'
+        });
+      }
       setErrors({});
     }
   }, [event]);
@@ -103,10 +123,29 @@ export default function AthleteRegistrationModal() {
     }
 
     if (!user || !token) {
-      showModal('Error', 'You must be logged in to register.', 'error');
+      // Store pending action for redirect back
+      const pendingAction = {
+        type: 'athlete_registration',
+        event: event,
+        from: window.location.pathname,
+        data: formData
+      };
+      localStorage.setItem('pendingAction', JSON.stringify(pendingAction));
+
+      showModal({
+        title: 'Login Required',
+        text: 'Please login to register for this event. We will bring you right back here!',
+        type: 'info',
+        confirmText: 'Go to Login',
+        onConfirm: () => {
+          navigate('/login');
+          closeAthleteRegistrationModal();
+        }
+      });
       return;
     }
-
+    
+    localStorage.removeItem('pendingAction');
     setLoading(true);
     try {
       if (event.paymentMethod === 'online') {
