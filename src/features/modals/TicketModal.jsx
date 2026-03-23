@@ -13,10 +13,11 @@ export default function TicketModal() {
     closeTicketModal, 
     user, 
     token,
-    logout 
+    logout,
+    showRegistrationSuccess
   } = useAppContext();
   
-  const { showModal } = useModal();
+  const { showModal, showLoading, closeModal } = useModal();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
@@ -40,8 +41,8 @@ export default function TicketModal() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    
     if (!user || !token) {
-      // Store pending action for redirect back
       const pendingAction = {
         type: 'ticket_purchase',
         ticketType: ticketType,
@@ -66,16 +67,25 @@ export default function TicketModal() {
     setLoading(true);
 
     try {
-      // 1. Create Order
+      // 1. Register Visitor First (Get visitorId)
+      const visitorRes = await registrationService.registerVisitor({
+        userId: user.userId,
+        ticketType: type
+      }, token);
+
+      const visitorId = visitorRes.data._id;
+
+      // 2. Create Payment Order (Pass visitorId)
       const orderRes = await paymentService.createOrder({
         userId: user.userId,
-        eventId: 'visitor_pass', // Placeholder eventId for generic visitor tickets
-        amount: amount
+        amount: amount,
+        visitorId: visitorId,
+        // eventId: "" // Mandatory field but empty for visitor pass as per user curl
       }, token);
 
       const order = orderRes.data;
 
-      // 2. Open Razorpay
+      // 3. Open Razorpay
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: order.amount,
@@ -83,7 +93,6 @@ export default function TicketModal() {
         name: 'PFX Fitness Expo',
         description: `${ticketType} Purchase`,
         image: import.meta.env.VITE_APP_LOGO,
-        // image: 'https://ui-avatars.com/api/?name=PFX+Fitness+Expo&background=ff4444&color=fff&size=512',
         order_id: order.id,
         config: {
           display: {
@@ -91,32 +100,24 @@ export default function TicketModal() {
           }
         },
         handler: async (response) => {
+          const currentTicketType = ticketType;
+          closeTicketModal();
+          showLoading('Verifying Payment...', 'Please wait while we confirm your ticket. Do not close this window.');
+
           try {
-            setLoading(true);
-            
-            // New requirement: Skip verifyPayment and createPaymentRecord
-            // Register Visitor directly
-            await registrationService.registerVisitor({
-              userId: user.userId,
-              ticketType: type
+            // 4. Verify Payment
+            await paymentService.verifyPayment({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature
             }, token);
 
-            showModal({
-              type: 'success',
-              title: 'Ticket Booked!',
-              text: `Your ${ticketType} has been successfully booked. Check your email for the ticket.`
-            });
-            closeTicketModal();
+            closeModal();
+            showRegistrationSuccess({ eventName: currentTicketType });
           } catch (err) {
-            console.error('Visitor registration failed:', err);
-            if (err.statusCode === 401) {
-              showModal('Session Expired', 'Please login again.', 'warning');
-              logout();
-            } else {
-              showModal('Error', err.message || 'Registration failed', 'error');
-            }
-          } finally {
-            setLoading(false);
+            closeModal();
+            console.error('Payment verification failed:', err);
+            showModal('Error', err.message || 'Payment verification failed', 'error');
           }
         },
         prefill: {
@@ -134,34 +135,74 @@ export default function TicketModal() {
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (error) {
-      console.error('Order creation failed:', error);
+      console.error('Payment flow failed:', error);
       if (error.statusCode === 401) {
         showModal('Session Expired', 'Please login again.', 'warning');
         logout();
       } else {
-        showModal('Error', error.message || 'Failed to initiate payment', 'error');
+        showModal('Booking Failed', error.message || 'Something went wrong. Please try again.', 'error');
       }
+    } finally {
       setLoading(false);
     }
   }
 
   return (
-    <Modal onClose={closeTicketModal}>
-      <h3>Book {ticketType}</h3>
-      <form className="form" onSubmit={handleSubmit}>
-        <div className="form-field">
-          <label>Ticket Type</label>
-          <input value={ticketType} disabled />
+    <Modal onClose={closeTicketModal} className="athlete-modal-content">
+      <div className="sport-modal-hero">
+        <div className="sport-modal-badge">{ticketType}</div>
+        <h3>Secure Your Entry</h3>
+        <p>You are booking a <strong>{ticketType}</strong> for the PFX Fitness Expo 2026.</p>
+      </div>
+
+      <div className="sport-modal-body">
+        <div className="ticket-summary-box" style={{ 
+          background: 'rgba(255, 255, 255, 0.05)', 
+          padding: '24px', 
+          borderRadius: '12px', 
+          marginBottom: '24px',
+          border: '1px solid rgba(255, 255, 255, 0.1)'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+            <span style={{ color: 'var(--muted)' }}>Ticket Type:</span>
+            <span style={{ fontWeight: '600' }}>{ticketType}</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+            <span style={{ color: 'var(--muted)' }}>Quantity:</span>
+            <span style={{ fontWeight: '600' }}>1 Admit</span>
+          </div>
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            marginTop: '16px', 
+            paddingTop: '16px', 
+            borderTop: '1px dashed rgba(255, 255, 255, 0.2)' 
+          }}>
+            <span style={{ fontWeight: '700', fontSize: '1.1rem' }}>Total Amount:</span>
+            <span style={{ fontWeight: '700', fontSize: '1.1rem', color: 'var(--accent)' }}>₹{getTicketDetails().amount}</span>
+          </div>
         </div>
-        <div className="form-field">
-          <label>Price</label>
-          <input value={`₹${getTicketDetails().amount}`} disabled />
-        </div>
-        <p className="payment-note">Secure online payment via Razorpay.</p>
-        <button type="submit" className="btn accent" disabled={loading}>
-          {loading ? 'Processing...' : 'Proceed to Payment'}
+
+        <button 
+          className="btn primary" 
+          style={{ width: '100%', padding: '16px', fontSize: '1rem' }}
+          disabled={loading}
+          onClick={handleSubmit}
+        >
+          {loading ? 'Processing...' : `Pay ₹${getTicketDetails().amount} & Confirm`}
         </button>
-      </form>
+
+        <p style={{ 
+          textAlign: 'center', 
+          fontSize: '0.8rem', 
+          color: 'var(--muted)', 
+          marginTop: '16px' 
+        }}>
+          Payment processed securely via Razorpay. <br />
+          By proceeding, you agree to our Terms & Conditions.
+        </p>
+      </div>
     </Modal>
   );
 }
+
