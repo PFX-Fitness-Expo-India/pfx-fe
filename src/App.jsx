@@ -17,6 +17,9 @@ import Login from './features/auth/Login';
 import Signup from './features/auth/Signup';
 import Account from './features/account/Account';
 import EventDetail from './features/sports/EventDetail';
+import PrivacyPolicy from './features/legal/PrivacyPolicy';
+import TermsAndConditions from './features/legal/TermsAndConditions';
+import RefundPolicy from './features/legal/RefundPolicy';
 import { SportModal, TicketModal, ConfirmationModal, AthleteRegistrationModal, RegistrationSuccessModal } from './features/modals';
 import { Navigate } from 'react-router-dom';
 
@@ -72,6 +75,9 @@ function AppInner() {
           <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
           <Route path="/account" element={<Account />} />
           <Route path="/events/:eventId" element={<EventDetail />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+          <Route path="/refund-policy" element={<RefundPolicy />} />
         </Routes>
 
       <SportModal />
