@@ -2,7 +2,7 @@ import { useState, useCallback, createContext, useContext, useEffect } from 'rea
 import { STORAGE_KEYS } from '../constants/config';
 import { loadFromStorage, saveToStorage, downloadCsv } from '../services/storageService';
 import { authService } from '../services/authService';
-import Swal from 'sweetalert2';
+import { useModal } from './ModalContext';
 
 // ─── Context ──────────────────────────────────────────────────────────────────
 
@@ -11,6 +11,8 @@ const AppContext = createContext(null);
 // ─── Provider ─────────────────────────────────────────────────────────────────
 
 export function AppProvider({ children }) {
+  const { showToast } = useModal();
+  
   // ── Authentication & View logic ──
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(() => localStorage.getItem('token') || null);
@@ -73,15 +75,11 @@ export function AppProvider({ children }) {
       localStorage.setItem('refreshToken', newAuthData.refreshToken);
       localStorage.setItem('userId', newAuthData.userId);
 
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
+      showToast({
         icon: 'success',
         title: 'Success!',
         text: 'Welcome back!',
-        timer: 3000,
-        showConfirmButton: false,
-        timerProgressBar: true
+        timer: 3000
       });
     } catch (err) {
       throw err;
@@ -91,15 +89,11 @@ export function AppProvider({ children }) {
   const signupUser = useCallback(async (userData) => {
     try {
       await authService.signup(userData);
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
+      showToast({
         icon: 'success',
         title: 'Success!',
         text: 'Registered successfully!',
-        timer: 3000,
-        showConfirmButton: false,
-        timerProgressBar: true
+        timer: 3000
       });
     } catch (err) {
       throw err;
@@ -121,18 +115,14 @@ export function AppProvider({ children }) {
       localStorage.removeItem('refreshToken');
       localStorage.removeItem('userId');
 
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
+      showToast({
         icon: 'success',
         title: 'Logged Out',
         text: 'You have been successfully logged out.',
-        timer: 3000,
-        showConfirmButton: false,
-        timerProgressBar: true
+        timer: 3000
       });
     }
-  }, [token]);
+  }, [token, showToast]);
 
   const handleApiError = useCallback(async (error, retryCallback) => {
     if (error.statusCode === 401 && refreshToken) {

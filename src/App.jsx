@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AppProvider, useAppContext } from './contexts/AppContext';
+import { ModalProvider } from './contexts/ModalContext';
 import { useScrollAnimation } from './hooks/useScrollAnimation';
 import PageLayout from './layouts/PageLayout';
 
@@ -93,9 +94,11 @@ function AppInner() {
 export default function App() {
   return (
     <Router>
-      <AppProvider>
-        <AppInner />
-      </AppProvider>
+      <ModalProvider>
+        <AppProvider>
+          <AppInner />
+        </AppProvider>
+      </ModalProvider>
     </Router>
   );
 }

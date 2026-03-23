@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 import { useAppContext } from '../../contexts/AppContext';
 import { authService } from '../../services/authService';
 import { ticketService } from '../../services/ticketService';
-import Swal from 'sweetalert2';
+import { useModal } from '../../contexts/ModalContext';
 import './Account.css';
 
 export default function Account() {
   const { user, token, logout, handleApiError } = useAppContext();
+  const { showModal, showToast } = useModal();
   const [activeTab, setActiveTab] = useState('tickets');
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -55,7 +56,7 @@ export default function Account() {
       setTickets(res.data || []);
     } catch (err) {
       console.error('Failed to load tickets:', err);
-      Swal.fire('Error', 'Failed to load your tickets.', 'error');
+      showModal('Error', 'Failed to load your tickets.', 'error');
     } finally {
       setLoading(false);
     }
@@ -83,7 +84,7 @@ export default function Account() {
   const handlePasswordChange = async (e) => {
     e.preventDefault();
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      return Swal.fire('Error', 'Passwords do not match.', 'error');
+      return showModal('Error', 'Passwords do not match.', 'error');
     }
 
     setIsUpdatingPassword(true);
@@ -93,10 +94,10 @@ export default function Account() {
         newPassword: passwordData.newPassword
       }, t));
       
-      Swal.fire('Success', 'Password changed successfully!', 'success');
+      showToast({ title: 'Success', text: 'Password changed successfully!', type: 'success' });
       setPasswordData({ oldPassword: '', newPassword: '', confirmPassword: '' });
     } catch (err) {
-      Swal.fire('Error', err.message || 'Failed to change password.', 'error');
+      showModal('Error', err.message || 'Failed to change password.', 'error');
     } finally {
       setIsUpdatingPassword(false);
     }
