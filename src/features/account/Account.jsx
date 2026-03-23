@@ -11,6 +11,7 @@ export default function Account() {
   const [activeTab, setActiveTab] = useState('tickets');
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [passwordData, setPasswordData] = useState({
     oldPassword: '',
     newPassword: '',
@@ -20,43 +21,38 @@ export default function Account() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  useEffect(() => {
-    if (token) {
-      loadTickets(token);
-    }
-  }, [token]);
-
-  const loadTickets = async (currentToken) => {
-    setLoading(true);
+  const formatDate = (dateString, fallback = Date.now()) => {
     try {
-      const fetchTickets = (t) => ticketService.getMyTickets(t);
-      const res = await handleApiError(
-        { statusCode: 200 }, // Dummy error to trigger refresh if needed? No, that's not how it works.
-        // Wait, handleApiError expects an error. 
-        // Better to just call it and catch?
-        null
-      ).catch(e => { if (e.statusCode === 401) throw e; }); 
-      // Actually, let's just do it manually for fetching if I don't have a wrapper.
-    } catch (err) {}
+      const d = new Date(dateString || fallback);
+      if (isNaN(d.getTime())) return 'Pending';
+      return d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+    } catch(e) {
+      return 'Pending';
+    }
   };
 
-  // Re-thinking handleApiError usage:
   const fetchWithRefresh = async (apiFunc) => {
     try {
       return await apiFunc(token);
     } catch (err) {
-      return await handleApiError(err, apiFunc);
+      if (err.statusCode === 401) {
+        return await handleApiError(err, apiFunc);
+      }
+      throw err;
     }
   };
 
-  const loadTicketsNew = async () => {
+  const loadTickets = async () => {
     setLoading(true);
     try {
       const res = await fetchWithRefresh((t) => ticketService.getMyTickets(t));
       setTickets(res.data || []);
     } catch (err) {
       console.error('Failed to load tickets:', err);
-      showModal('Error', 'Failed to load your tickets.', 'error');
+      // Don't show modal if it's just auth failing on reload
+      if (err.statusCode !== 401) {
+        showModal('Error', 'Failed to load your tickets.', 'error');
+      }
     } finally {
       setLoading(false);
     }
@@ -65,8 +61,19 @@ export default function Account() {
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
 
   useEffect(() => {
-    if (token) loadTicketsNew();
+    if (token) loadTickets();
   }, [token]);
+
+  useEffect(() => {
+    let timeout;
+    if (token && !user) {
+      setIsCheckingAuth(true);
+      timeout = setTimeout(() => setIsCheckingAuth(false), 2500); // safety fallback
+    } else {
+      setIsCheckingAuth(false);
+    }
+    return () => clearTimeout(timeout);
+  }, [token, user]);
 
   // Prevent navigation/refreshing while updating password
   useEffect(() => {
@@ -103,9 +110,18 @@ export default function Account() {
     }
   };
 
+  // DEBUG ADDITION
+  if (isCheckingAuth) {
+    return (
+      <div className="container" style={{ textAlign: 'center', padding: '100px 0', minHeight: '60vh' }}>
+        <h2 style={{ color: 'var(--muted)', animation: 'pulse 2s infinite' }}>Loading Account...</h2>
+      </div>
+    );
+  }
+
   if (!user) {
     return (
-      <div className="section container" style={{ textAlign: 'center', paddingTop: '100px' }}>
+      <div className="container" style={{ textAlign: 'center', padding: '100px 0', minHeight: '60vh' }}>
         <h2>Please Login</h2>
         <p>You need to be logged in to view your account.</p>
       </div>
@@ -113,7 +129,7 @@ export default function Account() {
   }
 
   return (
-    <div className="account-page section container">
+    <div className="account-page container" style={{ padding: 'var(--section-padding) 0', position: 'relative' }}>
       <div className="account-header">
         <h1>My Account</h1>
         <p className="user-email">{user.userName} ({user.role})</p>
@@ -158,14 +174,14 @@ export default function Account() {
                       <h3>{ticket.eventId?.eventName || 'Event Pass'}</h3>
                       {ticket.eventId?.eventDate && (
                          <p className="ticket-meta" style={{ color: 'var(--text)' }}>
-                           Date: {new Date(ticket.eventId.eventDate).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+                           Date: {formatDate(ticket.eventId.eventDate)}
                          </p>
                       )}
                       <p className="ticket-meta">
                         ID: {ticket.ticketId || 'Pending'} • Type: {ticket.ticketType ? ticket.ticketType.toUpperCase() : (ticket.role ? ticket.role.toUpperCase() : 'STANDARD')}
                       </p>
                       <p className="ticket-date">
-                        Issued on: {ticket.issuedAt ? new Date(ticket.issuedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : new Date(ticket.createdAt || Date.now()).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+                        Issued on: {ticket.issuedAt ? formatDate(ticket.issuedAt) : formatDate(ticket.createdAt)}
                       </p>
                     </div>
                     <div className={`ticket-status ${ticket.status === 'unused' ? 'success' : 'used'}`}>

@@ -40,10 +40,10 @@ export default function Hero() {
         
         {!user && (
           <div className="hero-cta">
-            <button className="btn primary" onClick={() => navigate('/login')}>
+            <button className="btn primary" onClick={() => scrollTo('sports')}>
               Register as Athlete
             </button>
-            <button className="btn outline" onClick={() => navigate('/login')}>
+            <button className="btn outline" onClick={() => scrollTo('tickets')}>
               Buy Visitor Tickets
             </button>
           </div>

@@ -41,9 +41,17 @@ export default function TicketModal() {
   async function handleSubmit(e) {
     e.preventDefault();
     if (!user || !token) {
+      // Store pending action for redirect back
+      const pendingAction = {
+        type: 'ticket_purchase',
+        ticketType: ticketType,
+        from: window.location.pathname
+      };
+      localStorage.setItem('pendingAction', JSON.stringify(pendingAction));
+
       showModal({
         title: 'Login Required',
-        text: 'Please login to purchase tickets.',
+        text: 'Please login to purchase tickets. We will bring you right back here!',
         type: 'info',
         confirmText: 'Go to Login',
         onConfirm: () => {

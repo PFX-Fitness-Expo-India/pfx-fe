@@ -55,6 +55,49 @@ function AppInner() {
     return () => window.removeEventListener('keydown', onKey);
   }, [closeAllModals]);
 
+  // Intent Preservation: Resume pending actions after login
+  const { user, openAthleteRegistrationModal, openTicketModal } = useAppContext();
+  
+  useEffect(() => {
+    const handleOpenAthlete = (e) => {
+      openAthleteRegistrationModal(e.detail);
+    };
+    const handleOpenTicket = (e) => {
+      openTicketModal(e.detail);
+    };
+
+    window.addEventListener('pfx:openAthleteRegistration', handleOpenAthlete);
+    window.addEventListener('pfx:openTicketModal', handleOpenTicket);
+    
+    return () => {
+      window.removeEventListener('pfx:openAthleteRegistration', handleOpenAthlete);
+      window.removeEventListener('pfx:openTicketModal', handleOpenTicket);
+    };
+  }, [openAthleteRegistrationModal, openTicketModal]);
+
+  useEffect(() => {
+    if (user) {
+      const pendingActionStr = localStorage.getItem('pendingAction');
+      if (pendingActionStr) {
+        try {
+          const action = JSON.parse(pendingActionStr);
+          // Small delay to ensure route transition is complete
+          setTimeout(() => {
+            if (action.type === 'athlete_registration') {
+              window.dispatchEvent(new CustomEvent('pfx:openAthleteRegistration', { detail: action.event }));
+            } else if (action.type === 'ticket_purchase') {
+              window.dispatchEvent(new CustomEvent('pfx:openTicketModal', { detail: action.ticketType }));
+            }
+            localStorage.removeItem('pendingAction'); 
+          }, 2000);
+        } catch (e) {
+          console.error('Failed to resume pending action', e);
+          localStorage.removeItem('pendingAction');
+        }
+      }
+    }
+  }, [user]);
+
   return (
     <PageLayout>
       <ScrollToTop />
