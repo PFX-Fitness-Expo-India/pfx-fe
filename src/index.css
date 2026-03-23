@@ -746,6 +746,7 @@ p  { margin: 0; }
 }
 
 .registration-copy {
+  flex: 1;
   font-size: 0.95rem;
   color: var(--muted);
 }
@@ -758,6 +759,9 @@ p  { margin: 0; }
 .bullet-list li { margin-bottom: 8px; }
 
 .registration-card {
+  flex: 1;
+  width: 100%;
+  max-width: 520px;
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-strong);
   background: radial-gradient(circle at 0% 0%, rgba(255, 48, 64, 0.2), transparent 60%),
@@ -801,13 +805,25 @@ p  { margin: 0; }
 }
 
 .form-field input,
-.form-field select {
-  border-radius: 999px;
+.form-field select,
+.form-field textarea {
+  width: 100%;
   border: 1px solid rgba(255, 255, 255, 0.22);
   background: rgba(0, 0, 0, 0.7);
   color: var(--text);
-  padding: 9px 14px;
+  padding: 10px 14px;
   font-size: 0.85rem;
+  font-family: inherit;
+}
+
+.form-field input,
+.form-field select {
+  border-radius: 999px;
+}
+
+.form-field textarea {
+  border-radius: 12px;
+  min-height: 100px;
 }
 
 .form-field select {
@@ -825,7 +841,8 @@ p  { margin: 0; }
 }
 
 .form-field input:focus,
-.form-field select:focus {
+.form-field select:focus,
+.form-field textarea:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 1px rgba(24, 225, 185, 0.6);
