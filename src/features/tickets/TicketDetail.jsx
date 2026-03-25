@@ -15,6 +15,9 @@ export default function TicketDetail() {
   const [loading, setLoading] = useState(true);
   const [qrSize, setQrSize] = useState(window.innerWidth < 768 ? 150 : 200);
   const qrRef = useRef(null);
+  const { user } = useAppContext();
+
+  if (!token || !user) return null;
 
   const fetchWithRefresh = useCallback(async (apiFunc) => {
     try {

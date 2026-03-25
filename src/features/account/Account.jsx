@@ -121,14 +121,7 @@ export default function Account() {
     );
   }
 
-  if (!user) {
-    return (
-      <div className="container" style={{ textAlign: 'center', padding: '100px 0', minHeight: '60vh' }}>
-        <h2>Please Login</h2>
-        <p>You need to be logged in to view your account.</p>
-      </div>
-    );
-  }
+  if (!user) return null;
 
   return (
     <div className="account-page container" style={{ padding: 'var(--section-padding) 0', position: 'relative' }}>
