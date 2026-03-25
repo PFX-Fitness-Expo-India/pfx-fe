@@ -40,6 +40,19 @@
   transform: scale(0.9);
 }
 
+.c-modal-box.small {
+  max-width: 360px;
+  padding: 30px 24px;
+}
+
+.c-modal-box.medium {
+  max-width: 440px;
+}
+
+.c-modal-box.large {
+  max-width: 600px;
+}
+
 .c-modal-scale-in {
   animation-name: cModalScaleIn;
 }

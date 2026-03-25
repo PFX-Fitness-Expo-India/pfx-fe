@@ -25,6 +25,19 @@ export function AppProvider({ children }) {
   // Fetch profile on initial mount if token exists
   useEffect(() => {
     async function initializeUser() {
+      // Check for persistent logout toast
+      if (localStorage.getItem('pfx_logout_success') === 'true') {
+        setTimeout(() => {
+          showToast({
+            icon: 'success',
+            title: 'Logged Out',
+            text: 'You have been successfully logged out.',
+            timer: 3000
+          });
+          localStorage.removeItem('pfx_logout_success');
+        }, 500); // Small delay to ensure modal system is ready
+      }
+
       if (token && userId) {
         try {
           const res = await authService.getUser(userId, token);
@@ -112,6 +125,9 @@ export function AppProvider({ children }) {
     } catch (err) {
       console.error('Logout API failed:', err);
     } finally {
+      // Set persistent toast flag before clearing state/storage
+      localStorage.setItem('pfx_logout_success', 'true');
+
       setUser(null);
       setToken(null);
       setRefreshToken(null);
@@ -127,15 +143,8 @@ export function AppProvider({ children }) {
       // Clear all queries to ensure fresh data for the guest/new user
       queryClient.clear();
       // Or specifically: queryClient.invalidateQueries({ queryKey: ['events'] });
-
-      showToast({
-        icon: 'success',
-        title: 'Logged Out',
-        text: 'You have been successfully logged out.',
-        timer: 3000
-      });
     }
-  }, [token, showToast]);
+  }, [token, queryClient]);
 
   const handleApiError = useCallback(async (error, retryCallback) => {
     if (error.statusCode === 401 && refreshToken) {
@@ -242,6 +251,8 @@ export function AppProvider({ children }) {
     activeRegistrationEvent,
     activeTicketType,
     confirmationMessage,
+    registrationSuccessData,
+    userId,
     // modal actions
     openSportModal,
     closeSportModal,

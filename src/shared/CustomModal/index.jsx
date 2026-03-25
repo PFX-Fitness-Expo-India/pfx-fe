@@ -85,7 +85,7 @@ export default function CustomModal({ state, onClose }) {
 
   return (
     <div className={`c-modal-overlay ${state.isOpen ? 'c-modal-enter' : 'c-modal-exit'}`} onClick={handleBackdropClick}>
-      <div className={`c-modal-box ${state.isOpen ? 'c-modal-scale-in' : 'c-modal-scale-out'}`}>
+      <div className={`c-modal-box ${state.isOpen ? 'c-modal-scale-in' : 'c-modal-scale-out'} ${state.size || 'medium'}`}>
         {state.type !== 'loading' && state.allowOutsideClick !== false && (
           <button className="c-modal-close" onClick={onClose} aria-label="Close modal">&times;</button>
         )}
