@@ -13,7 +13,8 @@ export function ModalProvider({ children }) {
     onConfirm: null,
     isToast: false,
     duration: 3000,
-    allowOutsideClick: true
+    allowOutsideClick: true,
+    size: 'medium' // 'small', 'medium', 'large'
   });
 
   const hideModal = useCallback(() => {
@@ -52,6 +53,7 @@ export function ModalProvider({ children }) {
         confirmText: options.confirmButtonText || options.confirmText || 'OK',
         isToast: false,
         allowOutsideClick: options.allowOutsideClick !== false,
+        size: options.size || 'medium',
         onConfirm: () => {
           hideModal();
           if (options.onConfirm) options.onConfirm();

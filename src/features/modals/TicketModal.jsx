@@ -69,7 +69,7 @@ export default function TicketModal() {
     try {
       // 1. Register Visitor First (Get visitorId)
       const visitorRes = await registrationService.registerVisitor({
-        userId: user.userId,
+        userId: localStorage.getItem("userId"),
         ticketType: type
       }, token);
 
@@ -77,7 +77,7 @@ export default function TicketModal() {
 
       // 2. Create Payment Order (Pass visitorId)
       const orderRes = await paymentService.createOrder({
-        userId: user.userId,
+        userId: localStorage.getItem("userId"),
         amount: amount,
         visitorId: visitorId,
         // eventId: "" // Mandatory field but empty for visitor pass as per user curl
@@ -101,6 +101,7 @@ export default function TicketModal() {
         },
         handler: async (response) => {
           const currentTicketType = ticketType;
+          const currentAmount = getTicketDetails().amount;
           closeTicketModal();
           showLoading('Verifying Ticket...', 'Please wait while we confirm your ticket. Do not close this window.');
 
@@ -116,7 +117,7 @@ export default function TicketModal() {
             showRegistrationSuccess({ 
               eventName: currentTicketType,
               type: 'ticket',
-              price: getTicketDetails().amount,
+              price: currentAmount,
               orderId: response.razorpay_order_id
             });
           } catch (err) {
