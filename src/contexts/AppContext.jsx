@@ -19,17 +19,18 @@ export function AppProvider({ children }) {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(() => localStorage.getItem('token') || null);
   const [refreshToken, setRefreshToken] = useState(() => localStorage.getItem('refreshToken') || null);
+  const [userId, setUserId] = useState(() => localStorage.getItem('userId') || null);
+  const [isInitializing, setIsInitializing] = useState(true);
 
   // Fetch profile on initial mount if token exists
   useEffect(() => {
     async function initializeUser() {
-      if (token) {
+      if (token && userId) {
         try {
-          // Try fetching profile, if it fails with 401, handleApiError will be called by components 
-          // but here we just try once.
-          const res = await authService.fetchProfile(token);
-          if (res.user) {
-            setUser(res.user);
+          const res = await authService.getUser(userId, token);
+          const userData = res.data || (res.userName ? res : null);
+          if (userData) {
+            setUser(userData);
           }
         } catch (error) {
           console.error('Failed to restore session:', error);
@@ -44,16 +45,17 @@ export function AppProvider({ children }) {
               localStorage.setItem('token', newToken);
               localStorage.setItem('refreshToken', newRefreshToken);
               
-              const retryRes = await authService.fetchProfile(newToken);
-              if (retryRes.user) setUser(retryRes.user);
+              const retryRes = await authService.getUser(userId, newToken);
+              const retryData = retryRes.data || (retryRes.userName ? retryRes : null);
+              if (retryData) setUser(retryData);
             } catch (err) {
               logout();
             }
-          } else {
-            logout();
           }
+          // Do NOT call logout() for other errors to prevent accidental clear on network hiccups
         }
       }
+      setIsInitializing(false);
     }
     initializeUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -254,6 +256,7 @@ export function AppProvider({ children }) {
     closeAllModals,
     guestViewMode,
     setGuestViewMode,
+    isInitializing,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

@@ -382,7 +382,7 @@ export default function Account() {
                 </div>
                 <h3>You have not booked any ticket</h3>
                 <p>Explore our upcoming events and secure your spot today!</p>
-                <button className="btn primary glow" onClick={() => window.location.href='/#events'}>
+                <button className="btn primary glow" onClick={() => navigate('/')}>
                   Browse Events
                 </button>
               </div>

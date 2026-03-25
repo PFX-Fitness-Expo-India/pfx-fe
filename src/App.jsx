@@ -38,12 +38,14 @@ import { Navigate } from "react-router-dom";
 // ─── Route Guards ─────────────────────────────────────────────────────────────
 
 function PublicRoute({ children }) {
-  const { user } = useAppContext();
+  const { user, isInitializing } = useAppContext();
+  if (isInitializing) return null; // Wait for auth check
   return user ? <Navigate to="/" replace /> : children;
 }
 
 function PrivateRoute({ children }) {
-  const { user } = useAppContext();
+  const { user, isInitializing } = useAppContext();
+  if (isInitializing) return null; // Wait for auth check
   return user ? children : <Navigate to="/" replace />;
 }
 
