@@ -115,7 +115,9 @@ export default function TicketModal() {
             closeModal();
             showRegistrationSuccess({ 
               eventName: currentTicketType,
-              type: 'ticket'
+              type: 'ticket',
+              price: getTicketDetails().amount,
+              orderId: response.razorpay_order_id
             });
           } catch (err) {
             closeModal();

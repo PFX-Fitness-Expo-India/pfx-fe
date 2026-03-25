@@ -1418,9 +1418,132 @@ tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.02); }
   padding-bottom: 40px !important;
 }
 
+.event-detail-media {
+  height: 340px;
+  background-size: cover;
+  background-position: center;
+}
+
+.event-detail-body {
+  padding: 32px !important;
+  text-align: left !important;
+}
+
+.event-detail-title {
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  margin-bottom: 12px !important;
+}
+
+.event-detail-desc {
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 32px !important;
+  max-width: 800px;
+}
+
+.event-detail-grid {
+  margin-bottom: 40px !important;
+}
+
+.event-detail-subcategories {
+  margin-bottom: 32px;
+}
+
+.event-detail-subcategories h3 {
+  font-size: 1.1rem;
+  margin-bottom: 16px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+}
+
+.subcategory-list {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.subcategory-badge {
+  margin: 0 !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  padding: 6px 14px !important;
+  font-size: 0.85rem !important;
+}
+
+.event-detail-actions {
+  margin-top: 40px;
+  display: flex;
+  gap: 16px;
+}
+
+.event-register-btn {
+  width: fit-content;
+  padding: 14px 32px !important;
+  font-size: 1rem !important;
+}
+
 @media (max-width: 768px) {
   .detail-section {
     padding-top: 16px !important;
+  }
+  
+  .event-detail-media {
+    height: 220px;
+  }
+  
+  .event-detail-body {
+    padding: 24px !important;
+  }
+  
+  .event-detail-title {
+    font-size: 1.8rem;
+  }
+
+  .event-detail-desc {
+    font-size: 0.9rem;
+    margin-bottom: 24px !important;
+  }
+
+  .event-detail-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important; /* 2 columns on mobile */
+    gap: 16px !important;
+    margin-bottom: 32px !important;
+    text-align: left !important;
+  }
+
+  .info-item {
+    text-align: left !important;
+  }
+
+  .event-register-btn {
+    width: 100%; /* Full width on mobile */
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .event-detail-grid {
+    grid-template-columns: 1fr 1fr !important; /* Keep 2 columns even on very small screens */
+    gap: 12px !important;
+  }
+  
+  .info-item label {
+    font-size: 0.65rem !important;
+  }
+  
+  .info-item span {
+    font-size: 0.85rem !important;
+  }
+
+  .event-detail-media {
+    height: 180px;
+  }
+  
+  .event-detail-body {
+    padding: 20px 16px !important;
   }
 }
 

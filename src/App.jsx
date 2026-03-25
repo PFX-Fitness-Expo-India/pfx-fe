@@ -1,12 +1,8 @@
 import { useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useLocation,
-} from "react-router-dom";
-import { AppProvider, useAppContext } from "./contexts/AppContext";
-import { ModalProvider } from "./contexts/ModalContext";
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { AppProvider, useAppContext } from './contexts/AppContext';
+import { ModalProvider } from './contexts/ModalContext';
+import AccountSkeleton from './features/account/AccountSkeleton';
 import { useScrollAnimation } from "./hooks/useScrollAnimation";
 import PageLayout from "./layouts/PageLayout";
 
@@ -33,7 +29,6 @@ import {
   AthleteRegistrationModal,
   RegistrationSuccessModal,
 } from "./features/modals";
-import { Navigate } from "react-router-dom";
 
 // ─── Route Guards ─────────────────────────────────────────────────────────────
 
@@ -45,7 +40,14 @@ function PublicRoute({ children }) {
 
 function PrivateRoute({ children }) {
   const { user, isInitializing } = useAppContext();
-  if (isInitializing) return null; // Wait for auth check
+  const location = useLocation();
+
+  if (isInitializing) {
+    if (location.pathname === '/account') {
+      return <AccountSkeleton />;
+    }
+    return null; // Wait for auth check on other private routes
+  }
   return user ? children : <Navigate to="/" replace />;
 }
 
