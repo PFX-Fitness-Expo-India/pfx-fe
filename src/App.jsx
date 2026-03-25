@@ -21,6 +21,7 @@ import Dashboard from "./features/dashboard";
 import Login from "./features/auth/Login";
 import Signup from "./features/auth/Signup";
 import Account from "./features/account/Account";
+import TicketDetail from "./features/tickets/TicketDetail";
 import EventDetail from "./features/sports/EventDetail";
 import PrivacyPolicy from "./features/legal/PrivacyPolicy";
 import TermsAndConditions from "./features/legal/TermsAndConditions";
@@ -39,6 +40,11 @@ import { Navigate } from "react-router-dom";
 function PublicRoute({ children }) {
   const { user } = useAppContext();
   return user ? <Navigate to="/" replace /> : children;
+}
+
+function PrivateRoute({ children }) {
+  const { user } = useAppContext();
+  return user ? children : <Navigate to="/" replace />;
 }
 
 // ─── ScrollToTop Helper ────────────────────────────────────────────────────────
@@ -158,7 +164,22 @@ function AppInner() {
             </PublicRoute>
           }
         />
-        <Route path="/account" element={<Account />} />
+        <Route
+          path="/account"
+          element={
+            <PrivateRoute>
+              <Account />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/ticket/:ticketId"
+          element={
+            <PrivateRoute>
+              <TicketDetail />
+            </PrivateRoute>
+          }
+        />
         <Route path="/events/:eventId" element={<EventDetail />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
