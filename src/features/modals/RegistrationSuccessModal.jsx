@@ -6,6 +6,9 @@ export default function RegistrationSuccessModal() {
 
   if (!registrationSuccessData) return null;
 
+  const { eventName, type } = registrationSuccessData;
+  const isTicket = type === 'ticket' || eventName?.toLowerCase().includes('pass');
+
   return (
     <Modal onClose={clearRegistrationSuccess} className="success-modal-content">
       <div style={{ textAlign: 'center', padding: '40px 20px' }}>
@@ -23,9 +26,16 @@ export default function RegistrationSuccessModal() {
         }}>
           ✓
         </div>
-        <h3 style={{ fontSize: '1.8rem', marginBottom: '12px', color: 'var(--text)' }}>Registration Successful!</h3>
+        <h3 style={{ fontSize: '1.8rem', marginBottom: '12px', color: 'var(--text)' }}>
+          {isTicket ? 'Booking Successful!' : 'Registration Successful!'}
+        </h3>
         <p style={{ color: 'var(--muted)', marginBottom: '32px', lineHeight: '1.6' }}>
-          Your spot for <strong>{registrationSuccessData.eventName}</strong> has been secured. <br />
+          {isTicket ? (
+            <>Your ticket for <strong>{eventName}</strong> has been secured.</>
+          ) : (
+            <>Your spot for <strong>{eventName}</strong> has been secured.</>
+          )}
+          <br />
           Check your account for details.
         </p>
         <button 

@@ -102,7 +102,7 @@ export default function TicketModal() {
         handler: async (response) => {
           const currentTicketType = ticketType;
           closeTicketModal();
-          showLoading('Verifying Payment...', 'Please wait while we confirm your ticket. Do not close this window.');
+          showLoading('Verifying Ticket...', 'Please wait while we confirm your ticket. Do not close this window.');
 
           try {
             // 4. Verify Payment
@@ -113,7 +113,10 @@ export default function TicketModal() {
             }, token);
 
             closeModal();
-            showRegistrationSuccess({ eventName: currentTicketType });
+            showRegistrationSuccess({ 
+              eventName: currentTicketType,
+              type: 'ticket'
+            });
           } catch (err) {
             closeModal();
             console.error('Payment verification failed:', err);
