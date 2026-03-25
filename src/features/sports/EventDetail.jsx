@@ -32,9 +32,9 @@ export default function EventDetail() {
           <div className="placeholder col-3 mb-4 rounded-pill py-3" />
           
           <div className="sport-card detail-card in-view overflow-hidden">
-            <div className="placeholder col-12" style={{ height: '300px' }} />
+            <div className="placeholder col-12 event-detail-media" />
             
-            <div className="sport-body" style={{ padding: '24px' }}>
+            <div className="event-detail-body">
               <h1 className="placeholder col-8 py-4 mb-3 rounded" />
               <p className="placeholder col-10 py-2 mb-2 rounded" />
               <p className="placeholder col-6 py-2 mb-5 rounded" />
@@ -90,13 +90,13 @@ export default function EventDetail() {
         </button>
         
         <div className="sport-card detail-card in-view">
-          <div className="sport-media" style={{ height: '300px', backgroundImage: `url('${imageUrl}')` }} />
+          <div className="sport-media event-detail-media" style={{ backgroundImage: `url('${imageUrl}')` }} />
           
-          <div className="sport-body" style={{ padding: '24px' }}>
-            <h1 className="section-title">{event.eventName}</h1>
-            <p className="subtitle" style={{ color: 'var(--muted)', marginBottom: '32px' }}>{event.eventDescription}</p>
+          <div className="sport-body event-detail-body">
+            <h1 className="section-title event-detail-title">{event.eventName}</h1>
+            <p className="subtitle event-detail-desc">{event.eventDescription}</p>
             
-            <div className="info-grid" style={{ marginBottom: '32px' }}>
+            <div className="info-grid event-detail-grid">
               <div className="info-item">
                 <label>Date</label>
                 <span>{formattedDate}</span>
@@ -124,14 +124,13 @@ export default function EventDetail() {
             </div>
 
             {event.haveSubcategory && event.subcategories?.length > 0 && (
-              <div style={{ marginBottom: '32px' }}>
-                <h3 style={{ fontSize: '1.2rem', marginBottom: '12px' }}>Categories</h3>
-                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              <div className="event-detail-subcategories">
+                <h3>Categories</h3>
+                <div className="subcategory-list">
                   {event.subcategories.map(cat => (
                     <span 
                       key={cat._id} 
-                      className="sport-modal-badge"
-                      style={{ margin: 0 }}
+                      className="sport-modal-badge subcategory-badge"
                     >
                       {cat.name}
                     </span>
@@ -140,25 +139,25 @@ export default function EventDetail() {
               </div>
             )}
             
-            {event.paymentMethod === 'online' ? (
-              <button 
-                className="btn primary" 
-                style={{ width: 'fit-content', padding: '6px 20px', fontSize: '0.8rem' }}
-                onClick={() => {
-                  openAthleteRegistrationModal(event);
-                }}
-              >
-                Register for this Event
-              </button>
-            ) : (
-              <a 
-                href="tel:+919361614200" 
-                className="btn primary" 
-                style={{ display: 'inline-block', width: 'fit-content', padding: '6px 20px', fontSize: '0.8rem', textAlign: 'center', boxSizing: 'border-box' }}
-              >
-                Call to Register
-              </a>
-            )}
+            <div className="event-detail-actions">
+              {event.paymentMethod === 'online' ? (
+                <button 
+                  className="btn primary event-register-btn" 
+                  onClick={() => {
+                    openAthleteRegistrationModal(event);
+                  }}
+                >
+                  Register for this Event
+                </button>
+              ) : (
+                <a 
+                  href="tel:+919361614200" 
+                  className="btn primary event-register-btn"
+                >
+                  Call to Register
+                </a>
+              )}
+            </div>
           </div>
         </div>
       </div>

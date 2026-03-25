@@ -1,16 +1,18 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAppContext } from '../../contexts/AppContext';
 import { authService } from '../../services/authService';
 import { ticketService } from '../../services/ticketService';
 import { useModal } from '../../contexts/ModalContext';
+import AccountSkeleton from './AccountSkeleton';
 import './Account.css';
 
 export default function Account() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, token, handleApiError } = useAppContext();
   const { showModal, showToast } = useModal();
-  const [activeTab, setActiveTab] = useState('profile');
+  const [activeTab, setActiveTab] = useState(location.state?.activeTab || 'profile');
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
@@ -45,6 +47,15 @@ export default function Account() {
       throw err;
     }
   }, [token, handleApiError]);
+
+  // Sync activeTab with location state (e.g., when navigating from success modal)
+  useEffect(() => {
+    if (location.state?.activeTab) {
+      setActiveTab(location.state.activeTab);
+      // Optional: clear state to prevent sticking on that tab on manual refresh
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   const loadTickets = useCallback(async () => {
     if (!token) return;
@@ -152,36 +163,6 @@ export default function Account() {
       setIsUpdatingPassword(false);
     }
   };
-
-  // DEBUG ADDITION
-  const AccountSkeleton = () => (
-    <div className="account-page container account-skeleton-page">
-      <div className="account-header-wrapper">
-        <div className="account-header">
-          <div className="account-skeleton-title"></div>
-          <div className="account-skeleton-badge-pill"></div>
-        </div>
-        <div className="account-tabs">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="account-skeleton-tab"></div>
-          ))}
-        </div>
-      </div>
-      <div className="tab-content-container">
-        <div className="account-skeleton-card-large">
-          <div className="account-skeleton-card-header">
-            <div className="account-skeleton-avatar-lg"></div>
-            <div className="account-skeleton-title-sm"></div>
-          </div>
-          <div className="account-skeleton-grid-sm">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="account-skeleton-item-sm"></div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 
   if (isCheckingAuth) {
     return <AccountSkeleton />;
