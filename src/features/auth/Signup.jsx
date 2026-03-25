@@ -53,21 +53,24 @@ export default function Signup() {
     try {
       await signupUser(userData);
       
+      // Redirect to login FIRST so the modal shows on top of the login page
+      navigate('/login');
+      
       await showModal({
         type: 'success',
         title: 'Signup Successful!',
-        text: 'A verification email has been sent. Please click on that to verify and then login.'
+        text: 'A verification email has been sent. Please click on that to verify and then login.',
+        allowOutsideClick: false // Make it mandatory to see
       });
-      
-      navigate('/login');
     } catch (err) {
       if (err.message?.includes('already exists') || err.statusCode === 409) {
+        navigate('/login');
         await showModal({
           type: 'error',
           title: 'Account Exists',
-          text: 'An account with this email already exists. Please login instead.'
+          text: 'An account with this email already exists. Please login instead.',
+          allowOutsideClick: false
         });
-        navigate('/login');
       } else {
         setError(err.message || 'Signup failed. Please try again.');
       }
