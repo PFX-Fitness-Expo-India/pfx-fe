@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../contexts/AppContext';
 import { authService } from '../../services/authService';
 import { ticketService } from '../../services/ticketService';
@@ -6,7 +7,8 @@ import { useModal } from '../../contexts/ModalContext';
 import './Account.css';
 
 export default function Account() {
-  const { user, token, logout, handleApiError } = useAppContext();
+  const navigate = useNavigate();
+  const { user, token, handleApiError } = useAppContext();
   const { showModal, showToast } = useModal();
   const [activeTab, setActiveTab] = useState('tickets');
   const [tickets, setTickets] = useState([]);
@@ -26,12 +28,12 @@ export default function Account() {
       const d = new Date(dateString || fallback);
       if (isNaN(d.getTime())) return 'Pending';
       return d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
-    } catch(e) {
+    } catch {
       return 'Pending';
     }
   };
 
-  const fetchWithRefresh = async (apiFunc) => {
+  const fetchWithRefresh = useCallback(async (apiFunc) => {
     try {
       return await apiFunc(token);
     } catch (err) {
@@ -40,9 +42,9 @@ export default function Account() {
       }
       throw err;
     }
-  };
+  }, [token, handleApiError]);
 
-  const loadTickets = async () => {
+  const loadTickets = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetchWithRefresh((t) => ticketService.getMyTickets(t));
@@ -56,13 +58,13 @@ export default function Account() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [fetchWithRefresh, showModal]);
 
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
 
   useEffect(() => {
     if (token) loadTickets();
-  }, [token]);
+  }, [token, loadTickets]);
 
   useEffect(() => {
     let timeout;
@@ -184,8 +186,17 @@ export default function Account() {
                         Issued on: {ticket.issuedAt ? formatDate(ticket.issuedAt) : formatDate(ticket.createdAt)}
                       </p>
                     </div>
-                    <div className={`ticket-status ${ticket.status === 'unused' ? 'success' : 'used'}`}>
-                      {ticket.status ? ticket.status.toUpperCase() : 'CONFIRMED'}
+                    <div className="ticket-actions" style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'flex-end' }}>
+                      <div className={`ticket-status ${ticket.status === 'unused' ? 'success' : 'used'}`}>
+                        {ticket.status ? ticket.status.toUpperCase() : 'CONFIRMED'}
+                      </div>
+                      <button 
+                        className="btn primary sm" 
+                        onClick={() => navigate(`/ticket/${ticket._id}`)}
+                        style={{ padding: '6px 14px', fontSize: '0.8rem' }}
+                      >
+                        View / Download
+                      </button>
                     </div>
                   </div>
                 ))}
