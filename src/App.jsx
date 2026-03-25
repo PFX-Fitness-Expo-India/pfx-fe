@@ -16,6 +16,7 @@ import Dashboard from './features/dashboard';
 import Login from './features/auth/Login';
 import Signup from './features/auth/Signup';
 import Account from './features/account/Account';
+import TicketDetail from './features/tickets/TicketDetail';
 import EventDetail from './features/sports/EventDetail';
 import PrivacyPolicy from './features/legal/PrivacyPolicy';
 import TermsAndConditions from './features/legal/TermsAndConditions';
@@ -117,6 +118,7 @@ function AppInner() {
           <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
           <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
           <Route path="/account" element={<Account />} />
+          <Route path="/ticket/:ticketId" element={<TicketDetail />} />
           <Route path="/events/:eventId" element={<EventDetail />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
