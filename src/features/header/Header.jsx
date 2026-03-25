@@ -89,7 +89,7 @@ export default function Header() {
                    </div>
                    <button 
                      className="dropdown-item logout-btn"
-                     onClick={() => { logout(); navigate('/'); setDropdownOpen(false); }}
+                     onClick={() => { logout(); window.location.href = '/'; setDropdownOpen(false); }}
                    >
                      Logout
                    </button>

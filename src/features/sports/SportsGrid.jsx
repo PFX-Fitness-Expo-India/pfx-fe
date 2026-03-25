@@ -4,9 +4,9 @@ import { useAppContext } from '../../contexts/AppContext';
 import SportCard from './SportCard';
 
 export default function SportsGrid({ onViewEvent }) {
-  const { user } = useAppContext();
+  const { user, guestViewMode, setGuestViewMode } = useAppContext();
   const { data: events = [], isLoading: loading, error } = useQuery({
-    queryKey: ['events'],
+    queryKey: ['events', user?.userId, guestViewMode],
     queryFn: async () => {
       const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/events`);
       const result = response.data;
@@ -16,8 +16,14 @@ export default function SportsGrid({ onViewEvent }) {
       throw new Error(result.message || 'Failed to fetch events');
     }
   });
+  // If logged in as visitor, or guest explicitly chose visitor view, hide the athlete grid
+  if (user?.role === 'visitor' || (guestViewMode === 'visitor' && !user)) return null;
 
-  if (user?.role === 'visitor') return null;
+
+  const scrollTo = (id) => {
+    const el = document.getElementById(id);
+    if (el) window.scrollTo({ top: el.offsetTop - 80, behavior: 'smooth' });
+  };
 
   return (
     <section id="sports" className="section">
@@ -73,6 +79,21 @@ export default function SportsGrid({ onViewEvent }) {
             ))
           )}
         </div>
+        
+        {!user && guestViewMode === 'athlete' && (
+          <div style={{ textAlign: 'center', marginTop: '48px', paddingTop: '24px', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
+            <p style={{ color: 'var(--muted)', marginBottom: '16px' }}>Just looking for visitor passes?</p>
+            <button 
+              className="btn outline" 
+              onClick={() => {
+                setGuestViewMode('visitor');
+                setTimeout(() => scrollTo('tickets'), 100);
+              }}
+            >
+              View Visitor Tickets
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );

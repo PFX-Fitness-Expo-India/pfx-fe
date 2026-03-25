@@ -1,4 +1,5 @@
 import { useState, useCallback, createContext, useContext, useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { STORAGE_KEYS } from '../constants/config';
 import { loadFromStorage, saveToStorage, downloadCsv } from '../services/storageService';
 import { authService } from '../services/authService';
@@ -12,6 +13,7 @@ const AppContext = createContext(null);
 
 export function AppProvider({ children }) {
   const { showToast } = useModal();
+  const queryClient = useQueryClient();
   
   // ── Authentication & View logic ──
   const [user, setUser] = useState(null);
@@ -114,6 +116,15 @@ export function AppProvider({ children }) {
       localStorage.removeItem('token');
       localStorage.removeItem('refreshToken');
       localStorage.removeItem('userId');
+      setGuestViewMode(null);
+      setAthletes([]);
+      setTickets([]);
+      localStorage.removeItem('pfx_athletes');
+      localStorage.removeItem('pfx_tickets');
+      
+      // Clear all queries to ensure fresh data for the guest/new user
+      queryClient.clear();
+      // Or specifically: queryClient.invalidateQueries({ queryKey: ['events'] });
 
       showToast({
         icon: 'success',
@@ -155,6 +166,7 @@ export function AppProvider({ children }) {
   const [activeTicketType, setActiveTicketType] = useState(null);
   const [confirmationMessage, setConfirmationMessage] = useState(null);
   const [registrationSuccessData, setRegistrationSuccessData] = useState(null);
+  const [guestViewMode, setGuestViewMode] = useState(null); // 'athlete', 'visitor', or null (both)
 
   // ── Athletes ──
   const addAthlete = useCallback((data) => {
@@ -237,10 +249,11 @@ export function AppProvider({ children }) {
     closeTicketModal,
     showConfirmation,
     closeConfirmation,
-    registrationSuccessData,
     showRegistrationSuccess,
     clearRegistrationSuccess,
     closeAllModals,
+    guestViewMode,
+    setGuestViewMode,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

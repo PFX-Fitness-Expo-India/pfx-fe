@@ -9,19 +9,31 @@ export default function Signup() {
   const { showModal } = useModal();
   const navigate = useNavigate();
   const [error, setError] = useState('');
+  const [formErrors, setFormErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [role, setRole] = useState('visitor');
   const formRef = useRef(null);
 
+  function validateForm(data) {
+    const errors = {};
+    if (!data.userName) errors.userName = 'Full Name is required';
+    if (!data.email) errors.email = 'Email is required';
+    else if (!/\S+@\S+\.\S+/.test(data.email)) errors.email = 'Invalid email address';
+    
+    if (!data.phoneNumber) errors.phoneNumber = 'Phone Number is required';
+    if (!data.password) errors.password = 'Password is required';
+    else if (data.password.length < 8) errors.password = 'Password must be at least 8 characters';
+    
+    return errors;
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
-    setLoading(true);
-
-    const form = formRef.current;
+    setFormErrors({});
     
-    // Validate matching passwords if you have confirm password, but matching requirements based on payload
+    const form = formRef.current;
     const userData = {
       userName: form.elements.userName.value.trim(),
       phoneNumber: form.elements.phoneNumber.value.trim(),
@@ -30,21 +42,39 @@ export default function Signup() {
       role: role
     };
 
+    const errors = validateForm(userData);
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
+    setLoading(true);
+
     try {
       await signupUser(userData);
       
       await showModal({
         type: 'success',
         title: 'Signup Successful!',
-        text: 'Your account has been created. Please login to continue.'
+        text: 'A verification email has been sent. Please click on that to verify and then login.'
       });
       
       navigate('/login');
     } catch (err) {
-      setError(err.message || 'Signup failed. Please try again.');
+      if (err.message?.includes('already exists') || err.statusCode === 409) {
+        await showModal({
+          type: 'error',
+          title: 'Account Exists',
+          text: 'An account with this email already exists. Please login instead.'
+        });
+        navigate('/login');
+      } else {
+        setError(err.message || 'Signup failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
+
   }
 
   return (
@@ -57,28 +87,31 @@ export default function Signup() {
             {error && <p className="error-text mt-3">{error}</p>}
           </div>
 
-          <form ref={formRef} className="form" onSubmit={handleSubmit}>
-            <div className="form-field full">
+          <form ref={formRef} className="form" onSubmit={handleSubmit} noValidate>
+            <div className={`form-field full ${formErrors.userName ? 'error' : ''}`}>
               <label htmlFor="userName">Full Name</label>
-              <input id="userName" name="userName" type="text" required disabled={loading} />
+              <input id="userName" name="userName" type="text" disabled={loading} />
+              {formErrors.userName && <span className="field-error">{formErrors.userName}</span>}
             </div>
 
             <div className="form-row">
-              <div className="form-field">
+              <div className={`form-field ${formErrors.email ? 'error' : ''}`}>
                 <label htmlFor="email">Email</label>
-                <input id="email" name="email" type="email" required disabled={loading} />
+                <input id="email" name="email" type="email" disabled={loading} />
+                {formErrors.email && <span className="field-error">{formErrors.email}</span>}
               </div>
-              <div className="form-field">
+              <div className={`form-field ${formErrors.phoneNumber ? 'error' : ''}`}>
                 <label htmlFor="phoneNumber">Phone Number</label>
-                <input id="phoneNumber" name="phoneNumber" type="tel" required disabled={loading} />
+                <input id="phoneNumber" name="phoneNumber" type="tel" disabled={loading} />
+                {formErrors.phoneNumber && <span className="field-error">{formErrors.phoneNumber}</span>}
               </div>
             </div>
 
             <div className="form-row">
-              <div className="form-field">
+              <div className={`form-field ${formErrors.password ? 'error' : ''}`}>
                 <label htmlFor="password">Password</label>
                 <div className="password-input-wrapper" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                  <input id="password" name="password" type={showPassword ? "text" : "password"} required disabled={loading} style={{ width: '100%', paddingRight: '54px' }} />
+                  <input id="password" name="password" type={showPassword ? "text" : "password"} disabled={loading} style={{ width: '100%', paddingRight: '54px' }} />
                   <button 
                     type="button" 
                     className="password-toggle"
@@ -100,6 +133,7 @@ export default function Signup() {
                     )}
                   </button>
                 </div>
+                {formErrors.password && <span className="field-error">{formErrors.password}</span>}
               </div>
               <div className="form-field">
                 <label htmlFor="role">Role</label>

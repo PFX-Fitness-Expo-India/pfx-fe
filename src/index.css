@@ -848,6 +848,25 @@ p  { margin: 0; }
   box-shadow: 0 0 0 1px rgba(24, 225, 185, 0.6);
 }
 
+.form-field.error input,
+.form-field.error select,
+.form-field.error textarea {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px rgba(255, 48, 64, 0.3);
+}
+
+.form-field.error label {
+  color: var(--primary);
+}
+
+.field-error {
+  color: var(--primary);
+  font-size: 0.7rem;
+  margin-top: 4px;
+  font-weight: 500;
+  display: block;
+}
+
 .form-field input:-webkit-autofill,
 .form-field input:-webkit-autofill:hover, 
 .form-field input:-webkit-autofill:focus, 

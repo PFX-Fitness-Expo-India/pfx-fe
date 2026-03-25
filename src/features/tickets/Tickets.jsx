@@ -1,9 +1,16 @@
 import { useAppContext } from '../../contexts/AppContext';
 
 export default function Tickets() {
-  const { openTicketModal, user } = useAppContext();
+  const { openTicketModal, user, guestViewMode, setGuestViewMode } = useAppContext();
 
-  if (user?.role === 'athlete') return null;
+  // If logged in as athlete, or guest explicitly chose athlete view, hide the visitor tickets
+  if (user?.role === 'athlete' || (guestViewMode === 'athlete' && !user)) return null;
+
+
+  const scrollTo = (id) => {
+    const el = document.getElementById(id);
+    if (el) window.scrollTo({ top: el.offsetTop - 80, behavior: 'smooth' });
+  };
 
   return (
     <section id="tickets" className="section section-dark">
@@ -48,6 +55,21 @@ export default function Tickets() {
             </div>
           </div>
         </div>
+        
+        {!user && guestViewMode === 'visitor' && (
+          <div style={{ textAlign: 'center', marginTop: '48px', paddingTop: '24px', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
+            <p style={{ color: 'var(--muted)', marginBottom: '16px' }}>Want to compete as an athlete?</p>
+            <button 
+              className="btn outline" 
+              onClick={() => {
+                setGuestViewMode('athlete');
+                setTimeout(() => scrollTo('sports'), 100);
+              }}
+            >
+              View Athlete Registration
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );
