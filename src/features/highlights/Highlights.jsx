@@ -6,6 +6,14 @@ const highlights = [
 ];
 
 export default function Highlights() {
+  // const [data,setData]=useState();
+  // try{
+  //   const res=await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/event/highlights`)
+  //   setData(res.data);
+  // }
+  // catch(e){
+  //   console.log(e);
+  // }
   return (
     <section id="about" className="section section-dark">
       <div className="container section-header">

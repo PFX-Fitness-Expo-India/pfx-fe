@@ -3,13 +3,18 @@ import { useAppContext } from '../../contexts/AppContext';
 import { useNavigate } from 'react-router-dom';
 
 export default function Hero() {
-  const { user } = useAppContext();
+  const { user, setGuestViewMode } = useAppContext();
   const navigate = useNavigate();
 
   function scrollTo(id) {
     const el = document.getElementById(id);
     if (el) window.scrollTo({ top: el.offsetTop - SCROLL_OFFSET, behavior: 'smooth' });
   }
+
+  const handleCtaClick = (id, mode) => {
+    setGuestViewMode(mode);
+    scrollTo(id);
+  };
 
   return (
     <section id="home" className="hero section">
@@ -40,10 +45,10 @@ export default function Hero() {
         
         {!user && (
           <div className="hero-cta">
-            <button className="btn primary" onClick={() => scrollTo('sports')}>
+            <button className="btn primary" onClick={() => handleCtaClick('sports', 'athlete')}>
               Register as Athlete
             </button>
-            <button className="btn outline" onClick={() => scrollTo('tickets')}>
+            <button className="btn outline" onClick={() => handleCtaClick('tickets', 'visitor')}>
               Buy Visitor Tickets
             </button>
           </div>
