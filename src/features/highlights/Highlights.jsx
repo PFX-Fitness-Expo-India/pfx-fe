@@ -45,8 +45,8 @@ export default function Highlights() {
 
   const highlightsData = [
     { label: 'Sports Competitions', value: stats?.sportsCompetitions ?? '12' },
-    { label: 'Athletes', value: stats?.athletes ?? '500+' },
-    { label: 'Visitors', value: stats?.visitors ?? '20,000' },
+    { label: 'Athletes', value: stats?.athletes ?? '999' },
+    { label: 'Visitors', value: stats?.visitors ?? '9999' },
     { label: 'Prize Pool', value: stats?.prizePool ?? '₹ Huge' },
   ];
 
