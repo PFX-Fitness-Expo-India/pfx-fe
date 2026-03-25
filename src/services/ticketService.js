@@ -17,4 +17,21 @@ export const ticketService = {
     }
     return data;
   },
+
+  getTicketById: async (ticketId, token) => {
+    const response = await fetch(`${API_BASE_URL}/api/tickets/${ticketId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await response.json();
+    if (!response.ok || (data.statusCode && data.statusCode >= 400)) {
+      const error = new Error(data.message || 'Failed to fetch ticket details');
+      error.statusCode = data.statusCode || response.status;
+      throw error;
+    }
+    return data;
+  },
 };
