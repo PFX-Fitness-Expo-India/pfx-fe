@@ -14,6 +14,11 @@ export default function EventDetail() {
   const { data: event, isLoading: loading, error } = useQuery({
     queryKey: ['events', eventId],
     queryFn: async () => {
+      // Basic validation for MongoDB ObjectID (24 hex characters)
+      if (!/^[0-9a-fA-F]{24}$/.test(eventId)) {
+        throw new Error('Invalid Event ID format');
+      }
+
       const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/events/${eventId}`);
       
       if (res.data.statusCode === 200) {
@@ -57,11 +62,19 @@ export default function EventDetail() {
   }
 
   if (error || !event) {
-    const errorMsg = error?.message || error || 'Event not found';
+    const errorMsg = error?.message || (typeof error === 'string' ? error : 'Event not found');
     return (
-      <section className="section in-view" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
-        <p style={{ color: '#ff4444', marginBottom: '1rem' }}>{errorMsg}</p>
-        <button className="btn outline" onClick={() => navigate('/')}>Back to Home</button>
+      <section className="section section-dark" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="container" style={{ textAlign: 'center' }}>
+          <div style={{ marginBottom: '2rem', opacity: 0.5 }}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          </div>
+          <h2 style={{ fontSize: '2rem', marginBottom: '1rem', fontFamily: 'var(--oswald)', textTransform: 'uppercase' }}>Event Not Found</h2>
+          <p style={{ color: 'var(--muted)', marginBottom: '2.5rem', maxWidth: '400px', marginInline: 'auto' }}>
+            {errorMsg.includes('Invalid') ? 'The link you followed might be broken or the ID is incorrect.' : 'This event might have been cancelled or is no longer available.'}
+          </p>
+          <button className="btn primary glow" onClick={() => navigate('/')}>Return to Events</button>
+        </div>
       </section>
     );
   }

@@ -13,7 +13,9 @@ export default function TicketDetail() {
   const { showModal } = useModal();
   const [ticket, setTicket] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [qrSize, setQrSize] = useState(window.innerWidth < 768 ? 150 : 200);
+  const [qrSize, setQrSize] = useState(
+    window.innerWidth < 360 ? 130 : window.innerWidth < 768 ? 150 : 200
+  );
   const qrRef = useRef(null);
   const { user } = useAppContext();
 
@@ -32,15 +34,28 @@ export default function TicketDetail() {
 
   useEffect(() => {
     const loadTicket = async () => {
+      // Basic validation for MongoDB ObjectID (24 hex characters)
+      if (!/^[0-9a-fA-F]{24}$/.test(ticketId)) {
+        console.warn('Invalid ticket ID format:', ticketId);
+        setTicket(null);
+        setLoading(false);
+        return;
+      }
+
       if (!token) return;
       setLoading(true);
       try {
         const res = await fetchWithRefresh((t) => ticketService.getTicketById(ticketId, t));
-        setTicket(res.data);
+        if (res && res.data) {
+          setTicket(res.data);
+        } else {
+          setTicket(null);
+        }
       } catch (err) {
         console.error('Failed to load ticket:', err);
+        setTicket(null);
+        // We still show the modal for context, but the page reflects the error
         showModal('Error', err.message || 'Failed to load ticket details.', 'error');
-        // navigate('/account');
       } finally {
         setLoading(false);
       }
@@ -51,7 +66,7 @@ export default function TicketDetail() {
 
   useEffect(() => {
     const handleResize = () => {
-      setQrSize(window.innerWidth < 768 ? 150 : 200);
+      setQrSize(window.innerWidth < 360 ? 130 : window.innerWidth < 768 ? 150 : 200);
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -96,10 +111,15 @@ export default function TicketDetail() {
   if (!ticket) {
     return (
       <div className="ticket-detail-page container">
-        <div className="error-message">
+        <div className="error-message-centered">
+          <div className="error-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          </div>
           <h2>Ticket Not Found</h2>
-          <p>We couldn't find the ticket you're looking for.</p>
-          <button className="btn primary" onClick={() => navigate('/account')}>Back to Account</button>
+          <p>The ticket ID in the URL is invalid or the ticket does not exist.</p>
+          <button className="btn primary glow" onClick={() => navigate('/account')}>
+            Return to My Account
+          </button>
         </div>
       </div>
     );
@@ -119,10 +139,12 @@ export default function TicketDetail() {
           <div className="event-info">
             <p className="event-label">EVENT PASS</p>
             <h1>{ticket.eventId?.eventName || 'Powerlifting Championship 2026'}</h1>
-            <p className="event-date">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-              {formatDate(ticket.eventId?.eventDate)}
-            </p>
+            {ticket.eventId?.eventDate && (
+              <p className="event-date">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                {formatDate(ticket.eventId.eventDate)}
+              </p>
+            )}
           </div>
           <div className={`ticket-status-badge ${ticket.status}`}>
             {ticket.status.toUpperCase()}
