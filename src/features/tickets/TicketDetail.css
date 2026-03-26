@@ -1,5 +1,5 @@
 .ticket-detail-page {
-  padding: 100px 0;
+  padding: 100px 20px;
   max-width: 800px;
   margin: 0 auto;
 }
@@ -67,7 +67,7 @@
 }
 
 .event-label {
-  font-size: 0.8rem;
+  font-size: clamp(0.7rem, 2vw, 0.8rem);
   font-weight: 700;
   letter-spacing: 2px;
   color: var(--primary);
@@ -75,9 +75,10 @@
 }
 
 .ticket-header-detailed h1 {
-  font-size: 2.2rem;
+  font-size: clamp(1.5rem, 5vw, 2.2rem);
   margin-bottom: 15px;
   color: #fff;
+  line-height: 1.2;
 }
 
 .event-date {
@@ -189,11 +190,11 @@
   }
   
   .ticket-header-detailed {
-    padding: 30px;
+    padding: 30px 20px;
     flex-direction: column;
-    align-items: center; /* Center header content on mobile */
-    text-align: center;
-    gap: 20px;
+    align-items: flex-start;
+    text-align: left;
+    gap: 12px;
   }
   
   /* Adjust notches for mobile to be less intrusive */
@@ -208,28 +209,37 @@
   .ticket-header-detailed::after { right: -10px; }
 
   .ticket-header-detailed h1 {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
+    margin-bottom: 5px;
+  }
+
+  .ticket-status-badge {
+    position: absolute;
+    top: 30px;
+    right: 20px;
+    padding: 6px 14px;
+    font-size: 0.75rem;
   }
   
   .ticket-body-detailed {
     grid-template-columns: 1fr;
-    padding: 30px;
-    gap: 40px;
+    padding: 30px 20px;
+    gap: 30px;
   }
   
   .ticket-info-grid {
-    gap: 30px;
-    text-align: center;
+    gap: 25px;
+    text-align: left;
   }
   
   .info-item {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
   }
   
   .info-item p {
-    font-size: 1.15rem;
+    font-size: 1.05rem;
   }
   
   .ticket-qr-section {
@@ -249,23 +259,121 @@
 
 @media (max-width: 480px) {
   .ticket-detail-page {
-    padding: 40px 15px;
+    padding: 40px 10px;
+  }
+
+  .ticket-header-detailed {
+    padding: 25px 15px;
   }
 
   .ticket-header-detailed h1 {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
+    padding-right: 80px; /* Space for the absolute badge */
   }
   
   .ticket-body-detailed {
-    padding: 25px 20px;
+    padding: 20px 15px;
+    gap: 25px;
   }
   
+  .ticket-info-grid {
+    gap: 20px;
+  }
+
+  .info-item p {
+    font-size: 0.9rem;
+  }
+
   .ticket-qr-section {
-    padding: 20px;
+    padding: 15px;
+    gap: 15px;
+  }
+
+  .qr-container {
+    padding: 8px;
+  }
+
+  .qr-hint {
+    font-size: 0.8rem;
   }
 
   .download-btn {
     width: 100%;
     justify-content: center;
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+
+  .ticket-status-badge {
+    padding: 6px 15px;
+    font-size: 0.8rem;
+  }
+
+  /* Hide notches only on extremely small screens if preferred, 
+     but let's keep them and just make them smaller */
+  .ticket-header-detailed::before,
+  .ticket-header-detailed::after {
+    width: 16px;
+    height: 16px;
+    bottom: -8px;
+  }
+
+  .ticket-header-detailed::before { left: -8px; }
+  .ticket-header-detailed::after { right: -8px; }
+}
+
+@media (max-width: 380px) {
+  .ticket-status-badge {
+    position: static;
+    margin-top: 10px;
+  }
+}
+
+/* Error state */
+.error-message-centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 20px;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  margin: 40px auto;
+  max-width: 500px;
+}
+
+.error-icon {
+  margin-bottom: 24px;
+  color: var(--muted);
+  opacity: 0.5;
+}
+
+.error-message-centered h2 {
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  color: #fff;
+}
+
+.error-message-centered p {
+  color: var(--muted);
+  margin-bottom: 30px;
+}
+
+@media (max-width: 480px) {
+  .error-message-centered {
+    padding: 60px 15px;
+    margin: 20px auto;
+  }
+}
+
+@media (max-width: 360px) {
+  .ticket-header-detailed h1 {
+    font-size: 1.25rem;
+  }
+
+  .info-item p {
+    font-size: 0.9rem;
   }
 }
