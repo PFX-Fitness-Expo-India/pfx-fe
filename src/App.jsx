@@ -146,7 +146,7 @@ function AppInner() {
               <SportsGrid />
               <Schedule />
               <Tickets />
-              <Sponsors />
+              {/* <Sponsors /> */}
               <Registration />
               {/* <Dashboard /> */}
             </>
