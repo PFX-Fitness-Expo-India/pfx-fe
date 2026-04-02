@@ -13,7 +13,11 @@ export default function Registration() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    let newValue = value;
+    if (name === 'name' || name === 'email') {
+      newValue = value.replace(/[^a-zA-Z0-9@. ]/g, '');
+    }
+    setFormData(prev => ({ ...prev, [name]: newValue }));
     if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
   };
 

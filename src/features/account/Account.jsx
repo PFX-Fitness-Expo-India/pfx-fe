@@ -24,6 +24,10 @@ export default function Account() {
   });
   const [errors, setErrors] = useState({});
   const [showOldPassword, setShowOldPassword] = useState(false);
+
+  const handleAllowedChars = (val) => {
+    return val.replace(/[^a-zA-Z0-9@. ]/g, '');
+  };
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -389,7 +393,7 @@ export default function Account() {
                       required 
                       placeholder="Enter current password"
                       value={passwordData.oldPassword}
-                      onChange={e => setPasswordData({...passwordData, oldPassword: e.target.value})}
+                      onChange={e => setPasswordData({...passwordData, oldPassword: handleAllowedChars(e.target.value)})}
                     />
                     <button 
                       type="button" 
@@ -417,7 +421,7 @@ export default function Account() {
                         placeholder="Min 8 characters"
                         value={passwordData.newPassword}
                         onChange={e => {
-                          const val = e.target.value;
+                          const val = handleAllowedChars(e.target.value);
                           setPasswordData({...passwordData, newPassword: val});
                           validateField('newPassword', val);
                         }}
@@ -448,7 +452,7 @@ export default function Account() {
                         placeholder="Repeat new password"
                         value={passwordData.confirmPassword}
                         onChange={e => {
-                          const val = e.target.value;
+                          const val = handleAllowedChars(e.target.value);
                           setPasswordData({...passwordData, confirmPassword: val});
                           validateField('confirmPassword', val);
                         }}
