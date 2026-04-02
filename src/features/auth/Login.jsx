@@ -10,6 +10,10 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const formRef = useRef(null);
 
+  const handleInput = (e) => {
+    e.target.value = e.target.value.replace(/[^a-zA-Z0-9@. ]/g, '');
+  };
+
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
@@ -53,13 +57,13 @@ export default function Login() {
           <form ref={formRef} className="form" onSubmit={handleSubmit}>
             <div className="form-field full">
               <label htmlFor="credentials">Email or Username</label>
-              <input id="credentials" name="credentials" type="text" required disabled={loading} />
+              <input id="credentials" name="credentials" type="text" required disabled={loading} onInput={handleInput} />
             </div>
 
             <div className="form-field full">
               <label htmlFor="password">Password</label>
               <div className="password-input-wrapper" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                <input id="password" name="password" type={showPassword ? "text" : "password"} required disabled={loading} style={{ width: '100%', paddingRight: '54px' }} />
+                <input id="password" name="password" type={showPassword ? "text" : "password"} required disabled={loading} style={{ width: '100%', paddingRight: '54px' }} onInput={handleInput} />
                 <button 
                   type="button" 
                   className="password-toggle"

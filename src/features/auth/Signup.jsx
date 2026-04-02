@@ -15,6 +15,10 @@ export default function Signup() {
   const [role, setRole] = useState('visitor');
   const formRef = useRef(null);
 
+  const handleInput = (e) => {
+    e.target.value = e.target.value.replace(/[^a-zA-Z0-9@. ]/g, '');
+  };
+
   function validateForm(data) {
     const errors = {};
     if (!data.userName) errors.userName = 'Full Name is required';
@@ -93,19 +97,19 @@ export default function Signup() {
           <form ref={formRef} className="form" onSubmit={handleSubmit} noValidate>
             <div className={`form-field full ${formErrors.userName ? 'error' : ''}`}>
               <label htmlFor="userName">Full Name</label>
-              <input id="userName" name="userName" type="text" disabled={loading} />
+              <input id="userName" name="userName" type="text" disabled={loading} onInput={handleInput} />
               {formErrors.userName && <span className="field-error">{formErrors.userName}</span>}
             </div>
 
             <div className="form-row">
               <div className={`form-field ${formErrors.email ? 'error' : ''}`}>
                 <label htmlFor="email">Email</label>
-                <input id="email" name="email" type="email" disabled={loading} />
+                <input id="email" name="email" type="email" disabled={loading} onInput={handleInput} />
                 {formErrors.email && <span className="field-error">{formErrors.email}</span>}
               </div>
               <div className={`form-field ${formErrors.phoneNumber ? 'error' : ''}`}>
                 <label htmlFor="phoneNumber">Phone Number</label>
-                <input id="phoneNumber" name="phoneNumber" type="tel" disabled={loading} />
+                <input id="phoneNumber" name="phoneNumber" type="tel" disabled={loading} onInput={handleInput} />
                 {formErrors.phoneNumber && <span className="field-error">{formErrors.phoneNumber}</span>}
               </div>
             </div>
@@ -114,7 +118,7 @@ export default function Signup() {
               <div className={`form-field ${formErrors.password ? 'error' : ''}`}>
                 <label htmlFor="password">Password</label>
                 <div className="password-input-wrapper" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                  <input id="password" name="password" type={showPassword ? "text" : "password"} disabled={loading} style={{ width: '100%', paddingRight: '54px' }} />
+                  <input id="password" name="password" type={showPassword ? "text" : "password"} disabled={loading} style={{ width: '100%', paddingRight: '54px' }} onInput={handleInput} />
                   <button 
                     type="button" 
                     className="password-toggle"
