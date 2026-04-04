@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useModal } from '../../contexts/ModalContext';
+import api from '../../services/api';
 
 export default function Registration() {
   const { showModal, closeModal } = useModal();
   const [formData, setFormData] = useState({
-    name: '',
+    fullName: '',
     email: '',
     message: ''
   });
@@ -14,7 +15,7 @@ export default function Registration() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     let newValue = value;
-    if (name === 'name' || name === 'email') {
+    if (name === 'fullName' || name === 'email') {
       newValue = value.replace(/[^a-zA-Z0-9@. ]/g, '');
     }
     setFormData(prev => ({ ...prev, [name]: newValue }));
@@ -25,7 +26,7 @@ export default function Registration() {
     e.preventDefault();
     
     const newErrors = {};
-    if (!formData.name.trim()) newErrors.name = 'Full Name is required';
+    if (!formData.fullName.trim()) newErrors.fullName = 'Full Name is required';
     if (!formData.email.trim()) {
       newErrors.email = 'Email Address is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -41,26 +42,19 @@ export default function Registration() {
     setIsSubmitting(true);
 
     try {
-      // Direct call to Vercel API Route
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+      // Use the centralized axios instance
+      const response = await api.post('/api/contacts', formData);
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setFormData({ name: '', email: '', message: '' });
-        showModal('Thank You!', 'Your message has been sent. We will get back to you shortly.', 'success');
+      if (response.status === 201 || response.status === 200) {
+        setFormData({ fullName: '', email: '', message: '' });
+        showModal('Thank You!', 'Your message has been sent successfully. Our team will get back to you shortly.', 'success');
       } else {
-        throw new Error(data.message || 'Failed to send message.');
+        throw new Error(response.data?.message || 'Failed to send message.');
       }
     } catch (error) {
       console.error('Contact error:', error);
-      showModal('Error', error.message || 'Something went wrong. In local Dev (npm run dev), Vercel API routes cannot be tested natively unless using Vercel CLI.', 'error');
+      const errorMessage = error.response?.data?.message || error.message || 'Something went wrong while sending your message. Please try again later.';
+      showModal('Error', errorMessage, 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -99,13 +93,13 @@ export default function Registration() {
                 <label htmlFor="contactName">Full Name</label>
                 <input 
                   id="contactName" 
-                  name="name" 
-                  placeholder="John Doe"
-                  value={formData.name}
+                  name="fullName" 
+                  placeholder="PFX Sports"
+                  value={formData.fullName}
                   onChange={handleChange}
-                  style={errors.name ? { borderColor: '#ff4444' } : {}}
+                  style={errors.fullName ? { borderColor: '#ff4444' } : {}}
                 />
-                {errors.name && <span style={{ color: '#ff4444', fontSize: '0.85rem', marginTop: '4px' }}>{errors.name}</span>}
+                {errors.fullName && <span style={{ color: '#ff4444', fontSize: '0.85rem', marginTop: '4px' }}>{errors.fullName}</span>}
               </div>
             </div>
             <div className="form-row">
@@ -115,7 +109,7 @@ export default function Registration() {
                   id="contactEmail" 
                   name="email" 
                   type="email" 
-                  placeholder="johndoe@example.com"
+                  placeholder="pfxsports@gmail.com"
                   value={formData.email}
                   onChange={handleChange}
                   style={errors.email ? { borderColor: '#ff4444' } : {}}
