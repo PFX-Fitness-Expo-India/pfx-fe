@@ -142,10 +142,10 @@ export default function EventDetail() {
                 <div className="subcategory-list">
                   {event.subcategories.map(cat => (
                     <span 
-                      key={cat._id} 
+                      key={cat} 
                       className="sport-modal-badge subcategory-badge"
                     >
-                      {cat.name}
+                      {cat}
                     </span>
                   ))}
                 </div>
