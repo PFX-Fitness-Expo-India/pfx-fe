@@ -120,4 +120,20 @@ export const authService = {
     }
     return data;
   },
+
+  verifyEmail: async (token) => {
+    const response = await fetch(`${API_BASE_URL}/verify-email/${token}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const data = await response.json();
+    if (!response.ok || (data.statusCode && data.statusCode >= 400)) {
+      const error = new Error(data.message || 'Email verification failed');
+      error.statusCode = data.statusCode || response.status;
+      throw error;
+    }
+    return data;
+  },
 };

@@ -19,6 +19,7 @@ import Signup from "./features/auth/Signup";
 import Account from "./features/account/Account";
 import TicketDetail from "./features/tickets/TicketDetail";
 import EventDetail from "./features/sports/EventDetail";
+import VerifyEmail from "./features/auth/VerifyEmail";
 import PrivacyPolicy from "./features/legal/PrivacyPolicy";
 import TermsAndConditions from "./features/legal/TermsAndConditions";
 import RefundPolicy from "./features/legal/RefundPolicy";
@@ -147,7 +148,7 @@ function AppInner() {
               <Schedule />
               <Tickets />
               {/* <Sponsors /> */}
-              <Registration />
+              {/* <Registration /> */}
               {/* <Dashboard /> */}
             </>
           }
@@ -185,6 +186,7 @@ function AppInner() {
           }
         />
         <Route path="/events/:eventId" element={<EventDetail />} />
+        <Route path="/verify-email/:token" element={<VerifyEmail />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
         <Route path="/refund-policy" element={<RefundPolicy />} />
