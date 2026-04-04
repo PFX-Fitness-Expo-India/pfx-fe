@@ -30,6 +30,7 @@ import {
   AthleteRegistrationModal,
   RegistrationSuccessModal,
 } from "./features/modals";
+import ResetPassword from "./features/auth/ResetPassword";
 
 // ─── Route Guards ─────────────────────────────────────────────────────────────
 
@@ -190,6 +191,7 @@ function AppInner() {
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
         <Route path="/refund-policy" element={<RefundPolicy />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
       </Routes>
 
       <SportModal />

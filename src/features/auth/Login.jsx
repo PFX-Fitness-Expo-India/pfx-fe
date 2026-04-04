@@ -1,6 +1,7 @@
-import { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAppContext } from '../../contexts/AppContext';
+import { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../../contexts/AppContext";
+import ForgotPasswordModal from "./ForgotPasswordModal";
 
 export default function Login() {
   const { loginUser } = useAppContext();
@@ -8,6 +9,7 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isForgotModalOpen, setIsForgotModalOpen] = useState(false);
   const formRef = useRef(null);
 
   const handleInput = (e) => {
@@ -85,6 +87,23 @@ export default function Login() {
                   )}
                 </button>
               </div>
+              <div style={{ textAlign: 'right', marginTop: '8px' }}>
+                <button
+                  type="button"
+                  className="btn-link"
+                  onClick={() => setIsForgotModalOpen(true)}
+                  style={{ 
+                    background: 'none', 
+                    border: 'none', 
+                    color: 'var(--muted)', 
+                    fontSize: '0.85rem', 
+                    cursor: 'pointer',
+                    padding: 0
+                  }}
+                >
+                  Forgot Password?
+                </button>
+              </div>
             </div>
 
             <div className="form-footer">
@@ -100,6 +119,10 @@ export default function Login() {
           </form>
         </div>
       </div>
+      <ForgotPasswordModal 
+        isOpen={isForgotModalOpen} 
+        onClose={() => setIsForgotModalOpen(false)} 
+      />
     </section>
   );
 }
