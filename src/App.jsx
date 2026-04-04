@@ -148,7 +148,7 @@ function AppInner() {
               <Schedule />
               <Tickets />
               {/* <Sponsors /> */}
-              {/* <Registration /> */}
+              <Registration />
               {/* <Dashboard /> */}
             </>
           }

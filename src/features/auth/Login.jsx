@@ -56,7 +56,7 @@ export default function Login() {
 
           <form ref={formRef} className="form" onSubmit={handleSubmit}>
             <div className="form-field full">
-              <label htmlFor="credentials">Email or Username</label>
+              <label htmlFor="credentials">Email</label>
               <input id="credentials" name="credentials" type="text" required disabled={loading} onInput={handleInput} />
             </div>
 
