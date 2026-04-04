@@ -59,7 +59,7 @@ export default function ForgotPasswordModal({ isOpen, onClose }) {
           <h2 className="mb-2" style={{ fontFamily: "var(--oswald)", textTransform: "uppercase", letterSpacing: "1px", color: "var(--primary)" }}>
             Forgot Password?
           </h2>
-          <p className="text-muted small">
+          <p className="text-white small">
             Enter your email address and we'll send you a link to reset your password.
           </p>
         </div>
@@ -77,7 +77,7 @@ export default function ForgotPasswordModal({ isOpen, onClose }) {
         ) : (
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="mb-4">
-              <label className="form-label text-muted small mb-2" style={{ textTransform: "uppercase", fontWeight: "600" }}>
+              <label className="form-label text-white small mb-2" style={{ textTransform: "uppercase", fontWeight: "600" }}>
                 Email Address
               </label>
               <input
@@ -115,7 +115,7 @@ export default function ForgotPasswordModal({ isOpen, onClose }) {
 
         <div className="text-center mt-4">
           <button 
-            className="btn btn-link text-muted small p-0" 
+            className="btn btn-link text-white small p-0" 
             onClick={onClose}
             style={{ textDecoration: "none" }}
           >
