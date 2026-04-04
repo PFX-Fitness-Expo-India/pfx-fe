@@ -26,103 +26,102 @@ export default function ForgotPasswordModal({ isOpen, onClose }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div 
-        className="modal-content auth-modal p-4 p-md-5" 
+        className="registration-card" 
         onClick={(e) => e.stopPropagation()}
-        style={{
-          background: "rgba(10, 10, 10, 0.95)",
-          backdropFilter: "blur(20px)",
-          border: "1px solid rgba(255, 255, 255, 0.1)",
-          borderRadius: "24px",
-          maxWidth: "500px",
-          width: "90%",
-          position: "relative"
-        }}
+        style={{ maxWidth: '500px', width: '95%', position: 'relative' }}
       >
         <button 
-          className="modal-close" 
+          className="modal-close-btn" 
           onClick={onClose}
+          aria-label="Close"
           style={{
-            position: "absolute",
-            top: "20px",
-            right: "20px",
-            background: "none",
-            border: "none",
-            color: "rgba(255, 255, 255, 0.5)",
-            fontSize: "1.5rem",
-            cursor: "pointer"
+            position: 'absolute',
+            top: '15px',
+            right: '20px',
+            background: 'none',
+            border: 'none',
+            color: 'var(--muted)',
+            fontSize: '1.5rem',
+            cursor: 'pointer',
+            zIndex: 10
           }}
         >
           &times;
         </button>
 
-        <div className="text-center mb-4">
-          <h2 className="mb-2" style={{ fontFamily: "var(--oswald)", textTransform: "uppercase", letterSpacing: "1px", color: "var(--primary)" }}>
-            Forgot Password?
-          </h2>
-          <p className="text-white small">
-            Enter your email address and we'll send you a link to reset your password.
-          </p>
-        </div>
+          <div className="section-header-compact text-center mb-4">
+            <p className="eyebrow" style={{ color: 'var(--primary)', fontWeight: '700' }}>Password Recovery</p>
+            <h3>Forgot Password?</h3>
+            <p className="small mt-2" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+              Enter your email address and we'll send you a link to reset your password.
+            </p>
+          </div>
 
-        {status === "success" ? (
-          <div className="text-center animate-fade-in">
-            <div className="success-icon mb-4" style={{ color: "#4BB543", fontSize: "3rem" }}>
-              <i className="fas fa-check-circle"></i>
+          {status === "success" ? (
+            <div className="text-center">
+              <div className="success-icon mb-4" style={{ color: "var(--primary)", fontSize: "3rem" }}>
+                <i className="fas fa-check-circle"></i>
+              </div>
+              <p className="mb-4 text-white">{message}</p>
+              <button 
+                className="btn primary px-4 w-100" 
+                onClick={onClose}
+              >
+                Done
+              </button>
             </div>
-            <p className="mb-4" style={{ color: "var(--muted)" }}>{message}</p>
-            <button className="btn primary glow w-100 py-3" onClick={onClose}>
-              Done
+          ) : (
+            <form onSubmit={handleSubmit} className="form">
+              <div className="form-field full mb-4">
+                <label>Email Address</label>
+                <input
+                  type="email"
+                  placeholder="name@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={status === "loading"}
+                />
+              </div>
+
+              {status === "error" && (
+                <div className="error-text mb-4 text-center text-danger">
+                  {message}
+                </div>
+              )}
+
+              <div className="form-footer">
+                <div className="registration-actions" style={{ justifyContent: 'center' }}>
+                  <button 
+                    type="submit" 
+                    className="btn primary px-5" 
+                    disabled={status === "loading"}
+                    style={{ minWidth: '200px' }}
+                  >
+                    {status === "loading" ? "Sending..." : "Send Reset Link"}
+                  </button>
+                </div>
+              </div>
+            </form>
+          )}
+
+          <div className="text-center mt-4">
+            <button 
+              className="btn-link" 
+              onClick={onClose}
+              style={{ 
+                background: 'none', 
+                border: 'none', 
+                color: '#fff', 
+                fontSize: '0.85rem', 
+                cursor: 'pointer',
+                fontWeight: '600'
+              }}
+            >
+              Back to Login
             </button>
           </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="auth-form">
-            <div className="mb-4">
-              <label className="form-label text-white small mb-2" style={{ textTransform: "uppercase", fontWeight: "600" }}>
-                Email Address
-              </label>
-              <input
-                type="email"
-                className="form-control bg-dark-transparent text-white border-0 py-3 px-4"
-                placeholder="name@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                disabled={status === "loading"}
-                style={{
-                  borderRadius: "12px",
-                  background: "rgba(255, 255, 255, 0.05)",
-                  border: "1px solid rgba(255, 255, 255, 0.05)"
-                }}
-              />
-            </div>
-
-            {status === "error" && (
-              <div className="alert alert-danger py-2 px-3 small border-0 mb-4" style={{ background: "rgba(255, 68, 68, 0.1)", color: "#ff4444", borderRadius: "8px" }}>
-                {message}
-              </div>
-            )}
-
-            <button 
-              type="submit" 
-              className={`btn primary glow w-100 py-3 ${status === "loading" ? "disabled" : ""}`}
-              disabled={status === "loading"}
-              style={{ fontSize: "1rem", fontWeight: "600" }}
-            >
-              {status === "loading" ? "Sending Link..." : "Send Reset Link"}
-            </button>
-          </form>
-        )}
-
-        <div className="text-center mt-4">
-          <button 
-            className="btn btn-link text-white small p-0" 
-            onClick={onClose}
-            style={{ textDecoration: "none" }}
-          >
-            Back to Login
-          </button>
         </div>
-      </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
         .modal-overlay {
@@ -131,20 +130,16 @@ export default function ForgotPasswordModal({ isOpen, onClose }) {
           left: 0;
           width: 100%;
           height: 100%;
-          background: rgba(0, 0, 0, 0.85);
+          background: rgba(0, 0, 0, 0.3);
           display: flex;
           align-items: center;
           justify-content: center;
           z-index: 9999;
-          backdrop-filter: blur(5px);
-        }
-        .bg-dark-transparent:focus {
-          background: rgba(255, 255, 255, 0.08) !important;
-          box-shadow: 0 0 0 2px rgba(255, 68, 68, 0.2);
-          outline: none;
+          backdrop-filter: blur(8px);
+          padding: 20px;
         }
         .animate-fade-in {
-          animation: fadeIn 0.5s ease-out;
+          animation: fadeIn 0.4s ease-out forwards;
         }
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(10px); }

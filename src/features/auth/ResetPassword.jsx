@@ -44,155 +44,105 @@ export default function ResetPassword() {
   };
 
   return (
-    <section className="section section-dark" style={{ minHeight: "80vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <section className="section login-section">
       <div className="container narrow-container">
-        <div 
-          className="registration-card p-4 p-md-5" 
-          style={{ 
-            background: "rgba(255, 255, 255, 0.02)", 
-            backdropFilter: "blur(20px)", 
-            border: "1px solid rgba(255, 255, 255, 0.05)", 
-            borderRadius: "24px" 
-          }}
-        >
-          <div className="text-center mb-5">
-            <h2 className="mb-3" style={{ fontFamily: "var(--oswald)", textTransform: "uppercase", letterSpacing: "1px", color: "var(--primary)" }}>
-              Reset Password
-            </h2>
-            <p className="text-muted">Enter your new password below to regain access to your account.</p>
+        <div className="registration-card">
+          <div className="section-header-compact text-center mb-4">
+            <p className="eyebrow" style={{ color: 'var(--primary)', fontWeight: '700' }}>Secure Access</p>
+            <h3>Reset your password</h3>
+            <p className="small mt-2" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+              Enter your new password below to regain access to your account.
+            </p>
+            {status === "error" && <p className="error-text mt-3 text-danger">{message}</p>}
           </div>
 
           {status === "success" ? (
-            <div className="text-center animate-fade-in">
-              <div className="success-icon mb-4" style={{ color: "var(--primary)", fontSize: "4rem" }}>
-                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="12" cy="12" r="10" stroke="var(--primary)" strokeWidth="1" fill="rgba(255, 68, 68, 0.1)"/>
-                  <path d="M8 12L11 15L16 9" stroke="var(--primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <div className="text-center">
+              <div className="success-icon mb-4" style={{ color: "var(--primary)", fontSize: "3.5rem" }}>
+                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M22 4L12 14.01l-3-3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <h3 className="mb-3" style={{ color: "var(--primary)" }}>Success!</h3>
-              <p className="mb-4 text-muted">{message}</p>
+              <p className="mb-4 text-white">{message}</p>
               <p className="small text-primary animate-pulse">Redirecting to login in 3s...</p>
               <button 
-                className="btn primary glow w-100 py-3 mt-2" 
+                className="btn primary px-4 w-100" 
                 onClick={() => navigate("/login")}
-                style={{ fontWeight: "600" }}
               >
                 Go to Login
               </button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="auth-form">
-              <div className="mb-4">
-                <label className="form-label text-muted small mb-2" style={{ textTransform: "uppercase", fontWeight: "600" }}>
-                  New Password
-                </label>
-                <div style={{ position: "relative" }}>
+            <form onSubmit={handleSubmit} className="form">
+              <div className="form-field full mb-4">
+                <label style={{ color: '#fff' }}>New Password</label>
+                <div className="password-input-wrapper" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                   <input
                     type={showPassword ? "text" : "password"}
-                    className="form-control bg-dark-transparent text-white border-0 py-3 px-4"
                     placeholder="Min 6 characters"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    style={{
-                      borderRadius: "12px",
-                      background: "rgba(255, 255, 255, 0.05)",
-                      border: "1px solid rgba(255, 255, 255, 0.05)",
-                      width: "100%",
-                      paddingRight: "50px"
-                    }}
+                    style={{ width: '100%', paddingRight: '54px', color: '#fff' }}
                   />
                   <button 
-                    type="button"
+                    type="button" 
+                    className="password-toggle"
                     onClick={() => setShowPassword(!showPassword)}
-                    style={{
-                      position: "absolute",
-                      right: "15px",
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      background: "none",
-                      border: "none",
-                      color: "rgba(255, 255, 255, 0.3)",
-                      cursor: "pointer"
-                    }}
+                    style={{ position: 'absolute', right: '14px', background: 'none', border: 'none', color: 'rgba(255, 255, 255, 0.5)', display: 'flex', alignItems: 'center', cursor: 'pointer', padding: 0 }}
+                    tabIndex="-1"
                   >
-                    {showPassword ? "Hide" : "Show"}
+                    {showPassword ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                      </svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    )}
                   </button>
                 </div>
               </div>
 
-              <div className="mb-5">
-                <label className="form-label text-muted small mb-2" style={{ textTransform: "uppercase", fontWeight: "600" }}>
-                  Confirm Password
-                </label>
+              <div className="form-field full mb-4">
+                <label style={{ color: '#fff' }}>Confirm Password</label>
                 <input
                   type={showPassword ? "text" : "password"}
-                  className="form-control bg-dark-transparent text-white border-0 py-3 px-4"
-                  placeholder="Repeat new password"
+                  placeholder="Repeat account password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  style={{
-                    borderRadius: "12px",
-                    background: "rgba(255, 255, 255, 0.05)",
-                    border: "1px solid rgba(255, 255, 255, 0.05)",
-                    width: "100%"
-                  }}
+                  style={{ color: '#fff' }}
                 />
               </div>
 
-              {status === "error" && (
-                <div className="alert alert-danger py-2 px-3 small border-0 mb-4" style={{ background: "rgba(255, 68, 68, 0.1)", color: "#ff4444", borderRadius: "8px" }}>
-                  {message}
+              <div className="form-footer">
+                <div className="registration-actions">
+                  <button 
+                    type="button" 
+                    className="btn subtle btn-sm" 
+                    onClick={() => navigate("/login")}
+                    style={{ color: '#fff' }}
+                  >
+                    Return to Login
+                  </button>
+                  <button 
+                    type="submit" 
+                    className="btn primary px-4" 
+                    disabled={status === "loading"}
+                  >
+                    {status === "loading" ? "Processing..." : "Reset Password"}
+                  </button>
                 </div>
-              )}
-
-              <button 
-                type="submit" 
-                className={`btn primary glow w-100 py-3 ${status === "loading" ? "disabled" : ""}`}
-                disabled={status === "loading"}
-                style={{ fontSize: "1rem", fontWeight: "600" }}
-              >
-                {status === "loading" ? "Resetting Password..." : "Reset Password"}
-              </button>
-              
-              <div className="text-center mt-4">
-                <button 
-                  type="button" 
-                  className="btn btn-link text-muted small p-0" 
-                  onClick={() => navigate("/login")}
-                  style={{ textDecoration: "none" }}
-                >
-                  Return to Login
-                </button>
               </div>
             </form>
           )}
         </div>
       </div>
-
-      <style dangerouslySetInnerHTML={{ __html: `
-        .bg-dark-transparent:focus {
-          background: rgba(255, 255, 255, 0.08) !important;
-          box-shadow: 0 0 0 2px rgba(255, 68, 68, 0.2);
-          outline: none;
-        }
-        .animate-pulse {
-          animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: .5; }
-        }
-        .animate-fade-in {
-          animation: fadeIn 0.8s ease-out forwards;
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}} />
     </section>
   );
 }
