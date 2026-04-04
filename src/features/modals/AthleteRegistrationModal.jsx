@@ -38,6 +38,7 @@ export default function AthleteRegistrationModal() {
       age: "0",
       gender: "male",
       weight: "0",
+      subcategory: "",
     };
   });
   const [errors, setErrors] = useState({});
@@ -52,9 +53,18 @@ export default function AthleteRegistrationModal() {
           age: "0",
           gender: "male",
           weight: "0",
+          subcategory: "",
         });
       }
       setErrors({});
+    } else {
+      // Initialize subcategory to first option if not set
+      if (event.haveSubcategory && event.subcategories?.length > 0) {
+        setFormData(prev => ({
+          ...prev,
+          subcategory: prev.subcategory || event.subcategories[0]
+        }));
+      }
     }
   }, [event]);
 
@@ -107,6 +117,9 @@ export default function AthleteRegistrationModal() {
       }
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
+      if (errors[name]) {
+        setErrors((prev) => ({ ...prev, [name]: null }));
+      }
     }
   };
 
@@ -123,6 +136,10 @@ export default function AthleteRegistrationModal() {
       formData.weight === "0."
     ) {
       newErrors.weight = "Please enter a valid weight.";
+    }
+
+    if (event.haveSubcategory && !formData.subcategory) {
+      newErrors.subcategory = "Please select a category.";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -164,6 +181,7 @@ export default function AthleteRegistrationModal() {
           age: parseInt(formData.age),
           gender: formData.gender,
           weight: parseFloat(formData.weight),
+          subcategory: formData.subcategory,
           paymentMethod: "online",
         };
         const registrationRes = await registrationService.registerAthlete(
@@ -180,6 +198,7 @@ export default function AthleteRegistrationModal() {
             amount: event.eventPrice,
             registrationId: registrationId,
             visitorId: "",
+            category: formData.subcategory,
           },
           token,
         );
@@ -262,6 +281,7 @@ export default function AthleteRegistrationModal() {
           age: parseInt(formData.age),
           gender: formData.gender,
           weight: parseFloat(formData.weight),
+          subcategory: formData.subcategory,
         };
         await registrationService.registerAthlete(athleteData, token);
 
@@ -390,6 +410,34 @@ export default function AthleteRegistrationModal() {
               )}
             </div>
           </div>
+
+          {event.haveSubcategory && event.subcategories?.length > 0 && (
+            <div className="form-row">
+              <div className="form-field full">
+                <label htmlFor="regSubcategory">Event Category</label>
+                <CustomSelect
+                  id="regSubcategory"
+                  name="subcategory"
+                  value={formData.subcategory}
+                  onChange={handleChange}
+                  options={event.subcategories.map(cat => ({ value: cat, label: cat }))}
+                  placeholder="Select Category"
+                  style={errors.subcategory ? { borderColor: "#ff4444" } : {}}
+                />
+                {errors.subcategory && (
+                  <span
+                    style={{
+                      color: "#ff4444",
+                      fontSize: "0.85rem",
+                      marginTop: "4px",
+                    }}
+                  >
+                    {errors.subcategory}
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
           <div style={{ marginTop: "24px" }}>
             <p
               style={{
