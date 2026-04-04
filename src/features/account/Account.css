@@ -358,89 +358,116 @@
 .account-skeleton-line.short { width: 60%; }
 .account-skeleton-footer { height: 40px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; margin-top: 20px; }
 
-/* Profile Section - NEW */
+/* Profile Section Overhaul */
 .account-profile-section {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .account-profile-card {
-  max-width: 650px;
-  margin: 0 auto;
+  width: 100%;
   background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 30px;
-  padding: 40px;
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+  padding: 30px 40px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.account-profile-card::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, rgba(255, 106, 61, 0.1), transparent 70%);
+  z-index: -1;
 }
 
 .account-profile-header {
   display: flex;
   align-items: center;
-  gap: 28px;
-  margin-bottom: 40px;
-  padding-bottom: 32px;
+  gap: 30px;
+  margin-bottom: 30px;
+  padding-bottom: 30px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .account-profile-avatar-large {
-  width: 90px;
-  height: 90px;
+  width: 80px;
+  height: 80px;
   background: linear-gradient(135deg, var(--primary), #ff6a3d);
-  border-radius: 25px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.5rem;
+  font-size: 2.2rem;
   font-family: var(--oswald);
   color: white;
-  box-shadow: 0 15px 30px rgba(255, 48, 64, 0.25);
+  box-shadow: 0 10px 25px rgba(255, 59, 48, 0.25);
+  transition: transform 0.4s ease;
+  flex-shrink: 0;
+}
+
+.account-profile-avatar-large:hover {
+  transform: scale(1.05) rotate(1deg);
 }
 
 .account-profile-title h3 {
-  font-size: 1.8rem;
+  font-size: 2rem;
+  font-family: var(--oswald);
   margin-bottom: 8px;
   color: var(--text);
+  letter-spacing: 0.02em;
 }
 
 .account-profile-badges {
   display: flex;
-  gap: 10px;
+  gap: 12px;
 }
 
 .account-role-badge {
-  background: rgba(255, 255, 255, 0.08);
-  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 6px 16px;
   border-radius: 50px;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: var(--muted);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 600;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .account-verified-badge {
-  background: rgba(52, 199, 89, 0.1);
+  background: rgba(52, 199, 89, 0.12);
   color: #34c759;
-  padding: 4px 12px;
+  padding: 6px 16px;
   border-radius: 50px;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-weight: 600;
+  gap: 8px;
+  font-weight: 700;
+  border: 1px solid rgba(52, 199, 89, 0.2);
 }
 
 .account-profile-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 32px;
+  gap: 24px 40px;
 }
 
 .account-profile-item {
   display: flex;
-  gap: 16px;
+  gap: 20px;
   align-items: flex-start;
+  min-width: 0; /* Important for long-text handling */
 }
 
 .account-profile-item-icon {
@@ -453,28 +480,32 @@
   justify-content: center;
   color: var(--primary);
   flex-shrink: 0;
+  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.02);
 }
 
 .account-profile-item-text {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
+  min-width: 0; /* Important for text-wrapping */
 }
 
 .account-profile-item-text .label {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.1em;
   color: var(--muted);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .account-profile-item-text .value {
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: var(--text);
-  font-weight: 500;
-  word-break: break-all;
+  font-weight: 600;
+  line-height: 1.4;
+  word-break: break-word; /* Ensure long emails wrap */
 }
+
 
 /* Security Section - Unique to Account */
 .account-password-section {
@@ -579,9 +610,9 @@
   background: linear-gradient(135deg, var(--primary), #ff6a3d);
   color: white;
   border: none;
-  padding: 16px 64px;
-  border-radius: 16px;
-  font-size: 1.1rem;
+  padding: 12px 32px;
+  border-radius: 12px;
+  font-size: 0.9rem;
   font-family: var(--oswald);
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -590,8 +621,8 @@
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
-  gap: 12px;
-  box-shadow: 0 15px 35px rgba(255, 48, 64, 0.3);
+  gap: 8px;
+  box-shadow: 0 10px 25px rgba(255, 48, 64, 0.25);
 }
 
 .account-btn-update-password:hover:not(:disabled) {
@@ -626,7 +657,11 @@
   .account-password-card { padding: 20px 16px; border-radius: 20px; }
   .account-section-header h2 { font-size: 1.25rem; }
   .account-password-section { margin-top: 20px; }
-  .account-profile-card { padding: 20px; border-radius: 20px; }
+  .account-profile-card { padding: 30px 20px; border-radius: 20px; }
+  .account-profile-grid { grid-template-columns: 1fr; gap: 24px; }
+  .account-profile-header { gap: 20px; }
+  .account-profile-avatar-large { width: 90px; height: 90px; font-size: 2.5rem; }
+  .account-profile-title h3 { font-size: 1.8rem; }
 }
 
 @media (max-width: 480px) {
@@ -656,13 +691,13 @@
   .account-ticket-card { padding: 14px; }
   .account-event-name { font-size: 1.05rem; }
   .account-input-wrapper input { padding: 10px 14px; font-size: 0.85rem; }
-  .account-profile-header { gap: 12px; margin-bottom: 24px; padding-bottom: 16px; }
-  .account-profile-avatar-large { width: 60px; height: 60px; font-size: 1.8rem; border-radius: 15px; }
-  .account-profile-title h3 { font-size: 1.3rem; }
-  .account-profile-grid { gap: 16px; }
-  .account-profile-item { gap: 12px; }
-  .account-profile-item-icon { width: 32px; height: 32px; border-radius: 8px; }
-  .account-profile-item-icon svg { width: 14px; height: 14px; }
+  .account-profile-header { gap: 16px; margin-bottom: 24px; padding-bottom: 16px; flex-direction: column; text-align: center; }
+  .account-profile-avatar-large { width: 80px; height: 80px; font-size: 2.2rem; border-radius: 20px; }
+  .account-profile-title h3 { font-size: 1.5rem; }
+  .account-profile-grid { grid-template-columns: 1fr; gap: 20px; }
+  .account-profile-item { gap: 12px; padding: 12px; background: rgba(255, 255, 255, 0.02); border-radius: 12px; }
+  .account-profile-item-icon { width: 40px; height: 40px; border-radius: 10px; }
+  .account-profile-item-icon svg { width: 16px; height: 16px; }
 }
 
 @keyframes account-pulse {

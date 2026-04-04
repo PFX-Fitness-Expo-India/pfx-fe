@@ -16,10 +16,18 @@ export function AppProvider({ children }) {
   const queryClient = useQueryClient();
   
   // ── Authentication & View logic ──
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(() => localStorage.getItem('token') || null);
-  const [refreshToken, setRefreshToken] = useState(() => localStorage.getItem('refreshToken') || null);
-  const [userId, setUserId] = useState(() => localStorage.getItem('userId') || null);
+  // ── Authentication & View logic ──
+  const [user, setUser] = useState(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.user);
+    try {
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [token, setToken] = useState(() => localStorage.getItem(STORAGE_KEYS.token) || null);
+  const [refreshToken, setRefreshToken] = useState(() => localStorage.getItem(STORAGE_KEYS.refreshToken) || null);
+  const [userId, setUserId] = useState(() => localStorage.getItem(STORAGE_KEYS.userId) || null);
   const [isInitializing, setIsInitializing] = useState(true);
 
   // Fetch profile on initial mount if token exists
@@ -44,6 +52,7 @@ export function AppProvider({ children }) {
           const userData = res.data || (res.userName ? res : null);
           if (userData) {
             setUser(userData);
+            localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(userData));
           }
         } catch (error) {
           console.error('Failed to restore session:', error);
@@ -55,8 +64,8 @@ export function AppProvider({ children }) {
               
               setToken(newToken);
               setRefreshToken(newRefreshToken);
-              localStorage.setItem('token', newToken);
-              localStorage.setItem('refreshToken', newRefreshToken);
+              localStorage.setItem(STORAGE_KEYS.token, newToken);
+              localStorage.setItem(STORAGE_KEYS.refreshToken, newRefreshToken);
               
               const retryRes = await authService.getUser(userId, newToken);
               const retryData = retryRes.data || (retryRes.userName ? retryRes : null);
@@ -80,17 +89,22 @@ export function AppProvider({ children }) {
       // Expected backend response: data: { token, refreshToken, userId, role, userName }
       const newAuthData = res.data;
       
-      setUser({
+      const fullUser = {
+        _id: newAuthData.userId,
         userId: newAuthData.userId,
         userName: newAuthData.userName,
         role: newAuthData.role
-      });
+      };
+      
+      setUser(fullUser);
       setToken(newAuthData.token);
       setRefreshToken(newAuthData.refreshToken);
+      setUserId(newAuthData.userId);
       
-      localStorage.setItem('token', newAuthData.token);
-      localStorage.setItem('refreshToken', newAuthData.refreshToken);
-      localStorage.setItem('userId', newAuthData.userId);
+      localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(fullUser));
+      localStorage.setItem(STORAGE_KEYS.token, newAuthData.token);
+      localStorage.setItem(STORAGE_KEYS.refreshToken, newAuthData.refreshToken);
+      localStorage.setItem(STORAGE_KEYS.userId, newAuthData.userId);
 
       showToast({
         icon: 'success',
@@ -131,14 +145,16 @@ export function AppProvider({ children }) {
       setUser(null);
       setToken(null);
       setRefreshToken(null);
-      localStorage.removeItem('token');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('userId');
+      setUserId(null);
+      localStorage.removeItem(STORAGE_KEYS.token);
+      localStorage.removeItem(STORAGE_KEYS.refreshToken);
+      localStorage.removeItem(STORAGE_KEYS.userId);
+      localStorage.removeItem(STORAGE_KEYS.user);
       setGuestViewMode(null);
       setAthletes([]);
       setTickets([]);
-      localStorage.removeItem('pfx_athletes');
-      localStorage.removeItem('pfx_tickets');
+      localStorage.removeItem(STORAGE_KEYS.athletes);
+      localStorage.removeItem(STORAGE_KEYS.tickets);
       
       // Clear all queries to ensure fresh data for the guest/new user
       queryClient.clear();
@@ -155,8 +171,8 @@ export function AppProvider({ children }) {
         
         setToken(newToken);
         setRefreshToken(newRefreshToken);
-        localStorage.setItem('token', newToken);
-        localStorage.setItem('refreshToken', newRefreshToken);
+        localStorage.setItem(STORAGE_KEYS.token, newToken);
+        localStorage.setItem(STORAGE_KEYS.refreshToken, newRefreshToken);
         
         return await retryCallback(newToken);
       } catch (err) {
