@@ -76,9 +76,10 @@ export default function Account() {
   }, [token, handleApiError]);
 
   const loadUserInfo = useCallback(async () => {
-    if (!token || !user?._id) return;
+    const targetId = user?._id || user?.userId;
+    if (!token || !targetId) return;
     try {
-      const response = await authService.getUser(user._id, token);
+      const response = await authService.getUser(targetId, token);
       if (response.data) {
         setUserInfo(response.data);
       } else if (response.userName) {

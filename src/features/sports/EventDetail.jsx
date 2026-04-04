@@ -106,8 +106,13 @@ export default function EventDetail() {
           <div className="sport-media event-detail-media" style={{ backgroundImage: `url('${imageUrl}')` }} />
           
           <div className="sport-body event-detail-body">
-            <h1 className="section-title event-detail-title">{event.eventName}</h1>
+            <h1 className="section-title event-detail-title">
+              {event.eventName || 'Event Pass'}
+            </h1>
+
+            {event.eventDescription &&
             <p className="subtitle event-detail-desc">{event.eventDescription}</p>
+            }
             
             <div className="info-grid event-detail-grid">
               <div className="info-item">

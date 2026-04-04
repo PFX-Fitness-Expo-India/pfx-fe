@@ -5,6 +5,10 @@ export const ADMIN_PHONE = '+919876543210';
 export const STORAGE_KEYS = {
   athletes: 'pfx_athletes',
   tickets: 'pfx_tickets',
+  user: 'pfx_user_data',
+  token: 'pfx_token',
+  refreshToken: 'pfx_refresh_token',
+  userId: 'pfx_userId',
 };
 
 export const NAV_LINKS = [

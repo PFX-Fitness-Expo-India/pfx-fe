@@ -137,8 +137,10 @@ export default function TicketDetail() {
       <div className="ticket-card-detailed">
         <div className="ticket-header-detailed">
           <div className="event-info">
-            <p className="event-label">EVENT PASS</p>
-            <h1>{ticket.eventId?.eventName || 'Powerlifting Championship 2026'}</h1>
+            {/* {ticket.eventId.eventName && (
+              <p className="event-label">EVENT PASS</p>
+            )} */}
+            <h1>{ticket.eventId?.eventName || 'Event Pass'}</h1>
               {ticket.subcategory && (
               <p className='pb-3'>
                Category: {ticket.subcategory}
