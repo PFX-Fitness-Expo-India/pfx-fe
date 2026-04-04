@@ -8,7 +8,7 @@ export default function EventDetail() {
   const { eventId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { token, openAthleteRegistrationModal } = useAppContext();
+  const { user, token, openAthleteRegistrationModal } = useAppContext();
   useScrollAnimation();
 
   const { data: event, isLoading: loading, error } = useQuery({
@@ -157,7 +157,17 @@ export default function EventDetail() {
                 <button 
                   className="btn primary event-register-btn" 
                   onClick={() => {
-                    openAthleteRegistrationModal(event);
+                    if (!user) {
+                      const pendingAction = {
+                        type: 'athlete_registration',
+                        event: event,
+                        from: location.pathname
+                      };
+                      localStorage.setItem('pendingAction', JSON.stringify(pendingAction));
+                      navigate('/login');
+                    } else {
+                      openAthleteRegistrationModal(event);
+                    }
                   }}
                 >
                   Register for this Event
