@@ -176,7 +176,7 @@ export default function AthleteRegistrationModal() {
       if (event.paymentMethod === "online") {
         // 1. Register Athlete First
         const athleteData = {
-          userId: localStorage.getItem("userId"),
+          userId: localStorage.getItem("pfx_userId"),
           eventId: event._id,
           age: parseInt(formData.age),
           gender: formData.gender,
@@ -193,7 +193,7 @@ export default function AthleteRegistrationModal() {
         // 2. Create Razorpay Order
         const orderRes = await paymentService.createOrder(
           {
-            userId: localStorage.getItem("userId"),
+            userId: localStorage.getItem("pfx_userId"),
             eventId: event._id,
             amount: event.eventPrice,
             registrationId: registrationId,
@@ -276,7 +276,7 @@ export default function AthleteRegistrationModal() {
       } else {
         // Offline flow
         const athleteData = {
-          userId: localStorage.getItem("userId"),
+          userId: localStorage.getItem("pfx_userId"),
           eventId: event._id,
           age: parseInt(formData.age),
           gender: formData.gender,
