@@ -125,7 +125,7 @@ function AppInner() {
                 }),
               );
             } else if (action.type === "call_to_register") {
-              const phoneNumber = import.meta.env.VITE_REGISTRATION_PHONE || "+919361614200";
+              const phoneNumber = import.meta.env.VITE_REGISTRATION_PHONE || "+919786543210";
               window.location.href = `tel:${phoneNumber}`;
             }
             localStorage.removeItem("pendingAction");

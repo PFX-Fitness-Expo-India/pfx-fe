@@ -15,9 +15,9 @@ export const NAV_LINKS = [
   { label: 'Home', id: 'home' },
   { label: 'About Expo', id: 'about' },
   { label: 'Sports Events', id: 'sports' },
+    { label: 'Visitor Tickets', id: 'tickets' },
   { label: 'Contact Us', id: 'contact-us' },
-  { label: 'Visitor Tickets', id: 'tickets' },
-  { label: 'Sponsors', id: 'sponsors' },
+  // { label: 'Sponsors', id: 'sponsors' },
   { label: 'Schedule', id: 'schedule' },
 ];
 
