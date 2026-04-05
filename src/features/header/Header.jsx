@@ -14,14 +14,18 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { user, logout } = useAppContext();
+
+  const { user, logout, guestViewMode } = useAppContext();
   const { showModal } = useModal();
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
@@ -69,7 +73,19 @@ export default function Header() {
 
       <nav className={`main-nav${menuOpen ? " open" : ""}`}>
         <div className="main-nav-list">
-          {NAV_LINKS.map(({ label, id }) => (
+          {NAV_LINKS.filter(({ id }) => {
+            // Role-based visibility
+            if (user?.role === "athlete" && id === "tickets") return false;
+            if (user?.role === "visitor" && id === "sports") return false;
+
+            // Guest view mode visibility (for non-logged in users)
+            if (!user) {
+              if (guestViewMode === "athlete" && id === "tickets") return false;
+              if (guestViewMode === "visitor" && id === "sports") return false;
+            }
+
+            return true;
+          }).map(({ label, id }) => (
             <a
               key={id}
               href={`#${id}`}
