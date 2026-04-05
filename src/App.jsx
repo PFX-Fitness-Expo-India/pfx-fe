@@ -124,6 +124,9 @@ function AppInner() {
                   detail: action.ticketType,
                 }),
               );
+            } else if (action.type === "call_to_register") {
+              const phoneNumber = import.meta.env.VITE_REGISTRATION_PHONE || "+919361614200";
+              window.location.href = `tel:${phoneNumber}`;
             }
             localStorage.removeItem("pendingAction");
           }, 2000);
