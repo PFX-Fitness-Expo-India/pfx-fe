@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   NAV_LINKS,
@@ -19,6 +19,20 @@ export default function Header() {
   const { showModal } = useModal();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const onScroll = () => {
@@ -100,7 +114,7 @@ export default function Header() {
         </div>
       </nav>
 
-      <div className="header-right-group">
+      <div className="header-right-group" ref={dropdownRef}>
         <div className="header-actions">
           {/* <a
             className="whatsapp-btn"

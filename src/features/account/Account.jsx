@@ -86,6 +86,7 @@ export default function Account() {
     if (!token || !targetId) return;
     try {
       const response = await authService.getUser(targetId, token);
+      // console.log(response);
       if (response.data) {
         setUserInfo(response.data);
       } else if (response.userName) {
@@ -226,8 +227,8 @@ export default function Account() {
         {activeTab === 'profile' && (
           <div className="account-profile-section">
             <div className="account-section-header centered">
-              <h2>User Profile</h2>
-              <p className="account-section-subtitle">Manage your personal information</p>
+              {/* <h2>User Profile</h2> */}
+              {/* <p className="account-section-subtitle">Manage your personal information</p> */}
             </div>
 
             <div className="account-profile-card">
@@ -272,17 +273,17 @@ export default function Account() {
                       </div>
                     </div>
 
-                    <div className="account-profile-item">
+                    {/* <div className="account-profile-item">
                       <div className="account-profile-item-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                       </div>
                       <div className="account-profile-item-text">
                         <span className="label">Member Since</span>
-                        <span className="value">March 2026</span>
+                        <span className="value">{userInfo?.createdAt ? formatDate(userInfo.createdAt) : formatDate(user?.createdAt)}</span>
                       </div>
-                    </div>
+                    </div> */}
 
-                    <div className="account-profile-item">
+                    {/* <div className="account-profile-item">
                       <div className="account-profile-item-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                       </div>
@@ -290,7 +291,7 @@ export default function Account() {
                         <span className="label">Account Status</span>
                         <span className="value">{(userInfo?.isVerified || user?.isVerified) ? 'Active & Verified' : 'Active'}</span>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </>
               ) : (
