@@ -76,7 +76,7 @@ export default function Account() {
   }, [token, handleApiError]);
 
   const loadUserInfo = useCallback(async () => {
-    const targetId = user?._id || user?.userId;
+    const targetId = user?._id || localStorage.getItem("pfx_userId");
     if (!token || !targetId) return;
     try {
       const response = await authService.getUser(targetId, token);

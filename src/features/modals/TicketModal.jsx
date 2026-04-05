@@ -68,8 +68,9 @@ export default function TicketModal() {
 
     try {
       // 1. Register Visitor First (Get visitorId)
+      console.log(localStorage.getItem("pfx_userId"));
       const visitorRes = await registrationService.registerVisitor({
-        userId: localStorage.getItem("userId"),
+        userId: localStorage.getItem("pfx_userId"),
         ticketType: type
       }, token);
 
@@ -77,7 +78,8 @@ export default function TicketModal() {
 
       // 2. Create Payment Order (Pass visitorId)
       const orderRes = await paymentService.createOrder({
-        userId: localStorage.getItem("userId"),
+
+        userId: localStorage.getItem("pfx_userId"),
         amount: amount,
         visitorId: visitorId,
         // eventId: "" // Mandatory field but empty for visitor pass as per user curl
