@@ -54,10 +54,12 @@ export default function RegistrationSuccessModal() {
 
       <div className="success-details-container">
         <div className="success-info-list">
-          <div
-            className={`success-modal-badge ${isTicket ? "badge-ticket" : ""}`}
-          >
-            {isTicket ? "Visitor Ticket" : "Athlete Registration"}
+          <div className="success-badge-wrapper">
+            <div
+              className={`success-modal-badge ${isTicket ? "badge-ticket" : ""}`}
+            >
+              {isTicket ? "Visitor Ticket" : "Athlete Registration"}
+            </div>
           </div>
           <div className="success-event-title">{eventName}</div>
 
@@ -91,10 +93,10 @@ export default function RegistrationSuccessModal() {
         </div>
 
         <div className="success-footer-actions">
-          <button className="btn primary" onClick={handleViewTickets}>
+          <button className="btn btn-sm primary" onClick={handleViewTickets}>
             Go to My Account
           </button>
-          <button className="btn subtle" onClick={clearRegistrationSuccess}>
+          <button className="btn btn-sm subtle" onClick={clearRegistrationSuccess}>
             Close
           </button>
         </div>
