@@ -12,7 +12,10 @@ export default function Account() {
   const location = useLocation();
   const { user, token, handleApiError } = useAppContext();
   const { showModal, showToast } = useModal();
-  const [activeTab, setActiveTab] = useState(location.state?.activeTab || 'profile');
+  const [activeTab, setActiveTab] = useState(() => {
+    // Priority: 1. Location state, 2. LocalStorage, 3. Default 'profile'
+    return location.state?.activeTab || localStorage.getItem('pfx_activeAccountTab') || 'profile';
+  });
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
@@ -30,6 +33,11 @@ export default function Account() {
   };
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  // Persist activeTab to localStorage
+  useEffect(() => {
+    localStorage.setItem('pfx_activeAccountTab', activeTab);
+  }, [activeTab]);
 
   const formatDate = (dateString, fallback = Date.now()) => {
     try {
@@ -56,8 +64,6 @@ export default function Account() {
   useEffect(() => {
     if (location.state?.activeTab) {
       setActiveTab(location.state.activeTab);
-      // Optional: clear state to prevent sticking on that tab on manual refresh
-      window.history.replaceState({}, document.title);
     }
   }, [location.state]);
 
