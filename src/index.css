@@ -1054,6 +1054,39 @@ p  { margin: 0; }
   flex-wrap: wrap;
 }
 
+/* Authentication Specific Footer Styling */
+.auth-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  margin-top: 24px;
+  width: 100%;
+}
+
+.auth-footer .btn.primary {
+  width: 100%;
+  max-width: 320px;
+}
+
+.auth-link {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  text-transform: none; /* Keep natural case */
+  letter-spacing: 0.02em;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.auth-link:hover {
+  color: var(--text);
+  text-decoration: underline;
+}
+
 @media (max-width: 480px) {
   .registration-actions {
     flex-direction: column-reverse;

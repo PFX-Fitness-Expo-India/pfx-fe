@@ -106,15 +106,13 @@ export default function Login() {
               </div>
             </div>
 
-            <div className="form-footer">
-              <div className="registration-actions">
-                <button type="button" className="btn subtle btn-sm" onClick={() => navigate('/signup')} disabled={loading}>
-                  Need an account? Sign up
-                </button>
-                <button type="submit" className="btn primary px-3" disabled={loading}>
-                  {loading ? 'Logging in...' : 'Login'}
-                </button>
-              </div>
+            <div className="auth-footer">
+              <button type="submit" className="btn primary" disabled={loading}>
+                {loading ? 'Logging in...' : 'Login'}
+              </button>
+              <button type="button" className="auth-link" onClick={() => navigate('/signup')} disabled={loading}>
+                Need an account? Sign up
+              </button>
             </div>
           </form>
         </div>

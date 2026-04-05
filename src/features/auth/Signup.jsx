@@ -72,7 +72,7 @@ export default function Signup() {
         await showModal({
           type: 'error',
           title: 'Account Exists',
-          text: 'An account with this email already exists. Please login instead.',
+          text: err.message,
           allowOutsideClick: false
         });
       } else {
@@ -157,15 +157,13 @@ export default function Signup() {
               </div>
             </div>
 
-            <div className="form-footer mt-4">
-              <div className="registration-actions" style={{ marginTop: '0' }}>
-                <button type="button" className="btn subtle" onClick={() => navigate('/login')} disabled={loading} style={{ border: 'none', background: 'transparent', paddingLeft: '0', fontSize: '0.75rem' }}>
-                  Already have an account? Login
-                </button>
-                <button type="submit" className="btn primary" disabled={loading} style={{ paddingInline: '24px' }}>
-                  {loading ? 'Processing...' : 'Sign Up'}
-                </button>
-              </div>
+            <div className="auth-footer">
+              <button type="submit" className="btn primary" disabled={loading}>
+                {loading ? 'Processing...' : 'Sign Up'}
+              </button>
+              <button type="button" className="auth-link" onClick={() => navigate('/login')} disabled={loading}>
+                Already have an account? Login
+              </button>
             </div>
           </form>
         </div>
