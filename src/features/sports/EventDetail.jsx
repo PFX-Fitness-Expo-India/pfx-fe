@@ -223,12 +223,25 @@ export default function EventDetail() {
                   Register for this Event
                 </button>
               ) : (
-                <a 
-                  href="tel:+919361614200" 
+                <button 
                   className="btn primary event-register-btn"
+                  onClick={() => {
+                    if (!user) {
+                      const pendingAction = {
+                        type: 'call_to_register',
+                        event: event,
+                        from: location.pathname
+                      };
+                      localStorage.setItem('pendingAction', JSON.stringify(pendingAction));
+                      navigate('/login');
+                    } else {
+                      const phoneNumber = import.meta.env.VITE_REGISTRATION_PHONE || "+919361614200";
+                      window.location.href = `tel:${phoneNumber}`;
+                    }
+                  }}
                 >
                   Call to Register
-                </a>
+                </button>
               )}
             </div>
           </div>
