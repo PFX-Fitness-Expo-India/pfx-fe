@@ -153,9 +153,11 @@ export default function TicketDetail() {
               </p>
             )}
           </div>
+          { user.role === "visitor" && (
           <div className={`ticket-status-badge ${ticket.status}`}>
             {ticket.status.toUpperCase()}
           </div>
+          )}
         </div>
 
         <div className="ticket-body-detailed">
