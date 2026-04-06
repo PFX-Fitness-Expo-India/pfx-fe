@@ -35,10 +35,8 @@ export default function AthleteRegistrationModal() {
       }
     }
     return {
-      age: "0",
-      gender: "male",
-      weight: "0",
       subcategory: "",
+      agreedToTerms: false
     };
   });
   const [errors, setErrors] = useState({});
@@ -50,10 +48,8 @@ export default function AthleteRegistrationModal() {
       // This prevents the "reset flash" on reload
       if (!localStorage.getItem("pendingAction")) {
         setFormData({
-          age: "0",
-          gender: "male",
-          weight: "0",
           subcategory: "",
+          agreedToTerms: false
         });
       }
       setErrors({});
@@ -84,42 +80,15 @@ export default function AthleteRegistrationModal() {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
 
-    if (name === "age" || name === "weight") {
-      let newValue = value;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value
+    }));
 
-      if (name === "age") {
-        newValue = newValue.replace(/[^0-9]/g, "");
-      } else if (name === "weight") {
-        newValue = newValue.replace(/[^0-9.]/g, "");
-        const parts = newValue.split(".");
-        if (parts.length > 2) {
-          newValue = parts[0] + "." + parts.slice(1).join("");
-        }
-      }
-
-      if (
-        newValue.length > 1 &&
-        newValue.startsWith("0") &&
-        !newValue.startsWith("0.")
-      ) {
-        newValue = newValue.replace(/^0+/, "");
-      }
-
-      if (newValue === "") {
-        newValue = "0";
-      }
-
-      setFormData((prev) => ({ ...prev, [name]: newValue }));
-      if (errors[name]) {
-        setErrors((prev) => ({ ...prev, [name]: null }));
-      }
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-      if (errors[name]) {
-        setErrors((prev) => ({ ...prev, [name]: null }));
-      }
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: null }));
     }
   };
 
@@ -127,19 +96,13 @@ export default function AthleteRegistrationModal() {
     e.preventDefault();
 
     const newErrors = {};
-    if (!formData.age || formData.age === "0") {
-      newErrors.age = "Please enter a valid age.";
-    }
-    if (
-      !formData.weight ||
-      formData.weight === "0" ||
-      formData.weight === "0."
-    ) {
-      newErrors.weight = "Please enter a valid weight.";
-    }
 
     if (event.haveSubcategory && !formData.subcategory) {
       newErrors.subcategory = "Please select a category.";
+    }
+
+    if (!formData.agreedToTerms) {
+      newErrors.agreedToTerms = "You must agree to the terms and conditions.";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -178,9 +141,6 @@ export default function AthleteRegistrationModal() {
         const athleteData = {
           userId: localStorage.getItem("pfx_userId"),
           eventId: event._id,
-          age: parseInt(formData.age),
-          gender: formData.gender,
-          weight: parseFloat(formData.weight),
           subcategory: formData.subcategory,
           paymentMethod: "online",
         };
@@ -278,9 +238,6 @@ export default function AthleteRegistrationModal() {
         const athleteData = {
           userId: localStorage.getItem("pfx_userId"),
           eventId: event._id,
-          age: parseInt(formData.age),
-          gender: formData.gender,
-          weight: parseFloat(formData.weight),
           subcategory: formData.subcategory,
         };
         await registrationService.registerAthlete(athleteData, token);
@@ -343,73 +300,7 @@ export default function AthleteRegistrationModal() {
           style={{ width: "100%" }}
           noValidate
         >
-          <div className="form-row">
-            <div className="form-field">
-              <label htmlFor="regAge">Age</label>
-              <input
-                id="regAge"
-                name="age"
-                type="text"
-                inputMode="numeric"
-                value={formData.age}
-                onChange={handleChange}
-                placeholder="e.g. 25"
-                style={errors.age ? { borderColor: "#ff4444" } : {}}
-              />
-              {errors.age && (
-                <span
-                  style={{
-                    color: "#ff4444",
-                    fontSize: "0.85rem",
-                    marginTop: "4px",
-                  }}
-                >
-                  {errors.age}
-                </span>
-              )}
-            </div>
-            <div className="form-field">
-              <label htmlFor="regGender">Gender</label>
-              <CustomSelect
-                id="regGender"
-                name="gender"
-                value={formData.gender}
-                onChange={handleChange}
-                options={[
-                  { value: "male", label: "Male" },
-                  { value: "female", label: "Female" },
-                  { value: "other", label: "Other" },
-                ]}
-                placeholder="Select Gender"
-              />
-            </div>
-          </div>
-          <div className="form-row">
-            <div className="form-field full">
-              <label htmlFor="regWeight">Weight (kg)</label>
-              <input
-                id="regWeight"
-                name="weight"
-                type="text"
-                inputMode="decimal"
-                value={formData.weight}
-                onChange={handleChange}
-                placeholder="e.g. 75.5"
-                style={errors.weight ? { borderColor: "#ff4444" } : {}}
-              />
-              {errors.weight && (
-                <span
-                  style={{
-                    color: "#ff4444",
-                    fontSize: "0.85rem",
-                    marginTop: "4px",
-                  }}
-                >
-                  {errors.weight}
-                </span>
-              )}
-            </div>
-          </div>
+          {/* Removed Age, Gender, Weight Fields */}
 
           {event.haveSubcategory && event.subcategories?.length > 0 && (
             <div className="form-row">
@@ -438,6 +329,34 @@ export default function AthleteRegistrationModal() {
               </div>
             </div>
           )}
+
+          <div className="form-row" style={{ marginTop: "16px" }}>
+            <div className="form-field full" style={{ flexDirection: "row", alignItems: "center", gap: "10px" }}>
+              <input
+                id="agreedToTerms"
+                name="agreedToTerms"
+                type="checkbox"
+                checked={formData.agreedToTerms}
+                onChange={handleChange}
+                style={{ width: "auto", cursor: "pointer", accentColor: "var(--primary)" }}
+              />
+              <label htmlFor="agreedToTerms" style={{ cursor: "pointer", textTransform: "none", letterSpacing: "normal", color: "var(--text)", fontSize: "0.85rem" }}>
+                I agree to the terms and conditions and confirm my participation.
+              </label>
+            </div>
+            {errors.agreedToTerms && (
+              <span
+                style={{
+                  color: "#ff4444",
+                  fontSize: "0.85rem",
+                  marginTop: "0",
+                  gridColumn: "1 / -1"
+                }}
+              >
+                {errors.agreedToTerms}
+              </span>
+            )}
+          </div>
           <div style={{ marginTop: "24px" }}>
             <p
               style={{
