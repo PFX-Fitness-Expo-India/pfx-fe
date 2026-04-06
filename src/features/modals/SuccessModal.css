@@ -1,6 +1,6 @@
 /* Styles for the unified, zero-scroll success modal */
 .success-modal-header {
-  padding: 0 0 24px;
+  padding: 0 0 16px;
   text-align: center;
   animation: modalContentFade 0.4s ease-out forwards;
 }
@@ -11,14 +11,14 @@
 }
 
 .success-modal-icon-circle {
-  width: 64px;
-  height: 64px;
+  width: 52px;
+  height: 52px;
   background: var(--accent);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 16px;
+  margin: 0 auto 12px;
   color: #000;
   box-shadow: 0 0 30px rgba(24, 225, 185, 0.3);
   animation: iconPop 0.5s cubic-bezier(0.17, 0.89, 0.32, 1.28) 0.1s both;
@@ -53,10 +53,10 @@
 .success-info-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin-top: 16px;
+  gap: 12px;
+  margin-top: 12px;
   background: rgba(255, 255, 255, 0.03);
-  padding: 24px;
+  padding: 16px 20px;
   border-radius: 16px;
   border: 1px solid var(--border-subtle);
 }
@@ -73,9 +73,9 @@
 .success-detail-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px 24px;
+  gap: 10px 24px;
   border-top: 1px solid var(--border-subtle);
-  padding-top: 16px;
+  padding-top: 12px;
 }
 
 .success-detail-item label {
@@ -120,7 +120,7 @@
   display: flex;
   flex-direction: row;
   gap: 12px;
-  margin-top: 24px;
+  margin-top: 20px;
 }
 
 .success-footer-actions .btn {
@@ -157,10 +157,10 @@
 
 /* Modal Content Adjustments when success-modal-compact is used */
 .modal-content.success-modal-compact {
-  padding: 40px 32px 32px;
+  padding: 32px 32px 28px;
   width: min(520px, 94vw);
   max-width: none;
-  max-height: 92vh;
+  max-height: none;
   background: linear-gradient(135deg, #0d0d14 0%, #0a0a0f 100%) !important;
   box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8),
               inset 0 0 80px rgba(24, 225, 185, 0.03);
