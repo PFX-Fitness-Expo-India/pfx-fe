@@ -338,7 +338,7 @@ export default function AthleteRegistrationModal() {
                 type="checkbox"
                 checked={formData.agreedToTerms}
                 onChange={handleChange}
-                style={{ width: "auto", cursor: "pointer", accentColor: "var(--primary)" }}
+                className="styled-checkbox"
               />
               <label htmlFor="agreedToTerms" style={{ cursor: "pointer", textTransform: "none", letterSpacing: "normal", color: "var(--text)", fontSize: "0.85rem" }}>
                 I agree to the terms and conditions and confirm my participation.

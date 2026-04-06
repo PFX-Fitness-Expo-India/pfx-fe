@@ -960,7 +960,7 @@ p  { margin: 0; }
   font-size: 0.7rem;
 }
 
-.form-field input,
+.form-field input:not([type="checkbox"]):not([type="radio"]),
 .form-field select,
 .form-field textarea {
   width: 100%;
@@ -974,7 +974,7 @@ p  { margin: 0; }
   font-family: inherit;
 }
 
-.form-field input,
+.form-field input:not([type="checkbox"]):not([type="radio"]),
 .form-field select {
   border-radius: 999px;
 }
@@ -1009,7 +1009,7 @@ p  { margin: 0; }
   padding: 12px;
 }
 
-.form-field input:focus,
+.form-field input:not([type="checkbox"]):not([type="radio"]):focus,
 .form-field select:focus,
 .form-field textarea:focus {
   outline: none;
@@ -1017,7 +1017,7 @@ p  { margin: 0; }
   box-shadow: 0 0 0 1px rgba(24, 225, 185, 0.6);
 }
 
-.form-field.error input,
+.form-field.error input:not([type="checkbox"]):not([type="radio"]),
 .form-field.error select,
 .form-field.error textarea {
   border-color: var(--primary);
@@ -1111,6 +1111,47 @@ p  { margin: 0; }
 }
 
 .hidden { display: none !important; }
+
+/* ---- Styled Checkbox (Neon Square Style) ---- */
+.styled-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px !important;
+  height: 20px !important;
+  min-width: 20px !important;
+  min-height: 20px !important;
+  flex: none !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  background-color: transparent;
+  border-radius: 4px !important;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.styled-checkbox:hover {
+  border-color: rgba(255, 255, 255, 0.6);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.styled-checkbox:checked {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  box-shadow: 0 0 14px var(--primary);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+  background-size: 65%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.styled-checkbox:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.25);
+}
 
 /* ---- Custom Select ---- */
 .select-container {
