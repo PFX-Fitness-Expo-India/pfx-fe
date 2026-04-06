@@ -21,10 +21,15 @@ export default function Header() {
   const location = useLocation();
 
   const dropdownRef = useRef(null);
+  const navRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      // Check if the click is outside BOTH the profile dropdown area and the mobile nav menu
+      const clickedOutsideDropdown = dropdownRef.current && !dropdownRef.current.contains(event.target);
+      const clickedOutsideNav = navRef.current && !navRef.current.contains(event.target);
+
+      if (clickedOutsideDropdown && clickedOutsideNav) {
         setDropdownOpen(false);
         setMenuOpen(false);
       }
@@ -49,14 +54,16 @@ export default function Header() {
     }
 
     // Slight delay to allow DOM to render 'home' before scrolling if on a different view
+    // Increased to 300ms to ensure Home page components are mounted
     setTimeout(() => {
       const el = document.getElementById(id);
-      if (el)
+      if (el) {
         window.scrollTo({
           top: el.offsetTop - SCROLL_OFFSET,
           behavior: "smooth",
         });
-    }, 100);
+      }
+    }, 300);
     setMenuOpen(false);
   }
 
@@ -85,7 +92,7 @@ export default function Header() {
         <img src={logo} alt="PFX Logo" className="logo-img" />
       </div>
 
-      <nav className={`main-nav${menuOpen ? " open" : ""}`}>
+      <nav className={`main-nav${menuOpen ? " open" : ""}`} ref={navRef}>
         <div className="main-nav-list">
           {NAV_LINKS.filter(({ id }) => {
             // Role-based visibility

@@ -1703,7 +1703,7 @@ tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.02); }
 
 .detail-list-item {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
   color: var(--text);
   font-size: 0.95rem;
@@ -1723,8 +1723,9 @@ tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.02); }
 
 .detail-list-icon {
   flex-shrink: 0;
-  margin-top: 3px;
   color: var(--primary);
+  display: flex;
+  align-items: center;
 }
 
 .subcategory-list {
