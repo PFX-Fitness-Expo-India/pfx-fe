@@ -16,9 +16,10 @@ export const NAV_LINKS = [
   { label: 'About Expo', id: 'about' },
   { label: 'Sports Events', id: 'sports' },
     { label: 'Visitor Tickets', id: 'tickets' },
-  { label: 'Contact Us', id: 'contact-us' },
+      { label: 'Schedule', id: 'schedule' },
+    { label: 'Contact Us', id: 'contact-us' },
   // { label: 'Sponsors', id: 'sponsors' },
-  { label: 'Schedule', id: 'schedule' },
+
 ];
 
 export const WHATSAPP_NUMBER = '919876543210';
