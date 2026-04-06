@@ -13,13 +13,31 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [role, setRole] = useState('visitor');
+  const [extraFields, setExtraFields] = useState({
+  gender: 'male',
+  age: 0,
+  weight: 0,
+  height: 0
+});
   const formRef = useRef(null);
 
   const handleInput = (e) => {
     e.target.value = e.target.value.replace(/[^a-zA-Z0-9@. ]/g, '');
   };
 
-  function validateForm(data) {
+  const handleNumberInputKeyDown = (e) => {
+    if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+
+  const handleNumberChange = (e) => {
+    let { name, value } = e.target;
+    value = value.replace(/^0+/, '');
+    setExtraFields({ ...extraFields, [name]: value });
+  };
+
+  function validateForm(data, currentRole) {
     const errors = {};
     if (!data.userName) errors.userName = 'Full Name is required';
     if (!data.email) errors.email = 'Email is required';
@@ -28,6 +46,18 @@ export default function Signup() {
     if (!data.phoneNumber) errors.phoneNumber = 'Phone Number is required';
     if (!data.password) errors.password = 'Password is required';
     else if (data.password.length < 8) errors.password = 'Password must be at least 8 characters';
+    
+    if (currentRole === 'athlete') {
+      if (!data.gender) errors.gender = 'Gender is required';
+      if (!data.age) errors.age = 'Age is required';
+      else if (isNaN(data.age) || data.age <= 18) errors.age = 'Age must be strictly greater than 18';
+      
+      if (!data.weight) errors.weight = 'Weight is required';
+      else if (isNaN(data.weight) || data.weight <= 0) errors.weight = 'Invalid weight';
+      
+      if (!data.height) errors.height = 'Height is required';
+      else if (isNaN(data.height) || data.height <= 0) errors.height = 'Invalid height';
+    }
     
     return errors;
   }
@@ -46,7 +76,14 @@ export default function Signup() {
       role: role
     };
 
-    const errors = validateForm(userData);
+    if (role === 'athlete') {
+      userData.gender = extraFields.gender;
+      userData.age = extraFields.age ? Number(extraFields.age) : '';
+      userData.weight = extraFields.weight ? Number(extraFields.weight) : '';
+      userData.height = extraFields.height ? Number(extraFields.height) : '';
+    }
+
+    const errors = validateForm(userData, role);
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
       return;
@@ -156,6 +193,45 @@ export default function Signup() {
                 />
               </div>
             </div>
+
+            {role === 'athlete' && (
+              <>
+                <div className="form-row">
+                  <div className={`form-field ${formErrors.gender ? 'error' : ''}`}>
+                    <label htmlFor="gender">Gender</label>
+                    <CustomSelect
+                      id="gender"
+                      name="gender"
+                      value={extraFields.gender}
+                      onChange={(e) => setExtraFields({...extraFields, gender: e.target.value})}
+                      options={[
+                        { value: 'male', label: 'Male' },
+                        { value: 'female', label: 'Female' },
+                        { value: 'other', label: 'Other' }
+                      ]}
+                    />
+                    {formErrors.gender && <span className="field-error">{formErrors.gender}</span>}
+                  </div>
+                  <div className={`form-field ${formErrors.age ? 'error' : ''}`}>
+                    <label htmlFor="age">Age</label>
+                    <input id="age" name="age" type="number" min="19" disabled={loading} value={extraFields.age} onChange={handleNumberChange} onKeyDown={handleNumberInputKeyDown} />
+                    {formErrors.age && <span className="field-error">{formErrors.age}</span>}
+                  </div>
+                </div>
+                <div className="form-row">
+                  <div className={`form-field ${formErrors.weight ? 'error' : ''}`}>
+                    <label htmlFor="weight">Weight (kg)</label>
+                    <input id="weight" name="weight" type="number" min="1" disabled={loading} value={extraFields.weight} onChange={handleNumberChange} onKeyDown={handleNumberInputKeyDown} />
+                    {formErrors.weight && <span className="field-error">{formErrors.weight}</span>}
+                  </div>
+                  <div className={`form-field ${formErrors.height ? 'error' : ''}`}>
+                    <label htmlFor="height">Height (cm)</label>
+                    <input id="height" name="height" type="number" min="1" disabled={loading} value={extraFields.height} onChange={handleNumberChange} onKeyDown={handleNumberInputKeyDown} />
+                    {formErrors.height && <span className="field-error">{formErrors.height}</span>}
+                  </div>
+                </div>
+              </>
+            )}
 
             <div className="auth-footer">
               <button type="submit" className="btn primary" disabled={loading}>

@@ -55,7 +55,7 @@ export default function VerifyEmail() {
                 <div className="spinner-inner"></div>
               </div>
               <h2 className="mb-3" style={{ fontFamily: 'var(--oswald)', textTransform: 'uppercase', letterSpacing: '1px' }}>Verifying Your Email</h2>
-              <p className="text-muted">Please wait while we confirm your account details...</p>
+              <p className="text-white">Please wait while we confirm your account details...</p>
             </div>
           )}
 
