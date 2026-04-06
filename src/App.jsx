@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 import { AppProvider, useAppContext } from './contexts/AppContext';
 import { ModalProvider } from './contexts/ModalContext';
 import AccountSkeleton from './features/account/AccountSkeleton';
+import GlobalLoader from './shared/GlobalLoader';
 import { useScrollAnimation } from "./hooks/useScrollAnimation";
 import PageLayout from "./layouts/PageLayout";
 
@@ -36,7 +37,7 @@ import ResetPassword from "./features/auth/ResetPassword";
 
 function PublicRoute({ children }) {
   const { user, isInitializing } = useAppContext();
-  if (isInitializing) return null; // Wait for auth check
+  if (isInitializing) return <GlobalLoader />; // Professional pulse loader
   return user ? <Navigate to="/" replace /> : children;
 }
 
@@ -48,7 +49,7 @@ function PrivateRoute({ children }) {
     if (location.pathname === '/account') {
       return <AccountSkeleton />;
     }
-    return null; // Wait for auth check on other private routes
+    return <GlobalLoader />; // Generic loader for other private routes
   }
   return user ? children : <Navigate to="/" replace />;
 }

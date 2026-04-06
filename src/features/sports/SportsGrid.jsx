@@ -16,8 +16,9 @@ export default function SportsGrid({ onViewEvent }) {
       throw new Error(result.message || 'Failed to fetch events');
     }
   });
-  // If logged in as visitor, or guest explicitly chose visitor view, hide the athlete grid
-  if (user?.role === 'visitor' || (guestViewMode === 'visitor' && !user)) return null;
+  // Strict Condition: Hide Sports Line-up ONLY if logged in as a visitor.
+  // Guests (no user) and Athletes should see this section.
+  if (user?.role === 'visitor') return null;
 
 
   const scrollTo = (id) => {
@@ -86,8 +87,7 @@ export default function SportsGrid({ onViewEvent }) {
             <button 
               className="btn outline" 
               onClick={() => {
-                setGuestViewMode('visitor');
-                setTimeout(() => scrollTo('tickets'), 100);
+                scrollTo('tickets');
               }}
             >
               View Visitor Tickets

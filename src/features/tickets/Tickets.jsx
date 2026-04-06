@@ -3,8 +3,9 @@ import { useAppContext } from '../../contexts/AppContext';
 export default function Tickets() {
   const { openTicketModal, user, guestViewMode, setGuestViewMode } = useAppContext();
 
-  // If logged in as athlete, or guest explicitly chose athlete view, hide the visitor tickets
-  if (user?.role === 'athlete' || (guestViewMode === 'athlete' && !user)) return null;
+  // Strict Condition: Hide Visitor Tickets ONLY if logged in as an athlete.
+  // Guests (no user) and Visitors should see this section.
+  if (user?.role === 'athlete') return null;
 
 
   const scrollTo = (id) => {
@@ -62,8 +63,7 @@ export default function Tickets() {
             <button 
               className="btn outline" 
               onClick={() => {
-                setGuestViewMode('athlete');
-                setTimeout(() => scrollTo('sports'), 100);
+                scrollTo('sports');
               }}
             >
               View Athlete Registration
