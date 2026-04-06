@@ -7,6 +7,7 @@ export default function Login() {
   const { loginUser } = useAppContext();
   const navigate = useNavigate();
   const [error, setError] = useState('');
+  const [formErrors, setFormErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isForgotModalOpen, setIsForgotModalOpen] = useState(false);
@@ -16,14 +17,29 @@ export default function Login() {
     e.target.value = e.target.value.replace(/[^a-zA-Z0-9@. ]/g, '');
   };
 
+  const validateForm = (data) => {
+    const errors = {};
+    if (!data.credentials) errors.credentials = 'Email or Phone is required';
+    if (!data.password) errors.password = 'Password is required';
+    return errors;
+  };
+
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
-    setLoading(true);
+    setFormErrors({});
 
     const form = formRef.current;
     const credentials = form.elements.credentials.value.trim();
     const password = form.elements.password.value;
+
+    const validationErrors = validateForm({ credentials, password });
+    if (Object.keys(validationErrors).length > 0) {
+      setFormErrors(validationErrors);
+      return;
+    }
+
+    setLoading(true);
 
     try {
       await loginUser(credentials, password);
@@ -56,16 +72,17 @@ export default function Login() {
             {error && <p className="error-text mt-3 text-danger">{error==="User not found"?"Invalid Credentials":error}</p>}
           </div>
 
-          <form ref={formRef} className="form" onSubmit={handleSubmit}>
-            <div className="form-field full">
+          <form ref={formRef} className="form" onSubmit={handleSubmit} noValidate>
+            <div className={`form-field full ${formErrors.credentials ? 'error' : ''}`}>
               <label htmlFor="credentials">Email</label>
-              <input id="credentials" name="credentials" type="text" required disabled={loading} onInput={handleInput} />
+              <input id="credentials" name="credentials" type="text" disabled={loading} onInput={handleInput} />
+              {formErrors.credentials && <span className="field-error">{formErrors.credentials}</span>}
             </div>
 
-            <div className="form-field full">
+            <div className={`form-field full ${formErrors.password ? 'error' : ''}`}>
               <label htmlFor="password">Password</label>
               <div className="password-input-wrapper" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                <input id="password" name="password" type={showPassword ? "text" : "password"} required disabled={loading} style={{ width: '100%', paddingRight: '54px' }} onInput={handleInput} />
+                <input id="password" name="password" type={showPassword ? "text" : "password"} disabled={loading} style={{ width: '100%', paddingRight: '54px' }} onInput={handleInput} />
                 <button 
                   type="button" 
                   className="password-toggle"
@@ -87,6 +104,7 @@ export default function Login() {
                   )}
                 </button>
               </div>
+              {formErrors.password && <span className="field-error">{formErrors.password}</span>}
               <div style={{ textAlign: 'right', marginTop: '8px' }}>
                 <button
                   type="button"
