@@ -979,6 +979,17 @@ p  { margin: 0; }
   border-radius: 999px;
 }
 
+/* Hide number input arrows */
+.form-field input[type="number"]::-webkit-inner-spin-button,
+.form-field input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.form-field input[type="number"] {
+  -moz-appearance: textfield;
+}
+
 .form-field textarea {
   border-radius: 12px;
   min-height: 100px;
