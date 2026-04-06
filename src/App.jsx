@@ -60,6 +60,8 @@ function ScrollToTop() {
   const { pathname } = useLocation();
 
   useEffect(() => {
+    // If there is a hash, let the page/component handle the scroll
+    if (window.location.hash) return;
     window.scrollTo(0, 0);
   }, [pathname]);
 

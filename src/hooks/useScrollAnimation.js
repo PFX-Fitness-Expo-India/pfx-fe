@@ -9,9 +9,6 @@ export function useScrollAnimation() {
   const location = useLocation();
 
   useEffect(() => {
-    // Disable scroll animations on mobile for better performance and refresh reliability
-    if (window.innerWidth <= 768) return;
-
     let observer;
     
     // Slight timeout allows React Router to mount the new elements before we query them
