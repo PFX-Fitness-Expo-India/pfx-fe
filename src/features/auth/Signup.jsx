@@ -68,7 +68,7 @@ export default function Signup() {
       });
     } catch (err) {
       if (err.message?.includes('already exists') || err.statusCode === 409) {
-        navigate('/login');
+        // navigate('/login');
         await showModal({
           type: 'error',
           title: 'Account Exists',
