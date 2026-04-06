@@ -23,6 +23,16 @@ export default function Signup() {
 
   const handleInput = (e) => {
     e.target.value = e.target.value.replace(/[^a-zA-Z0-9@. ]/g, '');
+    if (formErrors[e.target.name]) {
+      setFormErrors((prev) => ({ ...prev, [e.target.name]: undefined }));
+    }
+  };
+
+  const handlePhoneInput = (e) => {
+    e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    if (formErrors[e.target.name]) {
+      setFormErrors((prev) => ({ ...prev, [e.target.name]: undefined }));
+    }
   };
 
   const handleNumberInputKeyDown = (e) => {
@@ -35,6 +45,9 @@ export default function Signup() {
     let { name, value } = e.target;
     value = value.replace(/^0+/, '');
     setExtraFields({ ...extraFields, [name]: value });
+    if (formErrors[name]) {
+      setFormErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
   };
 
   function validateForm(data, currentRole) {
@@ -44,19 +57,24 @@ export default function Signup() {
     else if (!/\S+@\S+\.\S+/.test(data.email)) errors.email = 'Invalid email address';
     
     if (!data.phoneNumber) errors.phoneNumber = 'Phone Number is required';
+    else if (!/^\d{10}$/.test(data.phoneNumber)) errors.phoneNumber = 'Phone Number must be exactly 10 digits';
     if (!data.password) errors.password = 'Password is required';
     else if (data.password.length < 8) errors.password = 'Password must be at least 8 characters';
     
     if (currentRole === 'athlete') {
       if (!data.gender) errors.gender = 'Gender is required';
+      
       if (!data.age) errors.age = 'Age is required';
-      else if (isNaN(data.age) || data.age <= 18) errors.age = 'Age must be strictly greater than 18';
+      else if (isNaN(data.age) || data.age <= 12) errors.age = 'Age must be strictly greater than 12';
+      else if (data.age > 90) errors.age = 'Age must not exceed 90';
       
       if (!data.weight) errors.weight = 'Weight is required';
       else if (isNaN(data.weight) || data.weight <= 0) errors.weight = 'Invalid weight';
+      else if (data.weight > 300) errors.weight = 'Weight must not exceed 300 kg';
       
       if (!data.height) errors.height = 'Height is required';
       else if (isNaN(data.height) || data.height <= 0) errors.height = 'Invalid height';
+      else if (data.height > 300) errors.height = 'Height must not exceed 500 cm';
     }
     
     return errors;
@@ -146,7 +164,7 @@ export default function Signup() {
               </div>
               <div className={`form-field ${formErrors.phoneNumber ? 'error' : ''}`}>
                 <label htmlFor="phoneNumber">Phone Number</label>
-                <input id="phoneNumber" name="phoneNumber" type="tel" disabled={loading} onInput={handleInput} />
+                <input id="phoneNumber" name="phoneNumber" type="tel" maxLength="10" disabled={loading} onInput={handlePhoneInput} />
                 {formErrors.phoneNumber && <span className="field-error">{formErrors.phoneNumber}</span>}
               </div>
             </div>
@@ -203,7 +221,12 @@ export default function Signup() {
                       id="gender"
                       name="gender"
                       value={extraFields.gender}
-                      onChange={(e) => setExtraFields({...extraFields, gender: e.target.value})}
+                      onChange={(e) => {
+                        setExtraFields({...extraFields, gender: e.target.value});
+                        if (formErrors.gender) {
+                          setFormErrors((prev) => ({ ...prev, gender: undefined }));
+                        }
+                      }}
                       options={[
                         { value: 'male', label: 'Male' },
                         { value: 'female', label: 'Female' },
@@ -214,19 +237,19 @@ export default function Signup() {
                   </div>
                   <div className={`form-field ${formErrors.age ? 'error' : ''}`}>
                     <label htmlFor="age">Age</label>
-                    <input id="age" name="age" type="number" min="19" disabled={loading} value={extraFields.age} onChange={handleNumberChange} onKeyDown={handleNumberInputKeyDown} />
+                    <input id="age" name="age" type="number" min="19" max="90" disabled={loading} value={extraFields.age} onChange={handleNumberChange} onKeyDown={handleNumberInputKeyDown} />
                     {formErrors.age && <span className="field-error">{formErrors.age}</span>}
                   </div>
                 </div>
                 <div className="form-row">
                   <div className={`form-field ${formErrors.weight ? 'error' : ''}`}>
                     <label htmlFor="weight">Weight (kg)</label>
-                    <input id="weight" name="weight" type="number" min="1" disabled={loading} value={extraFields.weight} onChange={handleNumberChange} onKeyDown={handleNumberInputKeyDown} />
+                    <input id="weight" name="weight" type="number" min="1" max="300" disabled={loading} value={extraFields.weight} onChange={handleNumberChange} onKeyDown={handleNumberInputKeyDown} />
                     {formErrors.weight && <span className="field-error">{formErrors.weight}</span>}
                   </div>
                   <div className={`form-field ${formErrors.height ? 'error' : ''}`}>
                     <label htmlFor="height">Height (cm)</label>
-                    <input id="height" name="height" type="number" min="1" disabled={loading} value={extraFields.height} onChange={handleNumberChange} onKeyDown={handleNumberInputKeyDown} />
+                    <input id="height" name="height" type="number" min="1" max="300" disabled={loading} value={extraFields.height} onChange={handleNumberChange} onKeyDown={handleNumberInputKeyDown} />
                     {formErrors.height && <span className="field-error">{formErrors.height}</span>}
                   </div>
                 </div>

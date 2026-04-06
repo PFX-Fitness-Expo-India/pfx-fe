@@ -15,6 +15,9 @@ export default function Login() {
 
   const handleInput = (e) => {
     e.target.value = e.target.value.replace(/[^a-zA-Z0-9@. ]/g, '');
+    if (formErrors[e.target.name]) {
+      setFormErrors((prev) => ({ ...prev, [e.target.name]: undefined }));
+    }
   };
 
   const validateForm = (data) => {
