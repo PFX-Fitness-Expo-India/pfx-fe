@@ -6,6 +6,8 @@ export default function SportCard({ sport }) {
   const cardRef = useRef(null);
 
   useEffect(() => {
+    if (window.innerWidth <= 768) return;
+
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
         entry.target.classList.add('in-view');
