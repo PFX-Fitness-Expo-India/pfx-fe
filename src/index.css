@@ -1412,15 +1412,17 @@ tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.02); }
 .footer-grid a { color: var(--muted); }
 .footer-grid a:hover { color: var(--text); }
 
-/* ---- Scroll animations ---- */
-.section,
-.sport-card,
-.ticket-card,
-.stat-card,
-.sponsor-card {
-  opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 0.55s ease-out, transform 0.55s ease-out;
+/* ---- Scroll animations (Desktop Only) ---- */
+@media (min-width: 769px) {
+  .section,
+  .sport-card,
+  .ticket-card,
+  .stat-card,
+  .sponsor-card {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.55s ease-out, transform 0.55s ease-out;
+  }
 }
 
 .in-view {
