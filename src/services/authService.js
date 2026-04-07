@@ -170,4 +170,22 @@ export const authService = {
     }
     return data;
   },
+
+  updateProfile: async (userData, token) => {
+    const response = await fetch(`${API_BASE_URL}/update-profile`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(userData),
+    });
+    const data = await response.json();
+    if (!response.ok || (data.statusCode && data.statusCode >= 400)) {
+      const error = new Error(data.message || "Update profile failed");
+      error.statusCode = data.statusCode || response.status;
+      throw error;
+    }
+    return data;
+  },
 };
