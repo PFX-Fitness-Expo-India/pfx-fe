@@ -20,6 +20,65 @@ export default function Account() {
   const [loading, setLoading] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [userInfo, setUserInfo] = useState(null);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
+  const [profileFormData, setProfileFormData] = useState({
+    userName: '', phoneNumber: '', gender: '', age: '', weight: '', height: ''
+  });
+  const [profileFormErrors, setProfileFormErrors] = useState({});
+
+  const handleProfileInput = (e) => {
+    let { name, value } = e.target;
+    if (name === 'userName') {
+      value = value.replace(/[^a-zA-Z0-9@. ]/g, '');
+    }
+    setProfileFormData((prev) => ({ ...prev, [name]: value }));
+    if (profileFormErrors[name]) setProfileFormErrors((prev) => ({ ...prev, [name]: undefined }));
+  };
+
+  const handleProfilePhoneInput = (e) => {
+    const value = e.target.value.replace(/[^0-9]/g, '');
+    setProfileFormData((prev) => ({ ...prev, [e.target.name]: value }));
+    if (profileFormErrors[e.target.name]) setProfileFormErrors((prev) => ({ ...prev, [e.target.name]: undefined }));
+  };
+
+  const handleProfileNumberInputKeyDown = (e) => {
+    if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+
+  const handleProfileNumberChange = (e) => {
+    let { name, value } = e.target;
+    value = value.replace(/^0+/, '');
+    setProfileFormData((prev) => ({ ...prev, [name]: value }));
+    if (profileFormErrors[name]) setProfileFormErrors((prev) => ({ ...prev, [name]: undefined }));
+  };
+
+  const validateProfileForm = (data) => {
+    const errors = {};
+    if (!data.userName) errors.userName = 'Full Name is required';
+    if (!data.phoneNumber) errors.phoneNumber = 'Phone Number is required';
+    else if (!/^\d{10}$/.test(data.phoneNumber)) errors.phoneNumber = 'Phone Number must be exactly 10 digits';
+    
+    if (userInfo?.role === 'athlete' || user?.role === 'athlete') {
+      if (!data.gender) errors.gender = 'Gender is required';
+      
+      if (!data.age) errors.age = 'Age is required';
+      else if (isNaN(data.age) || data.age <= 12) errors.age = 'Age must be strictly greater than 12';
+      else if (data.age > 90) errors.age = 'Age must not exceed 90';
+      
+      if (!data.weight) errors.weight = 'Weight is required';
+      else if (isNaN(data.weight) || data.weight <= 0) errors.weight = 'Invalid weight';
+      else if (data.weight > 300) errors.weight = 'Weight must not exceed 300 kg';
+      
+      if (!data.height) errors.height = 'Height is required';
+      else if (isNaN(data.height) || data.height <= 0) errors.height = 'Invalid height';
+      else if (data.height > 300) errors.height = 'Height must not exceed 500 cm';
+    }
+    return errors;
+  };
+
   const [passwordData, setPasswordData] = useState({
     oldPassword: '',
     newPassword: '',
@@ -86,16 +145,42 @@ export default function Account() {
     if (!token || !targetId) return;
     try {
       const response = await authService.getUser(targetId, token);
-      // console.log(response);
-      if (response.data) {
-        setUserInfo(response.data);
-      } else if (response.userName) {
-        setUserInfo(response); // Fallback if data is not nested
+      const data = response.data || response;
+      if (data) {
+        setUserInfo(data);
+        setProfileFormData({
+          userName: data.userName || '',
+          phoneNumber: data.phoneNumber || '',
+          gender: data.gender || '',
+          age: data.age || '',
+          weight: data.weight || '',
+          height: data.height || ''
+        });
       }
     } catch (err) {
       console.error('Failed to load user info:', err);
     }
   }, [token, user?._id]);
+
+  const handleProfileUpdate = async (e) => {
+    e.preventDefault();
+    const errors = validateProfileForm(profileFormData);
+    if (Object.keys(errors).length > 0) {
+      setProfileFormErrors(errors);
+      return;
+    }
+    setIsUpdatingProfile(true);
+    try {
+      await fetchWithRefresh((t) => authService.updateProfile(profileFormData, t));
+      showToast({ title: 'Success', text: 'Profile updated successfully!', type: 'success' });
+      setIsEditingProfile(false);
+      loadUserInfo();
+    } catch (err) {
+      showModal('Error', err.message || 'Failed to update profile.', 'error');
+    } finally {
+      setIsUpdatingProfile(false);
+    }
+  };
 
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
 
@@ -226,10 +311,6 @@ export default function Account() {
       <div className="tab-content-container">
         {activeTab === 'profile' && (
           <div className="account-profile-section">
-            <div className="account-section-header centered">
-              {/* <h2>User Profile</h2> */}
-              {/* <p className="account-section-subtitle">Manage your personal information</p> */}
-            </div>
 
             <div className="account-profile-card">
               {(userInfo || user) ? (
@@ -250,10 +331,94 @@ export default function Account() {
                         )}
                       </div>
                     </div>
+                    <button 
+                      className="tab-btn" 
+                      style={{marginLeft: 'auto', alignSelf: 'center'}}
+                      onClick={() => setIsEditingProfile(!isEditingProfile)}
+                    >
+                      {isEditingProfile ? 'Cancel Edit' : 'Edit Profile'}
+                    </button>
                   </div>
 
-                  <div className="account-profile-grid">
-                    <div className="account-profile-item">
+                  {isEditingProfile ? (
+                    <form className="account-password-form" onSubmit={handleProfileUpdate} style={{marginTop: '20px'}}>
+                      <div className="account-form-row">
+                        <div className={`account-form-group ${profileFormErrors.userName ? 'has-error' : ''}`}>
+                          <label>Username</label>
+                          <div className="account-input-wrapper">
+                            <input name="userName" type="text" value={profileFormData.userName} onInput={handleProfileInput} disabled={isUpdatingProfile} required />
+                          </div>
+                          {profileFormErrors.userName && <span className="account-error-msg">{profileFormErrors.userName}</span>}
+                        </div>
+                        <div className="account-form-group">
+                          <label>Email Address</label>
+                          <div className="account-input-wrapper">
+                            <input type="email" value={userInfo?.email || user?.email} disabled style={{opacity: 0.7, cursor: 'not-allowed'}} />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="account-form-row">
+                        <div className={`account-form-group ${profileFormErrors.phoneNumber ? 'has-error' : ''}`}>
+                          <label>Phone Number</label>
+                          <div className="account-input-wrapper">
+                            <input name="phoneNumber" type="tel" maxLength="10" value={profileFormData.phoneNumber} onInput={handleProfilePhoneInput} disabled={isUpdatingProfile} />
+                          </div>
+                          {profileFormErrors.phoneNumber && <span className="account-error-msg">{profileFormErrors.phoneNumber}</span>}
+                        </div>
+                        <div className={`account-form-group ${profileFormErrors.gender ? 'has-error' : ''}`}>
+                          <label>Gender</label>
+                          <div className="account-input-wrapper">
+                            <select 
+                              name="gender"
+                              value={profileFormData.gender} 
+                              onChange={(e) => {
+                                setProfileFormData({...profileFormData, gender: e.target.value});
+                                if (profileFormErrors.gender) setProfileFormErrors((prev) => ({ ...prev, gender: undefined }));
+                              }}
+                              disabled={isUpdatingProfile}
+                              style={{ width: '100%', padding: '0.8rem 1rem', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', fontSize: '1rem' }}
+                            >
+                              <option value="" style={{color: 'black'}}>Select</option>
+                              <option value="male" style={{color: 'black'}}>Male</option>
+                              <option value="female" style={{color: 'black'}}>Female</option>
+                              <option value="other" style={{color: 'black'}}>Other</option>
+                            </select>
+                          </div>
+                          {profileFormErrors.gender && <span className="account-error-msg">{profileFormErrors.gender}</span>}
+                        </div>
+                      </div>
+                      <div className="account-form-row">
+                        <div className={`account-form-group ${profileFormErrors.age ? 'has-error' : ''}`}>
+                          <label>Age</label>
+                          <div className="account-input-wrapper">
+                            <input name="age" type="number" min="13" max="90" value={profileFormData.age} onChange={handleProfileNumberChange} onKeyDown={handleProfileNumberInputKeyDown} disabled={isUpdatingProfile} />
+                          </div>
+                          {profileFormErrors.age && <span className="account-error-msg">{profileFormErrors.age}</span>}
+                        </div>
+                        <div className={`account-form-group ${profileFormErrors.height ? 'has-error' : ''}`}>
+                          <label>Height (cm)</label>
+                          <div className="account-input-wrapper">
+                            <input name="height" type="number" min="1" max="500" value={profileFormData.height} onChange={handleProfileNumberChange} onKeyDown={handleProfileNumberInputKeyDown} disabled={isUpdatingProfile} />
+                          </div>
+                          {profileFormErrors.height && <span className="account-error-msg">{profileFormErrors.height}</span>}
+                        </div>
+                        <div className={`account-form-group ${profileFormErrors.weight ? 'has-error' : ''}`}>
+                          <label>Weight (kg)</label>
+                          <div className="account-input-wrapper">
+                            <input name="weight" type="number" min="1" max="300" value={profileFormData.weight} onChange={handleProfileNumberChange} onKeyDown={handleProfileNumberInputKeyDown} disabled={isUpdatingProfile} />
+                          </div>
+                          {profileFormErrors.weight && <span className="account-error-msg">{profileFormErrors.weight}</span>}
+                        </div>
+                      </div>
+                      <div className="account-password-actions">
+                        <button type="submit" className="account-btn-update-password" disabled={isUpdatingProfile}>
+                          {isUpdatingProfile ? 'Saving...' : 'Save Profile'}
+                        </button>
+                      </div>
+                    </form>
+                  ) : (
+                    <div className="account-profile-grid">
+                      <div className="account-profile-item">
                       <div className="account-profile-item-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
                       </div>
@@ -273,26 +438,65 @@ export default function Account() {
                       </div>
                     </div>
 
-                    {/* <div className="account-profile-item">
+                    {(userInfo?.gender || user?.gender) && (
+                      <div className="account-profile-item">
+                        <div className="account-profile-item-icon">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        </div>
+                        <div className="account-profile-item-text">
+                          <span className="label">Gender</span>
+                          <span className="value" style={{textTransform: 'capitalize'}}>{userInfo?.gender || user?.gender}</span>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {(userInfo?.age || user?.age) && (
+                      <div className="account-profile-item">
+                        <div className="account-profile-item-icon">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        </div>
+                        <div className="account-profile-item-text">
+                          <span className="label">Age</span>
+                          <span className="value">{userInfo?.age || user?.age}</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {(userInfo?.height || user?.height) && (
+                      <div className="account-profile-item">
+                        <div className="account-profile-item-icon">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22V2"></path><path d="M5 22h14"></path><path d="M5 2h14"></path><line x1="12" y1="22" x2="12" y2="2"></line></svg>
+                        </div>
+                        <div className="account-profile-item-text">
+                          <span className="label">Height</span>
+                          <span className="value">{userInfo?.height || user?.height} cm</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {(userInfo?.weight || user?.weight) && (
+                      <div className="account-profile-item">
+                        <div className="account-profile-item-icon">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M16 16v-6a4 4 0 0 0-8 0v6"></path><path d="M12 20v-4"></path></svg>
+                        </div>
+                        <div className="account-profile-item-text">
+                          <span className="label">Weight</span>
+                          <span className="value">{userInfo?.weight || user?.weight} kg</span>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="account-profile-item">
                       <div className="account-profile-item-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                       </div>
                       <div className="account-profile-item-text">
                         <span className="label">Member Since</span>
-                        <span className="value">{userInfo?.createdAt ? formatDate(userInfo.createdAt) : formatDate(user?.createdAt)}</span>
+                        <span className="value">{userInfo?.createdAt ? formatDate(userInfo.createdAt) : formatDate(new Date().toISOString())}</span>
                       </div>
-                    </div> */}
-
-                    {/* <div className="account-profile-item">
-                      <div className="account-profile-item-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                      </div>
-                      <div className="account-profile-item-text">
-                        <span className="label">Account Status</span>
-                        <span className="value">{(userInfo?.isVerified || user?.isVerified) ? 'Active & Verified' : 'Active'}</span>
-                      </div>
-                    </div> */}
-                  </div>
+                    </div>
+                    </div>
+                  )}
                 </>
               ) : (
                 <div style={{ textAlign: 'center', padding: '20px' }}>

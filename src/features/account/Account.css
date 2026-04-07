@@ -6,10 +6,10 @@
 }
 
 .account-header-wrapper {
-  margin-bottom: 48px;
+  margin-bottom: 34px;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 24px;
 }
 
 .account-header {
@@ -79,7 +79,7 @@
 .account-tabs {
   display: flex;
   gap: 12px; /* Reduced gap */
-  margin-bottom: 32px; /* Reduced margin */
+  margin-bottom: 0; /* Removed margin */
   background: rgba(255, 255, 255, 0.03);
   padding: 6px;
   border-radius: 16px;
@@ -561,6 +561,18 @@
   border-radius: 16px;
   font-size: 1rem;
   transition: all 0.3s ease;
+}
+
+/* Hide number input spin buttons */
+.account-input-wrapper input::-webkit-outer-spin-button,
+.account-input-wrapper input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+.account-input-wrapper input[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 .account-input-wrapper input:focus {
