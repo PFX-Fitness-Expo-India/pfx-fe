@@ -93,7 +93,8 @@ img {
 .section-header {
   display: flex;
   align-items: flex-end;
-  justify-content: space-between;
+  justify-content: center;
+  
   gap: 32px;
   margin-bottom: 40px;
 }
@@ -192,6 +193,10 @@ p  { margin: 0; }
 }
 
 @media (max-width: 768px) {
+  :root {
+    --section-padding: 60px;
+  }
+
   .logo-img {
     height: 34px;
   }
@@ -905,6 +910,128 @@ p  { margin: 0; }
   flex: 1;
   font-size: 0.95rem;
   color: var(--muted);
+  display: flex;
+  flex-direction: column;
+}
+
+.registration-copy h3 {
+  margin: 0 0 12px 0;
+}
+
+.registration-copy > p {
+  margin: 0;
+}
+
+/* ---- Contact Section ---- */
+.contact-section .section-header {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 60px;
+  flex-direction: column;
+}
+
+.contact-section .section-header > div:first-child {
+  flex: none;
+}
+
+.contact-layout {
+  justify-content: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.contact-footer {
+  margin-top: 24px;
+}
+
+/* Mobile responsive for contact section */
+@media (max-width: 768px) {
+  .contact-section .section-header {
+    margin-bottom: 40px;
+  }
+
+  .contact-section .section-header h2 {
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+  }
+
+  .registration-layout {
+    gap: 24px;
+  }
+
+  .registration-copy {
+    font-size: 0.9rem;
+  }
+
+  .registration-copy h3 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
+
+  .registration-card {
+    max-width: 100%;
+    padding: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-section .section-header {
+    margin-bottom: 30px;
+    justify-content: center;
+  }
+
+  .contact-section .section-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .contact-section .eyebrow {
+    text-align: center;
+  }
+
+  .registration-copy {
+    font-size: 0.85rem;
+    text-align: center;
+    align-items: center;
+  }
+
+  .registration-copy h3 {
+    font-size: 1rem;
+    margin-bottom: 8px;
+  }
+
+  .registration-copy > p {
+    line-height: 1.4;
+    margin-bottom: 10px;
+    text-align: justify;
+  }
+
+  .bullet-list {
+    margin-top: 12px;
+    padding-left: 16px;
+    margin-left: auto;
+    margin-right: auto;
+    display: inline-block;
+    text-align: left;
+  }
+
+  .bullet-list li {
+    margin-bottom: 6px;
+    font-size: 0.85rem;
+  }
+
+  .registration-card {
+    max-width: 100%;
+    padding: 20px;
+  }
+
+  .registration-layout {
+    gap: 16px;
+  }
+
+  .eyebrow {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+  }
 }
 
 .bullet-list {
@@ -972,6 +1099,30 @@ p  { margin: 0; }
   padding: 10px 14px;
   font-size: 0.85rem;
   font-family: inherit;
+}
+
+.form-field input::placeholder,
+.form-field textarea::placeholder {
+  color: rgba(158, 160, 181, 0.4);
+  opacity: 0.6;
+}
+
+.form-field input::-webkit-input-placeholder,
+.form-field textarea::-webkit-input-placeholder {
+  color: rgba(158, 160, 181, 0.4);
+  opacity: 0.6;
+}
+
+.form-field input::-moz-placeholder,
+.form-field textarea::-moz-placeholder {
+  color: rgba(158, 160, 181, 0.4);
+  opacity: 0.6;
+}
+
+.form-field input:-ms-input-placeholder,
+.form-field textarea:-ms-input-placeholder {
+  color: rgba(158, 160, 181, 0.4);
+  opacity: 0.6;
 }
 
 .form-field input:not([type="checkbox"]):not([type="radio"]),
@@ -1101,6 +1252,10 @@ p  { margin: 0; }
 }
 
 @media (max-width: 480px) {
+  :root {
+    --section-padding: 40px;
+  }
+
   .registration-actions {
     flex-direction: column-reverse;
     align-items: stretch;
