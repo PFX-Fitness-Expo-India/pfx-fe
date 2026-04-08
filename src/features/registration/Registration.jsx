@@ -67,9 +67,9 @@ export default function Registration() {
           <p className="eyebrow">Get In Touch</p>
           <h2>Contact PFX Fitness Expo</h2>
         </div>
-        <p className="section-intro">
+        {/* <p className="section-intro">
           Have a question about the expo, sponsorships, or athlete registration? Send us a message and our team will get back to you as soon as possible.
-        </p>
+        </p> */}
       </div>
       
       <div className="container registration-layout contact-layout">
@@ -93,7 +93,8 @@ export default function Registration() {
                 <label htmlFor="contactName">Full Name</label>
                 <input 
                   id="contactName" 
-                  name="fullName" 
+                  name="fullName"
+                  className='text-muted' 
                   placeholder="PFX Sports"
                   value={formData.fullName}
                   onChange={handleChange}
