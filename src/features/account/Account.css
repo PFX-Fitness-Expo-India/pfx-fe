@@ -169,13 +169,14 @@
   transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
   position: relative;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .account-ticket-card:hover {
   transform: translateY(-8px);
   background: rgba(255, 255, 255, 0.08); /* Increased hover opacity */
-  border-color: rgba(255, 107, 0, 0.5); /* More visible highlight */
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  border-color: var(--primary); /* Use primary color for highlight */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 107, 0, 0.1);
 }
 
 .account-ticket-card-header {
@@ -457,6 +458,41 @@
   border: 1px solid rgba(52, 199, 89, 0.2);
 }
 
+.account-btn-edit-profile {
+  margin-left: auto;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.account-btn-edit-profile:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.account-btn-edit-profile.cancel {
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--muted);
+}
+
+.account-btn-edit-profile.cancel:hover {
+  background: rgba(255, 59, 48, 0.05);
+  border-color: #ff3b30;
+  color: #ff3b30;
+}
+
 .account-profile-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -710,6 +746,28 @@
   .account-profile-item { gap: 12px; padding: 12px; background: rgba(255, 255, 255, 0.02); border-radius: 12px; }
   .account-profile-item-icon { width: 40px; height: 40px; border-radius: 10px; }
   .account-profile-item-icon svg { width: 16px; height: 16px; }
+  .account-btn-edit-profile { 
+    position: absolute; 
+    top: 20px; 
+    right: 20px; 
+    width: 44px; /* Slightly larger for better touch target */
+    height: 44px; 
+    padding: 0; 
+    border-radius: 50%; 
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+    gap: 0;
+    margin: 0; 
+    font-size: 0; 
+  }
+  .account-btn-edit-profile svg { 
+    margin: 0; 
+    width: 20px; 
+    height: 20px; 
+    display: block;
+  }
+  .account-btn-edit-profile.cancel { top: 20px; right: 20px; }
 }
 
 @keyframes account-pulse {

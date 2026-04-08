@@ -332,11 +332,20 @@ export default function Account() {
                       </div>
                     </div>
                     <button 
-                      className="tab-btn" 
-                      style={{marginLeft: 'auto', alignSelf: 'center'}}
+                      className={`account-btn-edit-profile ${isEditingProfile ? 'cancel' : ''}`}
                       onClick={() => setIsEditingProfile(!isEditingProfile)}
                     >
-                      {isEditingProfile ? 'Cancel Edit' : 'Edit Profile'}
+                      {isEditingProfile ? (
+                        <>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                          Cancel
+                        </>
+                      ) : (
+                        <>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                          Edit Profile
+                        </>
+                      )}
                     </button>
                   </div>
 
@@ -530,7 +539,11 @@ export default function Account() {
             ) : tickets.length > 0 ? (
               <div className="account-ticket-grid">
                 {tickets.map((ticket, index) => (
-                  <div key={ticket._id || index} className="account-ticket-card">
+                  <div 
+                    key={ticket._id || index} 
+                    className="account-ticket-card"
+                    onClick={() => navigate(`/ticket/${ticket._id}`)}
+                  >
                     <div className="account-ticket-card-header">
                       <div className="account-event-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><line x1="10" y1="9" x2="8" y2="9"></line></svg>
@@ -566,13 +579,6 @@ export default function Account() {
 
                     <div className="account-ticket-card-footer">
                       <span className="account-issued-date">Issued: {ticket.issuedAt ? formatDate(ticket.issuedAt) : formatDate(ticket.createdAt)}</span>
-                      <button 
-                        className="account-btn-view-ticket" 
-                        onClick={() => navigate(`/ticket/${ticket._id}`)}
-                      >
-                        View Ticket
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"></path><polyline points="12 5 19 12 12 19"></polyline></svg>
-                      </button>
                     </div>
                   </div>
                 ))}
