@@ -135,8 +135,8 @@ export default function AthleteRegistrationModal() {
       newErrors.subcategory = "Please select a category.";
     }
 
-    // Only require terms agreement if feature is enabled
-    if (REQUIRE_TERMS_AGREEMENT && !formData.agreedToTerms) {
+    // Checkbox is always required, regardless of REQUIRE_TERMS_AGREEMENT flag
+    if (!formData.agreedToTerms) {
       newErrors.agreedToTerms = "You must agree to the terms and conditions.";
     }
 
@@ -305,9 +305,9 @@ export default function AthleteRegistrationModal() {
         );
       } else if (error.statusCode === 400) {
         showModal(
-          "Invalid Data",
+          // "Invalid Data",
           error.message || "Please check your inputs.",
-          "error",
+         
         );
       } else {
         showModal(
