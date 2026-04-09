@@ -55,7 +55,7 @@ export default function Highlights() {
       <div className="container section-header">
         <div>
           <p className="eyebrow">Event Highlights</p>
-          <h2>Elite competition. World-class production.</h2>
+          <h2>Elite competition. <br /> World-class production.</h2>
         </div>
         <p className="section-intro">
           PFX Fitness Expo India brings together the most exciting strength, physique, and

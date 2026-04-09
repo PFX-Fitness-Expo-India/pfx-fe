@@ -7,6 +7,10 @@ import { registrationService } from "../../services/registrationService";
 import { paymentService } from "../../services/paymentService";
 import { useModal } from "../../contexts/ModalContext";
 import logo from "../../assets/logo.png";
+
+//  FEATURE FLAG: Set to true to require terms & conditions, false to skip
+const REQUIRE_TERMS_AGREEMENT = false;
+
 export default function AthleteRegistrationModal() {
   const {
     activeRegistrationEvent: event,
@@ -21,6 +25,9 @@ export default function AthleteRegistrationModal() {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
+  const [termsModalOpen, setTermsModalOpen] = useState(false);
+  const [termsRead, setTermsRead] = useState(!REQUIRE_TERMS_AGREEMENT); // Auto-pass if disabled
+  const [attemptedCheckbox, setAttemptedCheckbox] = useState(false);
   const [formData, setFormData] = useState(() => {
     // Attempt to restore from pendingAction immediately on mount
     const pendingActionStr = localStorage.getItem("pendingAction");
@@ -82,6 +89,11 @@ export default function AthleteRegistrationModal() {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
+    // Only block checkbox change if terms are REQUIRED and not read
+    if (name === "agreedToTerms" && REQUIRE_TERMS_AGREEMENT && !termsRead) {
+      return;
+    }
+
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value
@@ -89,6 +101,28 @@ export default function AthleteRegistrationModal() {
 
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: null }));
+    }
+  };
+
+  const handleOpenTerms = () => {
+    setAttemptedCheckbox(false);
+    setTermsModalOpen(true);
+  };
+
+  const handleCloseTerms = () => {
+    setTermsModalOpen(false);
+  };
+
+  const handleMarkTermsAsRead = () => {
+    setTermsRead(true);
+    setAttemptedCheckbox(false);
+    setTermsModalOpen(false);
+  };
+
+  const handleCheckboxClick = (e) => {
+    if (!termsRead) {
+      e.preventDefault();
+      setAttemptedCheckbox(true);
     }
   };
 
@@ -101,7 +135,8 @@ export default function AthleteRegistrationModal() {
       newErrors.subcategory = "Please select a category.";
     }
 
-    if (!formData.agreedToTerms) {
+    // Only require terms agreement if feature is enabled
+    if (REQUIRE_TERMS_AGREEMENT && !formData.agreedToTerms) {
       newErrors.agreedToTerms = "You must agree to the terms and conditions.";
     }
 
@@ -291,7 +326,7 @@ export default function AthleteRegistrationModal() {
       <div className="sport-modal-hero">
         <div className="sport-modal-badge">Athlete Registration</div>
         <h3>{event.eventName}</h3>
-        <p>Complete your details to register for this event.</p>
+        {/* <p>Complete your details to register for this event.</p> */}
       </div>
       <div className="sport-modal-body">
         <form
@@ -331,18 +366,54 @@ export default function AthleteRegistrationModal() {
           )}
 
           <div className="form-row" style={{ marginTop: "16px" }}>
-            <div className="form-field full" style={{ flexDirection: "row", alignItems: "center", gap: "10px" }}>
-              <input
-                id="agreedToTerms"
-                name="agreedToTerms"
-                type="checkbox"
-                checked={formData.agreedToTerms}
-                onChange={handleChange}
-                className="styled-checkbox"
-              />
-              <label htmlFor="agreedToTerms" style={{ cursor: "pointer", textTransform: "none", letterSpacing: "normal", color: "var(--text)", fontSize: "0.85rem" }}>
-                I agree to the terms and conditions and confirm my participation.
-              </label>
+            <div className="form-field full" style={{ flexDirection: "column", alignItems: "flex-start", gap: "10px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <input
+                  id="agreedToTerms"
+                  name="agreedToTerms"
+                  type="checkbox"
+                  checked={formData.agreedToTerms}
+                  onChange={handleChange}
+                  onClick={REQUIRE_TERMS_AGREEMENT ? handleCheckboxClick : undefined}
+                  className="styled-checkbox"
+                  style={{ 
+                    cursor: !REQUIRE_TERMS_AGREEMENT || termsRead ? "pointer" : "not-allowed", 
+                    opacity: !REQUIRE_TERMS_AGREEMENT || termsRead ? 1 : 0.6 
+                  }}
+                />
+                <label htmlFor="agreedToTerms" style={{ 
+                  cursor: !REQUIRE_TERMS_AGREEMENT || termsRead ? "pointer" : "not-allowed", 
+                  textTransform: "none", 
+                  letterSpacing: "normal", 
+                  color: !REQUIRE_TERMS_AGREEMENT || termsRead ? "var(--text)" : "var(--muted)", 
+                  fontSize: "0.85rem", 
+                  opacity: !REQUIRE_TERMS_AGREEMENT || termsRead ? 1 : 0.6 
+                }}>
+                  I agree to the{" "}
+                  <button
+                    type="button"
+                    onClick={handleOpenTerms}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "#ff3040",
+                      cursor: "pointer",
+                      textDecoration: "underline",
+                      fontSize: "0.85rem",
+                      padding: 0,
+                      font: "inherit"
+                    }}
+                  >
+                    terms and conditions
+                  </button>
+                  {" "}and confirm my participation.
+                </label>
+              </div>
+              {REQUIRE_TERMS_AGREEMENT && attemptedCheckbox && !termsRead && (
+                <p className="text-danger" style={{ fontSize: "0.75rem", color: "#ff4444", margin: "4px 0 0 0" }}>
+                  Please read the terms and conditions first
+                </p>
+              )}
             </div>
             {errors.agreedToTerms && (
               <span
@@ -378,6 +449,58 @@ export default function AthleteRegistrationModal() {
           </div>
         </form>
       </div>
+
+      {/* Terms and Conditions Modal - Only shown if feature is enabled */}
+      {REQUIRE_TERMS_AGREEMENT && termsModalOpen && (
+        <Modal onClose={handleCloseTerms} className="terms-modal-content">
+          <div className="terms-modal-header">
+            <h3>Terms and Conditions</h3>
+            
+          </div>
+          <div className="terms-modal-body">
+            <div style={{ color: "var(--text)", fontSize: "0.9rem", lineHeight: "1.6" }}>
+              <h4>1. Registration and Participation</h4>
+              <p>By registering for this event, you confirm that you are eligible to participate and have read all event details and requirements.</p>
+
+              <h4>2. Health and Safety</h4>
+              <p>You confirm that you are in good physical health and capable of participating in this fitness event. You agree to compete at your own risk and assume full responsibility for any injuries or damages.</p>
+
+              <h4>3. Code of Conduct</h4>
+              <p>All participants must maintain the highest level of sportsmanship and conduct themselves respectfully. Any abusive, offensive, or inappropriate behavior will result in immediate disqualification.</p>
+
+              <h4>4. Payment Terms</h4>
+              <p>The registration fee must be paid in full at the time of registration. Payments are non-refundable except as per our refund policy.</p>
+
+              <h4>5. Event Rules</h4>
+              <p>You agree to abide by all event rules and decisions made by event officials. Any violations may result in disqualification without refund.</p>
+
+              <h4>6. Photography and Media</h4>
+              <p>You consent to being photographed and/or filmed during the event and agree that such media may be used for promotional purposes by PFX Fitness Expo.</p>
+
+              <h4>7. Liability Waiver</h4>
+              <p>PFX Fitness Expo India and its organizers are not liable for any injuries, loss, or damages incurred during participation in the event.</p>
+
+              <h4>8. Cancellation Policy</h4>
+              <p>Event dates and venues are subject to change at the organizer's discretion. In case of cancellation, registered fees will be refunded or credited for future events.</p>
+
+              <h4>9. Privacy</h4>
+              <p>Your personal information will be used for event management purposes only and will be kept confidential as per our privacy policy.</p>
+
+              <h4>10. Acceptance</h4>
+              <p>By checking the agreement box, you acknowledge that you have read, understood, and agree to be bound by these terms and conditions.</p>
+            </div>
+          </div>
+          <div className="terms-modal-footer">
+            <button
+              onClick={handleMarkTermsAsRead}
+              className="btn primary"
+              style={{ width: "100%", padding: "12px" }}
+            >
+              I Have Read & Agree to Terms
+            </button>
+          </div>
+        </Modal>
+      )}
     </Modal>
   );
 }
