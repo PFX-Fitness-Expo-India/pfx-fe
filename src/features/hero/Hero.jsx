@@ -1,8 +1,33 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { useState, useEffect } from 'react';
 import { SCROLL_OFFSET } from '../../constants/config';
 import { useAppContext } from '../../contexts/AppContext';
 import { useNavigate } from 'react-router-dom';
+
+const Counter = ({ target, duration = 2000 }) => {
+  const [count, setCount] = useState(1);
+
+  useEffect(() => {
+    if (typeof target !== 'number' || target === 1) {
+      setCount(target);
+      return;
+    }
+
+    let startTimestamp = null;
+    const step = (timestamp) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      setCount(Math.floor(progress * target));
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      }
+    };
+    window.requestAnimationFrame(step);
+  }, [target, duration]);
+
+  return <>{count}</>;
+};
 
 export default function Hero() {
   const { user, guestViewMode, setGuestViewMode } = useAppContext();
@@ -70,7 +95,7 @@ export default function Hero() {
         )}
         
         <div className="hero-meta">
-          <span>3 Days • {events.length || '...'} Sports • Mumbai, India</span>
+          <span>3 Days • <Counter target={events.length || 1} /> Sports • Mumbai, India</span>
           <span className="dot">•</span>
           <span>November 2026</span>
         </div>

@@ -31,7 +31,7 @@ export default function SportsGrid({ onViewEvent }) {
       <div className="container section-header">
         <div>
           <p className="eyebrow">Sports Line-Up</p>
-          <h2>{events.length } electrifying disciplines. One massive stage.</h2>
+          <h2>{events.length } electrifying disciplines.<br/> One massive stage.</h2>
         </div>
         <p className="section-intro">
           From bodybuilding to combat sports, endurance to strength, compete or witness India's
