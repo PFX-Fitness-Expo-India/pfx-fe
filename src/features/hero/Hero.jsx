@@ -98,8 +98,7 @@ export default function Hero() {
         )}
         
         <div className="hero-meta">
-          <span>3 Days • <Counter target={events.length || 1} /> Sports • Mumbai, India</span>
-          <span className="dot">•</span>
+          <span>3 Days • <Counter target={events.length || 1} /> Sports • Mumbai, India • </span>
           <span>November 2026</span>
         </div>
       </div>
