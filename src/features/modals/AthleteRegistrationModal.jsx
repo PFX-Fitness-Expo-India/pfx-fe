@@ -47,7 +47,6 @@ export default function AthleteRegistrationModal() {
     };
   });
   const [errors, setErrors] = useState({});
-
   useEffect(() => {
     if (!event) {
       setLoading(false);
@@ -242,6 +241,7 @@ export default function AthleteRegistrationModal() {
                 date: event.eventDate,
                 location: event.eventLocation,
                 orderId: response.razorpay_order_id,
+                name: user.userName || 'User',
               });
             } catch (err) {
               closeModal();
@@ -285,6 +285,7 @@ export default function AthleteRegistrationModal() {
           date: event.eventDate,
           location: event.eventLocation,
           paymentMethod: "offline",
+          name: user.userName || 'User',
         });
       }
     } catch (error) {
@@ -332,6 +333,7 @@ export default function AthleteRegistrationModal() {
         <div className="sport-modal-badge">Athlete Registration</div>
         <h3>{event.eventName}</h3>
         {/* <p>Complete your details to register for this event.</p> */}
+
       </div>
       <div className="sport-modal-body">
         <form

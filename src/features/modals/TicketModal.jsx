@@ -120,7 +120,9 @@ export default function TicketModal() {
               eventName: currentTicketType,
               type: 'ticket',
               price: currentAmount,
-              orderId: response.razorpay_order_id
+              orderId: response.razorpay_order_id,
+              paymentMethod: 'online',
+              name: user.userName || 'User',
             });
           } catch (err) {
             closeModal();

@@ -102,7 +102,14 @@ export default function Account() {
     try {
       const d = new Date(dateString || fallback);
       if (isNaN(d.getTime())) return 'Pending';
-      return d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+      return d.toLocaleDateString(undefined, { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
     } catch {
       return 'Pending';
     }

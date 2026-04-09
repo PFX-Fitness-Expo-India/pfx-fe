@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { SCROLL_OFFSET } from '../../constants/config';
 import { useAppContext } from '../../contexts/AppContext';
 import { useNavigate } from 'react-router-dom';
+import logo from '../../assets/logo_2.png';
 
 const Counter = ({ target, duration = 2000 }) => {
   const [count, setCount] = useState(1);
@@ -57,22 +58,24 @@ export default function Hero() {
   };
 
   return (
-    <section id="home" className="hero section">
+    <section id="home" className="hero">
       <div className="hero-media">
+        <img
+          className="hero-image"
+          src="https://images.pexels.com/photos/3837781/pexels-photo-3837781.jpeg"
+          alt="Hero background"
+        />
         <div className="hero-overlay" />
-        <video
-          className="hero-video"
-          autoPlay
-          muted
-          loop
-          playsInline
-          poster="https://images.pexels.com/photos/3837781/pexels-photo-3837781.jpeg"
-        >
-          <source
-            src="https://videos.pexels.com/video-files/4761656/4761656-uhd_2560_1440_25fps.mp4"
-            type="video/mp4"
-          />
-        </video>
+      </div>
+
+      <div className="hero-branding">
+        <div className="hero-logo-circle">
+          <img src={logo} alt="PFX Fitness Expo" />
+        </div>
+        {/* <div className="hero-brand-text">
+          <div>PFX</div>
+          <div>Fitness Expo</div>
+        </div> */}
       </div>
 
       <div className="hero-content container">

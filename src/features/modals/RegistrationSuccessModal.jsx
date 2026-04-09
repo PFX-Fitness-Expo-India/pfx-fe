@@ -9,7 +9,7 @@ export default function RegistrationSuccessModal() {
 
   if (!registrationSuccessData) return null;
 
-  const { eventName, type, price, date, location, orderId, paymentMethod } =
+  const { eventName, type, price, date, location, orderId, paymentMethod, name } =
     registrationSuccessData;
   const isTicket = type === "ticket";
 
@@ -64,6 +64,10 @@ export default function RegistrationSuccessModal() {
           <div className="success-event-title">{eventName}</div>
 
           <div className="success-detail-grid">
+            <div className="success-detail-item">
+              <label>Holder</label>
+              <span>{name || "User"}</span>
+            </div>
             <div className="success-detail-item">
               <label>Amount</label>
               <span>{price ? `₹${price}` : "0"}</span>
