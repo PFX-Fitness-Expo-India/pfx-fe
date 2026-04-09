@@ -6,7 +6,7 @@ import { useAppContext } from "../../contexts/AppContext";
 import { registrationService } from "../../services/registrationService";
 import { paymentService } from "../../services/paymentService";
 import { useModal } from "../../contexts/ModalContext";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logo_2.png";
 
 //  FEATURE FLAG: Set to true to require terms & conditions, false to skip
 const REQUIRE_TERMS_AGREEMENT = false;
@@ -205,8 +205,7 @@ export default function AthleteRegistrationModal() {
           key: import.meta.env.VITE_RAZORPAY_KEY_ID,
           amount: order.amount,
           currency: order.currency,
-          image: import.meta.env.VITE_APP_LOGO,
-          // image: 'https://ui-avatars.com/api/?name=PFX+Fitness+Expo&background=ff4444&color=fff&size=512',
+          image: import.meta.env.VITE_APP_LOGO || 'https://ui-avatars.com/api/?name=PFX&background=ff3040&color=fff&size=256&font-size=0.4&bold=true',
           name: "PFX Fitness Expo",
           description: `Registration for ${event.eventName}`,
           order_id: order.id,
@@ -323,6 +322,12 @@ export default function AthleteRegistrationModal() {
 
   return (
     <Modal onClose={handleCloseModal} className="athlete-modal-content">
+      <div className="modal-header-with-logo">
+        <div className="modal-logo-section">
+          <img src={logo} alt="PFX Logo" className="modal-logo-img" />
+          <span className="modal-brand-name">PFX Fitness Expo</span>
+        </div>
+      </div>
       <div className="sport-modal-hero">
         <div className="sport-modal-badge">Athlete Registration</div>
         <h3>{event.eventName}</h3>
