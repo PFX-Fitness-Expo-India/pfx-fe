@@ -8,7 +8,7 @@ import {
 import { useAppContext } from "../../contexts/AppContext";
 import { useModal } from "../../contexts/ModalContext";
 
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logo_2.png";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);

@@ -5,7 +5,7 @@ import { useAppContext } from '../../contexts/AppContext';
 import { paymentService } from '../../services/paymentService';
 import { registrationService } from '../../services/registrationService';
 import { useModal } from '../../contexts/ModalContext';
-import logo from '../../assets/logo.png';
+import logo from '../../assets/logo_2.png';
 
 export default function TicketModal() {
   const { 

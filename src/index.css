@@ -173,7 +173,7 @@ p  { margin: 0; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
+  padding: 0 24px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(18px);
   transition: background 0.3s ease, 
@@ -181,16 +181,25 @@ p  { margin: 0; }
               border-color 0.3s ease;
 }
 
+.site-header.scrolled {
+  background: rgba(5, 5, 9, 0.85);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
 .logo {
   cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: fit-content;
 }
 
 .logo-img {
-  height: 42px;
+  height: 68px;
   width: auto;
   object-fit: contain;
+  max-width: 180px;
 }
 
 @media (max-width: 768px) {
@@ -199,7 +208,13 @@ p  { margin: 0; }
   }
 
   .logo-img {
-    height: 34px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-img {
+    height: 32px;
   }
 }
 
@@ -1512,6 +1527,34 @@ p  { margin: 0; }
   color: var(--text);
 }
 
+.modal-header-with-logo {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 16px 0 12px 0;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-logo-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.modal-logo-img {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+.modal-brand-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.05em;
+}
+
 .athlete-modal-content .form-field label {
   color: rgba(255, 255, 255, 0.9);
   font-weight: 500;
@@ -1695,7 +1738,7 @@ tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.02); }
 }
 
 @media (max-width: 768px) {
-  .site-header { padding-inline: 12px; }
+  .site-header { padding-inline: 16px; }
   .logo { font-size: 1.1rem; }
   .header-right-group { gap: 6px; flex-wrap: nowrap; }
   .header-actions { gap: 6px; flex-wrap: nowrap; }
@@ -1714,6 +1757,14 @@ tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.02); }
   }
   .header-actions { gap: 8px; }
   .login-btn { font-size: 0.72rem; padding: 6px 12px; }
+  
+  .modal-logo-img {
+    height: 36px;
+  }
+  
+  .modal-brand-name {
+    font-size: 0.9rem;
+  }
 
   .main-nav {
     position: absolute;
@@ -1774,6 +1825,36 @@ tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.02); }
   .section { padding: 72px 0; }
   .footer-grid { grid-template-columns: minmax(0, 1fr); }
   .sport-modal-body { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+}
+
+@media (max-width: 480px) {
+  .site-header { 
+    padding-inline: 12px;
+    height: 72px;
+  }
+  
+  .logo-img {
+    height: 60px;
+  }
+  
+  .header-right-group { gap: 8px; }
+  .header-actions { gap: 4px; }
+  
+  .modal-logo-img {
+    height: 32px;
+  }
+  
+  .modal-logo-section {
+    gap: 8px;
+  }
+  
+  .modal-brand-name {
+    font-size: 0.85rem;
+  }
+  
+  .modal-header-with-logo {
+    padding: 12px 0 8px 0;
+  }
 }
 
 @media (max-width: 520px) {
