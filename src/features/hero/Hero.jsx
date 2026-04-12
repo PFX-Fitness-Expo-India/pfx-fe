@@ -59,15 +59,6 @@ export default function Hero() {
 
   return (
     <section id="home" className="hero">
-      <div className="hero-media">
-        <img
-          className="hero-image"
-          src="https://images.pexels.com/photos/3837781/pexels-photo-3837781.jpeg"
-          alt="Hero background"
-        />
-        <div className="hero-overlay" />
-      </div>
-
       <div className="hero-branding">
         <div className="hero-logo-circle">
           <img src={logo} alt="PFX Fitness Expo" />
