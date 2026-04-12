@@ -6,5 +6,10 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: true,
+    allowedHosts: [
+      'overfull-faceless-unlovable.ngrok-free.dev',
+      'localhost',
+      '.ngrok-free.dev',
+    ],
   },
 })
