@@ -74,7 +74,7 @@ export default function Account() {
       
       if (!data.height) errors.height = 'Height is required';
       else if (isNaN(data.height) || data.height <= 0) errors.height = 'Invalid height';
-      else if (data.height > 300) errors.height = 'Height must not exceed 500 cm';
+      else if (data.height > 300) errors.height = 'Height must not exceed 300 cm';
     }
     return errors;
   };
@@ -93,10 +93,18 @@ export default function Account() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Persist activeTab to localStorage
+  // Persist activeTab to localStorage for page refreshes
+  // but clear it when navigating away from the Account page
   useEffect(() => {
     localStorage.setItem('pfx_activeAccountTab', activeTab);
   }, [activeTab]);
+
+  useEffect(() => {
+    // Cleanup: Remove the tab preference when user leaves the Account section
+    return () => {
+      localStorage.removeItem('pfx_activeAccountTab');
+    };
+  }, []);
 
   const formatDate = (dateString, fallback = Date.now()) => {
     try {
@@ -374,58 +382,62 @@ export default function Account() {
                         </div>
                       </div>
                       <div className="account-form-row">
-                        <div className={`account-form-group ${profileFormErrors.phoneNumber ? 'has-error' : ''}`}>
+                        <div className={`account-form-group ${profileFormErrors.phoneNumber ? 'has-error' : ''}`} style={!(userInfo?.role === 'athlete' || user?.role === 'athlete') ? { flex: '1 1 100%' } : {}}>
                           <label>Phone Number</label>
                           <div className="account-input-wrapper">
                             <input name="phoneNumber" type="tel" maxLength="10" value={profileFormData.phoneNumber} onInput={handleProfilePhoneInput} disabled={isUpdatingProfile} />
                           </div>
                           {profileFormErrors.phoneNumber && <span className="account-error-msg">{profileFormErrors.phoneNumber}</span>}
                         </div>
-                        <div className={`account-form-group ${profileFormErrors.gender ? 'has-error' : ''}`}>
-                          <label>Gender</label>
-                          <div className="account-input-wrapper">
-                            <select 
-                              name="gender"
-                              value={profileFormData.gender} 
-                              onChange={(e) => {
-                                setProfileFormData({...profileFormData, gender: e.target.value});
-                                if (profileFormErrors.gender) setProfileFormErrors((prev) => ({ ...prev, gender: undefined }));
-                              }}
-                              disabled={isUpdatingProfile}
-                              style={{ width: '100%', padding: '0.8rem 1rem', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', fontSize: '1rem' }}
-                            >
-                              <option value="" style={{color: 'black'}}>Select</option>
-                              <option value="male" style={{color: 'black'}}>Male</option>
-                              <option value="female" style={{color: 'black'}}>Female</option>
-                              <option value="other" style={{color: 'black'}}>Other</option>
-                            </select>
+                        {(userInfo?.role === 'athlete' || user?.role === 'athlete') && (
+                          <div className={`account-form-group ${profileFormErrors.gender ? 'has-error' : ''}`}>
+                            <label>Gender</label>
+                            <div className="account-input-wrapper">
+                              <select 
+                                name="gender"
+                                value={profileFormData.gender} 
+                                onChange={(e) => {
+                                  setProfileFormData({...profileFormData, gender: e.target.value});
+                                  if (profileFormErrors.gender) setProfileFormErrors((prev) => ({ ...prev, gender: undefined }));
+                                }}
+                                disabled={isUpdatingProfile}
+                                style={{ width: '100%', padding: '0.8rem 1rem', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', fontSize: '1rem' }}
+                              >
+                                <option value="" style={{color: 'black'}}>Select</option>
+                                <option value="male" style={{color: 'black'}}>Male</option>
+                                <option value="female" style={{color: 'black'}}>Female</option>
+                                <option value="other" style={{color: 'black'}}>Other</option>
+                              </select>
+                            </div>
+                            {profileFormErrors.gender && <span className="account-error-msg">{profileFormErrors.gender}</span>}
                           </div>
-                          {profileFormErrors.gender && <span className="account-error-msg">{profileFormErrors.gender}</span>}
-                        </div>
+                        )}
                       </div>
-                      <div className="account-form-row">
-                        <div className={`account-form-group ${profileFormErrors.age ? 'has-error' : ''}`}>
-                          <label>Age</label>
-                          <div className="account-input-wrapper">
-                            <input name="age" type="number" min="13" max="90" value={profileFormData.age} onChange={handleProfileNumberChange} onKeyDown={handleProfileNumberInputKeyDown} disabled={isUpdatingProfile} />
+                      {(userInfo?.role === 'athlete' || user?.role === 'athlete') && (
+                        <div className="account-form-row">
+                          <div className={`account-form-group ${profileFormErrors.age ? 'has-error' : ''}`}>
+                            <label>Age</label>
+                            <div className="account-input-wrapper">
+                              <input name="age" type="number" min="13" max="90" value={profileFormData.age} onChange={handleProfileNumberChange} onKeyDown={handleProfileNumberInputKeyDown} disabled={isUpdatingProfile} />
+                            </div>
+                            {profileFormErrors.age && <span className="account-error-msg">{profileFormErrors.age}</span>}
                           </div>
-                          {profileFormErrors.age && <span className="account-error-msg">{profileFormErrors.age}</span>}
-                        </div>
-                        <div className={`account-form-group ${profileFormErrors.height ? 'has-error' : ''}`}>
-                          <label>Height (cm)</label>
-                          <div className="account-input-wrapper">
-                            <input name="height" type="number" min="1" max="500" value={profileFormData.height} onChange={handleProfileNumberChange} onKeyDown={handleProfileNumberInputKeyDown} disabled={isUpdatingProfile} />
+                          <div className={`account-form-group ${profileFormErrors.height ? 'has-error' : ''}`}>
+                            <label>Height (cm)</label>
+                            <div className="account-input-wrapper">
+                              <input name="height" type="number" min="1" max="500" value={profileFormData.height} onChange={handleProfileNumberChange} onKeyDown={handleProfileNumberInputKeyDown} disabled={isUpdatingProfile} />
+                            </div>
+                            {profileFormErrors.height && <span className="account-error-msg">{profileFormErrors.height}</span>}
                           </div>
-                          {profileFormErrors.height && <span className="account-error-msg">{profileFormErrors.height}</span>}
-                        </div>
-                        <div className={`account-form-group ${profileFormErrors.weight ? 'has-error' : ''}`}>
-                          <label>Weight (kg)</label>
-                          <div className="account-input-wrapper">
-                            <input name="weight" type="number" min="1" max="300" value={profileFormData.weight} onChange={handleProfileNumberChange} onKeyDown={handleProfileNumberInputKeyDown} disabled={isUpdatingProfile} />
+                          <div className={`account-form-group ${profileFormErrors.weight ? 'has-error' : ''}`}>
+                            <label>Weight (kg)</label>
+                            <div className="account-input-wrapper">
+                              <input name="weight" type="number" min="1" max="300" value={profileFormData.weight} onChange={handleProfileNumberChange} onKeyDown={handleProfileNumberInputKeyDown} disabled={isUpdatingProfile} />
+                            </div>
+                            {profileFormErrors.weight && <span className="account-error-msg">{profileFormErrors.weight}</span>}
                           </div>
-                          {profileFormErrors.weight && <span className="account-error-msg">{profileFormErrors.weight}</span>}
                         </div>
-                      </div>
+                      )}
                       <div className="account-password-actions">
                         <button type="submit" className="account-btn-update-password" disabled={isUpdatingProfile}>
                           {isUpdatingProfile ? 'Saving...' : 'Save Profile'}
@@ -454,52 +466,56 @@ export default function Account() {
                       </div>
                     </div>
 
-                    {(userInfo?.gender || user?.gender) && (
-                      <div className="account-profile-item">
-                        <div className="account-profile-item-icon">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                        </div>
-                        <div className="account-profile-item-text">
-                          <span className="label">Gender</span>
-                          <span className="value" style={{textTransform: 'capitalize'}}>{userInfo?.gender || user?.gender}</span>
-                        </div>
-                      </div>
-                    )}
-                    
-                    {(userInfo?.age || user?.age) && (
-                      <div className="account-profile-item">
-                        <div className="account-profile-item-icon">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                        </div>
-                        <div className="account-profile-item-text">
-                          <span className="label">Age</span>
-                          <span className="value">{userInfo?.age || user?.age}</span>
-                        </div>
-                      </div>
-                    )}
+                    {(userInfo?.role === 'athlete' || user?.role === 'athlete') && (
+                      <>
+                        {(userInfo?.gender || user?.gender) && (
+                          <div className="account-profile-item">
+                            <div className="account-profile-item-icon">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            </div>
+                            <div className="account-profile-item-text">
+                              <span className="label">Gender</span>
+                              <span className="value" style={{textTransform: 'capitalize'}}>{userInfo?.gender || user?.gender}</span>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {(userInfo?.age || user?.age) && (
+                          <div className="account-profile-item">
+                            <div className="account-profile-item-icon">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                            </div>
+                            <div className="account-profile-item-text">
+                              <span className="label">Age</span>
+                              <span className="value">{userInfo?.age || user?.age}</span>
+                            </div>
+                          </div>
+                        )}
 
-                    {(userInfo?.height || user?.height) && (
-                      <div className="account-profile-item">
-                        <div className="account-profile-item-icon">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22V2"></path><path d="M5 22h14"></path><path d="M5 2h14"></path><line x1="12" y1="22" x2="12" y2="2"></line></svg>
-                        </div>
-                        <div className="account-profile-item-text">
-                          <span className="label">Height</span>
-                          <span className="value">{userInfo?.height || user?.height} cm</span>
-                        </div>
-                      </div>
-                    )}
+                        {(userInfo?.height || user?.height) && (
+                          <div className="account-profile-item">
+                            <div className="account-profile-item-icon">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22V2"></path><path d="M5 22h14"></path><path d="M5 2h14"></path><line x1="12" y1="22" x2="12" y2="2"></line></svg>
+                            </div>
+                            <div className="account-profile-item-text">
+                              <span className="label">Height</span>
+                              <span className="value">{userInfo?.height || user?.height} cm</span>
+                            </div>
+                          </div>
+                        )}
 
-                    {(userInfo?.weight || user?.weight) && (
-                      <div className="account-profile-item">
-                        <div className="account-profile-item-icon">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M16 16v-6a4 4 0 0 0-8 0v6"></path><path d="M12 20v-4"></path></svg>
-                        </div>
-                        <div className="account-profile-item-text">
-                          <span className="label">Weight</span>
-                          <span className="value">{userInfo?.weight || user?.weight} kg</span>
-                        </div>
-                      </div>
+                        {(userInfo?.weight || user?.weight) && (
+                          <div className="account-profile-item">
+                            <div className="account-profile-item-icon">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M16 16v-6a4 4 0 0 0-8 0v6"></path><path d="M12 20v-4"></path></svg>
+                            </div>
+                            <div className="account-profile-item-text">
+                              <span className="label">Weight</span>
+                              <span className="value">{userInfo?.weight || user?.weight} kg</span>
+                            </div>
+                          </div>
+                        )}
+                      </>
                     )}
 
                     <div className="account-profile-item">
@@ -597,8 +613,25 @@ export default function Account() {
                 </div>
                 <h3>You have not booked any ticket</h3>
                 <p>Explore our upcoming events and secure your spot today!</p>
-                <button className="btn primary glow" onClick={() => navigate('/')}>
-                  Browse Events
+                <button 
+                  className="btn primary glow" 
+                  onClick={() => {
+                    const targetId = user?.role === 'athlete' ? 'sports' : 'tickets';
+                    navigate('/');
+                    
+                    // Delay to allow Home page components to mount before scrolling
+                    setTimeout(() => {
+                      const el = document.getElementById(targetId);
+                      if (el) {
+                        window.scrollTo({
+                          top: el.offsetTop - 80, // Using 80 as a safe offset
+                          behavior: 'smooth'
+                        });
+                      }
+                    }, 300);
+                  }}
+                >
+                  {user?.role === 'athlete' ? 'Browse Events' : 'Browse Passes'}
                 </button>
               </div>
             )}
