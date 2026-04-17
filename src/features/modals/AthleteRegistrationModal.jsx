@@ -457,8 +457,8 @@ export default function AthleteRegistrationModal() {
         </form>
       </div>
 
-      {/* Terms and Conditions Modal - Only shown if feature is enabled */}
-      {REQUIRE_TERMS_AGREEMENT && termsModalOpen && (
+      {/* Terms and Conditions Modal */}
+      {termsModalOpen && (
         <Modal onClose={handleCloseTerms} className="terms-modal-content">
           <div className="terms-modal-header">
             <h3>Terms and Conditions</h3>
