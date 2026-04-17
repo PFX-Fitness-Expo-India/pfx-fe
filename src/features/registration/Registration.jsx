@@ -15,9 +15,14 @@ export default function Registration() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     let newValue = value;
-    if (name === 'fullName' || name === 'email') {
+    
+    if (name === 'fullName') {
+      // Allow only alphabets and spaces
+      newValue = value.replace(/[^a-zA-Z\s]/g, '');
+    } else if (name === 'email') {
       newValue = value.replace(/[^a-zA-Z0-9@. ]/g, '');
     }
+    
     setFormData(prev => ({ ...prev, [name]: newValue }));
     if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
   };
@@ -26,13 +31,23 @@ export default function Registration() {
     e.preventDefault();
     
     const newErrors = {};
-    if (!formData.fullName.trim()) newErrors.fullName = 'Full Name is required';
+    if (!formData.fullName.trim()) {
+      newErrors.fullName = 'Full Name is required';
+    } else if (formData.fullName.trim().length < 2) {
+      newErrors.fullName = 'Full Name is too short';
+    }
+
     if (!formData.email.trim()) {
       newErrors.email = 'Email Address is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = 'Please enter a valid email address';
     }
-    if (!formData.message.trim()) newErrors.message = 'Message is required';
+
+    if (!formData.message.trim()) {
+      newErrors.message = 'Message is required';
+    } else if (formData.message.trim().length < 10) {
+      newErrors.message = 'Message must be at least 10 characters long';
+    }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
