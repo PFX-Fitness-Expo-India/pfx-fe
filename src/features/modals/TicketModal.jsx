@@ -20,6 +20,9 @@ export default function TicketModal() {
   const { showModal, showLoading, closeModal } = useModal();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [termsModalOpen, setTermsModalOpen] = useState(false);
+  const [termsRead, setTermsRead] = useState(true); // Default to true as per athlete flow default settings if requirement flag is absent
 
   useEffect(() => {
     if (!ticketType) {
@@ -36,7 +39,23 @@ export default function TicketModal() {
     if (ticketType === 'VIP Pass') {
       return { amount: 2999, type: 'gold' };
     }
-    return { amount: 999, type: 'standard' };
+  };
+  
+  const handleOpenTerms = () => {
+    setTermsModalOpen(true);
+  };
+
+  const handleCloseTerms = () => {
+    setTermsModalOpen(false);
+  };
+
+  const handleMarkTermsAsRead = () => {
+    setTermsRead(true);
+    setTermsModalOpen(false);
+  };
+
+  const handleCheckboxChange = (e) => {
+    setAgreedToTerms(e.target.checked);
   };
 
   async function handleSubmit(e) {
@@ -193,10 +212,49 @@ export default function TicketModal() {
           </div>
         </div>
 
+        <div className="form-row" style={{ marginTop: "16px", marginBottom: "20px" }}>
+          <div className="form-field full" style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+            <input
+              id="agreedToTerms"
+              name="agreedToTerms"
+              type="checkbox"
+              checked={agreedToTerms}
+              onChange={handleCheckboxChange}
+              className="styled-checkbox"
+              style={{ cursor: "pointer" }}
+            />
+            <label htmlFor="agreedToTerms" style={{ 
+              cursor: "pointer", 
+              textTransform: "none", 
+              letterSpacing: "normal", 
+              color: "var(--text)", 
+              fontSize: "0.85rem" 
+            }}>
+              I agree to the{" "}
+              <button
+                type="button"
+                onClick={handleOpenTerms}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: "#ff3040",
+                  cursor: "pointer",
+                  textDecoration: "underline",
+                  fontSize: "0.85rem",
+                  padding: 0,
+                  font: "inherit"
+                }}
+              >
+                terms and conditions
+              </button>
+            </label>
+          </div>
+        </div>
+
         <button 
           className="btn primary" 
           style={{ width: '100%', padding: '16px', fontSize: '1rem' }}
-          disabled={loading}
+          disabled={loading || !agreedToTerms}
           onClick={handleSubmit}
         >
           {loading ? 'Processing...' : `Pay ₹${getTicketDetails().amount} & Confirm`}
@@ -208,10 +266,60 @@ export default function TicketModal() {
           color: 'var(--muted)', 
           marginTop: '16px' 
         }}>
-          Payment processed securely via Razorpay. <br />
-          By proceeding, you agree to our Terms & Conditions.
+          Payment processed securely via Razorpay.
         </p>
       </div>
+
+      {/* Terms and Conditions Modal */}
+      {termsModalOpen && (
+        <Modal onClose={handleCloseTerms} className="terms-modal-content">
+          <div className="terms-modal-header">
+            <h3>Terms and Conditions</h3>
+          </div>
+          <div className="terms-modal-body">
+            <div style={{ color: "var(--text)", fontSize: "0.9rem", lineHeight: "1.6" }}>
+              <h4>1. Registration and Participation</h4>
+              <p>By registering for this event, you confirm that you are eligible to participate and have read all event details and requirements.</p>
+
+              <h4>2. Health and Safety</h4>
+              <p>You confirm that you are in good physical health and capable of participating in this fitness event. You agree to compete at your own risk and assume full responsibility for any injuries or damages.</p>
+
+              <h4>3. Code of Conduct</h4>
+              <p>All participants must maintain the highest level of sportsmanship and conduct themselves respectfully. Any abusive, offensive, or inappropriate behavior will result in immediate disqualification.</p>
+
+              <h4>4. Payment Terms</h4>
+              <p>The registration fee must be paid in full at the time of registration. Payments are non-refundable except as per our refund policy.</p>
+
+              <h4>5. Event Rules</h4>
+              <p>You agree to abide by all event rules and decisions made by event officials. Any violations may result in disqualification without refund.</p>
+
+              <h4>6. Photography and Media</h4>
+              <p>You consent to being photographed and/or filmed during the event and agree that such media may be used for promotional purposes by PFX Fitness Expo.</p>
+
+              <h4>7. Liability Waiver</h4>
+              <p>PFX Fitness Expo India and its organizers are not liable for any injuries, loss, or damages incurred during participation in the event.</p>
+
+              <h4>8. Cancellation Policy</h4>
+              <p>Event dates and venues are subject to change at the organizer's discretion. In case of cancellation, registered fees will be refunded or credited for future events.</p>
+
+              <h4>9. Privacy</h4>
+              <p>Your personal information will be used for event management purposes only and will be kept confidential as per our privacy policy.</p>
+
+              <h4>10. Acceptance</h4>
+              <p>By checking the agreement box, you acknowledge that you have read, understood, and agree to be bound by these terms and conditions.</p>
+            </div>
+          </div>
+          <div className="terms-modal-footer">
+            <button
+              onClick={handleMarkTermsAsRead}
+              className="btn primary"
+              style={{ width: "100%", padding: "12px" }}
+            >
+              I Have Read & Agree to Terms
+            </button>
+          </div>
+        </Modal>
+      )}
     </Modal>
   );
 }

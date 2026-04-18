@@ -1,12 +1,39 @@
+import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../contexts/AppContext';
+import { useModal } from '../../contexts/ModalContext';
 
 export default function Tickets() {
-  const { openTicketModal, user, guestViewMode, setGuestViewMode } = useAppContext();
+  const { openTicketModal, user, token, guestViewMode, setGuestViewMode } = useAppContext();
+  const { showModal } = useModal();
+  const navigate = useNavigate();
 
   // Strict Condition: Hide Visitor Tickets ONLY if logged in as an athlete.
   // Guests (no user) and Visitors should see this section.
   if (user?.role === 'athlete') return null;
 
+
+  const handleBuyClick = (type) => {
+    if (!user || !token) {
+      const pendingAction = {
+        type: 'ticket_purchase',
+        ticketType: type,
+        from: window.location.pathname
+      };
+      localStorage.setItem('pendingAction', JSON.stringify(pendingAction));
+
+      showModal({
+        title: 'Login Required',
+        text: 'Please login to purchase tickets. We will bring you right back here!',
+        type: 'info',
+        confirmText: 'Go to Login',
+        onConfirm: () => {
+          navigate('/login');
+        }
+      });
+      return;
+    }
+    openTicketModal(type);
+  };
 
   const scrollTo = (id) => {
     const el = document.getElementById(id);
@@ -35,7 +62,7 @@ export default function Tickets() {
                 <li>All open seating arenas</li>
                 <li>Brand experiences &amp; demos</li>
               </ul>
-              <button className="btn primary ticket-buy-btn" onClick={() => openTicketModal('General Pass')}>
+              <button className="btn primary ticket-buy-btn" onClick={() => handleBuyClick('General Pass')}>
                 Buy Ticket
               </button>
             </div>
@@ -50,7 +77,7 @@ export default function Tickets() {
                 <li>VIP lounge access</li>
                 <li>Exclusive meet &amp; greet zones</li>
               </ul>
-              <button className="btn accent ticket-buy-btn" onClick={() => openTicketModal('VIP Pass')}>
+              <button className="btn accent ticket-buy-btn" onClick={() => handleBuyClick('VIP Pass')}>
                 Buy VIP Ticket
               </button>
             </div>
