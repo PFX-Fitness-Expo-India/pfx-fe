@@ -2832,3 +2832,51 @@ tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.02); }
   100% { left: 100%; }
 }
 
+/* Modal Responsiveness */
+@media (max-width: 480px) {
+  .c-modal-box {
+    padding: 24px 20px !important;
+    max-width: calc(100% - 24px) !important;
+    margin: 12px !important;
+  }
+
+  .sport-modal-hero {
+    margin-bottom: 12px;
+  }
+
+  .sport-modal-hero h3 {
+    font-size: 1.3rem !important;
+  }
+
+  .sport-modal-hero p {
+    font-size: 0.82rem !important;
+    line-height: 1.4;
+  }
+
+  .ticket-summary-box {
+    padding: 14px 16px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .ticket-summary-box div {
+    margin-bottom: 8px !important;
+  }
+
+  .ticket-summary-box span {
+    font-size: 0.82rem !important;
+  }
+
+  .ticket-summary-box span[style*="font-size: 1.1rem"] {
+    font-size: 0.95rem !important;
+  }
+
+  .athlete-modal-content .btn {
+    padding: 14px !important;
+    font-size: 0.82rem !important;
+  }
+
+  .form-row label {
+    font-size: 0.78rem !important;
+  }
+}
+
